@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="repository.Kasik" name="Kasik's REPO" version="1.0" provider-name="Kasik">
+	<extension point="xbmc.addon.repository" name="Kasik's Addon Repository">
+		<info compressed="false">https://github.com/Kasik/Kasiks-Repo/addons.xml</info>
+		<checksum>https://github.com/Kasik/Kasiks-Repo/addons.xml.md5</checksum>
+		<datadir zip="true">https://github.com/Kasik/Kasiks-Repo/zips</datadir>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary>Install Kasik's Addons</summary>
+		<description>Download and install addons from Kasik.......For OFFICIAL !! Support Visit XBMCHUB.COM</description>
+		<platform>all</platform>
+	</extension>
+</addon>
+
+
