@@ -1,4 +1,3 @@
-#-*- coding: utf-8 -*-
 import xbmc, xbmcgui, xbmcaddon, xbmcplugin
 import urllib,urllib2,re,cookielib,string,urlparse,os,time,datetime,threading
 from BeautifulSoup import BeautifulSoup
@@ -6,7 +5,6 @@ try:
     import urlresolver
     from t0mm0.common.net import Net as net
     from t0mm0.common.addon import Addon
-    from universal import favorites, playbackengine
     from metahandler import metahandlers
 
     
@@ -17,7 +15,8 @@ except Exception, e:
     xbmc.log('TVRule ERROR - Importing Modules: '+str(e))
 
     
-from resources.libs import main,settings  
+from resources.src import main
+from resources.src.scripts import settings
     
 #TVRule.to - by Kasik 2013.
 
@@ -31,7 +30,7 @@ art = main.art
 
 
 
-######################################################## Directories ####################################
+
 UpdatePath=os.path.join(main.datapath,'Update')
 try:
     os.makedirs(UpdatePath)
@@ -41,12 +40,13 @@ try:
     os.makedirs(ListsPath)
 except: pass
 
+######################################################## Main ####################################
       
 def MAIN():
-        main.addDirHome('Search',base_url,5,art+'/search2.png')
-        main.addDirHome('Latest Shows',base_url,1,art+'.png')
-        main.addDirHome('Categories',base_url,3,art+'.png')
-        main.addDirHome('Archives',base_url,2,art+'/png')
+        main.addDirHome('Search',base_url,5,art+'/search.png')
+        main.addDirHome('Latest Shows',base_url,1,art+'latestshows.png')
+        main.addDirHome('Categories',base_url,3,art+'categories.png')
+        main.addDirHome('Archives',base_url,2,art+'archives.png')
                     
 
 
@@ -226,27 +226,27 @@ if mode==None or url==None or len(url)<1:
                
        
 elif mode==1:
-        from resources.libs import tvrule
+        from resources.src import tvrule
         print ""+url
         tvrule.Index(url)
                
 elif mode==2:
-        from resources.libs import tvrule
+        from resources.src import tvrule
         print ""+url
         tvrule.Archive(url)
 
 elif mode==3:
-        from resources.libs import tvrule
+        from resources.src import tvrule
         print ""+url
         tvrule.Shows(url)
 
 elif mode==4:
-        from resources.libs import tvrule
+        from resources.src import tvrule
         print ""+url
         tvrule.Search(url)
         
 elif mode==5:
-        from resources.libs import tvrule
+        from resources.src import tvrule
         print ""+url
         tvrule.Searchhistory()
 
@@ -256,17 +256,17 @@ elif mode==20:
         
 
 elif mode==75:
-       from resources.libs import tvrule
+       from resources.src import tvrule
        print ""+url
        tvrule.VIDEOLINKS(name,url)
 
 elif mode==100:
-       from resources.libs import tvrule
+       from resources.src import tvrule
        print ""+url
        tvrule.Play(name,url)
 
 elif mode==150:
-       from resources.libs import tvrule
+       from resources.src import tvrule
        print ""+url
        tvrule.PlayB(name,url)
        
