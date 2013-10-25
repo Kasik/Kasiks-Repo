@@ -1,0 +1,24 @@
+<settings>
+    <setting id="auto-view" value="true" />
+    <setting id="bit-disc" value="0" />
+    <setting id="choose-skin" value="true" />
+    <setting id="con-view" value="3" />
+    <setting id="delete-incomplete-downloads" value="true" />
+    <setting id="disj-qua" value="0" />
+    <setting id="download-folder" value="" />
+    <setting id="download-in-background" value="true" />
+    <setting id="episodes-view" value="504" />
+    <setting id="home-view" value="1" />
+    <setting id="meta-view" value="true" />
+    <setting id="notify-percent" value="2" />
+    <setting id="password" value="" />
+    <setting id="seasons-view" value="504" />
+    <setting id="sub-view" value="0" />
+    <setting id="tsn-qua" value="0" />
+    <setting id="username" value="" />
+    <setting id="vice-qua" value="0" />
+    <setting id="whistory" value="true" />
+    <setting id="wild-qua" value="0" />
+    <setting id="xml-folder" value="" />
+    <setting id="xpr-view" value="3" />
+</settings>
