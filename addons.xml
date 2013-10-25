@@ -70,23 +70,10 @@
 	<extension point="xbmc.addon.repository" name="Kasik's Addon Repository">
 		<info compressed="false">https://github.com/Kasik/Kasiks-Repo/raw/master/addons.xml</info>
 		<checksum>https://github.com/Kasik/Kasiks-Repo/raw/master/addons.xml.md5</checksum>
-		<datadir zip="true">https://github.com/Kasik/Kasiks-Repo/raw/master/addons/</datadir>
+		<datadir zip="true">https://github.com/Kasik/Kasiks-Repo/raw/master/zips/</datadir>
 	</extension>
 	<extension point="xbmc.addon.metadata">
-		<summary>Install all of Kasik's Addons</summary>
-		<description>Download and install addons from Kasik.......For Official Support Visit XBMCHUB.COM</description>
-		<platform>all</platform>
-	</extension>
-</addon>
-
-<addon id="repository.kasik" name="Kasik's Repository" version="1.0" provider-name="Kasik">
-	<extension point="xbmc.addon.repository" name="Kasik's Addon Repository">
-		<info compressed="false">https://github.com/Kasik/Kasiks-Repo/raw/master/addons.xml</info>
-		<checksum>https://github.com/Kasik/Kasiks-Repo/raw/master/addons.xml.md5</checksum>
-		<datadir zip="true">https://github.com/Kasik/Kasiks-Repo/raw/master/zips</datadir>
-	</extension>
-	<extension point="xbmc.addon.metadata">
-		<summary>Install all of Kasik's Addons</summary>
+		<summary>Install Addons created by Kasik</summary>
 		<description>Download and install addons from Kasik.......For Official Support Visit XBMCHUB.COM</description>
 		<platform>all</platform>
 	</extension>
