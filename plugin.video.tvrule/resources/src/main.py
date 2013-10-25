@@ -16,10 +16,6 @@ addon = Addon(addon_id)
 grab = metahandlers.MetaData(preparezip = False)
 Dir = xbmc.translatePath(os.path.join('special://home/addons/plugin.video.tvrule', ''))
 
-
-from universal import favorites
-fav = favorites.Favorites(addon_id, sys.argv)
-
 datapath = addon.get_profile()
 
 
@@ -1472,17 +1468,13 @@ def addInfo(name,url,mode,iconimage,gen,year):
         else:
                 xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_UNSORTED )
                 xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_LABEL )
-        Commands=[
-                ("[B][COLOR blue]Add[/COLOR][/B] to My Fav's",fav.add_directory(name, u, section_title='Movies', section_addon_title="tvrule Fav's", img=iconimage, infolabels={'item_mode':mode, 'item_url':url, 'genre':gen,'year':year})),
-                ("[B][COLOR red]Remove[/COLOR][/B] from My Fav's",fav.delete_item(name, section_title='Movies', section_addon_title="tvrule Fav's"))]
         if selfAddon.getSetting("meta-view") == "true":
                 video_type='movie'
                 imdb=infoLabels['imdb_id']
                 cname=urllib.quote_plus(infoLabels['metaName'])
-                Commands.append((watched_mark, 'XBMC.RunPlugin(%s?mode=777&name=%s&url=%s&iconimage=%s)' % (sys.argv[0], cname, video_type,imdb)))
+                #Commands.append((watched_mark, 'XBMC.RunPlugin(%s?mode=777&name=%s&url=%s&iconimage=%s)' % (sys.argv[0], cname, video_type,imdb)))
                 #Commands.append(('Refresh Metadata', 'XBMC.RunPlugin(%s?mode=778&name=%s&url=%s&iconimage=%s)' % (sys.argv[0], cname, video_type,imdb)))
         liz=xbmcgui.ListItem(name, iconImage=art+'/vidicon.png', thumbnailImage=infoLabels['cover_url'])
-        liz.addContextMenuItems( Commands, replaceItems=True )
         liz.setInfo( type="Video", infoLabels = infoLabels)
         liz.setProperty('fanart_image', infoLabels['backdrop_url'])
         ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=True)
