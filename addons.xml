@@ -70,7 +70,7 @@
 	<extension point="xbmc.addon.repository" name="Kasik's Addon Repository">
 		<info compressed="false">https://github.com/Kasik/Kasiks-Repo/raw/master/addons.xml</info>
 		<checksum>https://github.com/Kasik/Kasiks-Repo/raw/master/addons.xml.md5</checksum>
-		<datadir zip="true">https://github.com/Kasik/Kasiks-Repo/tree/master/addons</datadir>
+		<datadir zip="true">https://github.com/Kasik/Kasiks-Repo/raw/master/addons/</datadir>
 	</extension>
 	<extension point="xbmc.addon.metadata">
 		<summary>Install all of Kasik's Addons</summary>
