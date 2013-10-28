@@ -136,6 +136,12 @@ def CatDex(url):
                         return False   
         dialogWait.close()
         del dialogWait
+        
+        olderentries=re.compile('class="next page-numbers" href="([^"]*)">&raquo;</a>').findall(link)
+        for url in olderentries:
+                main.addDir('[COLOR blue]Next Page -> [/COLOR]',url,7,art+'/next.png')
+                xbmcplugin.setContent(int(sys.argv[1]), 'Movies')
+        
 
 def Index3(url):
         link=main.OPENURL(url)

@@ -5,3 +5,8 @@
 [B]Version 0.0.2[/B]
 
 - Fixed Next
+
+[B]Version 0.0.3[/B]
+
+- Small Correction
+
