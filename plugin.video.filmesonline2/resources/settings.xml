@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+   <category label="General">
+   <setting id="meta-view" type="bool" label="[B]Metadata[/B]" default="true"/>
+   </category>
+   <category label="Auto View">
+    <setting id="auto-view" type="bool" label="[B]Auto View[/B]" default="true"/>
+		<setting id="home-view"	type="enum" label="Main Menu View" values="List|Thumbnail" default="1" enable="!eq(-1,false)"/>
+		<setting id="sub-view"	type="enum" label="Sub Menu View" values="List|Thumbnail" default="0" enable="!eq(-1,false)"/>
+		<setting id="seasons-view" type="number" label="Season View" default="504" enable="!eq(-2,false)"/>	
+		<setting id="episodes-view" type="number" label="Episode View" default="504" enable="!eq(-3,false)"/>
+		<setting id="choose-skin" type="bool"  label="[B]Xperience 1080 OFF  | Confluence ON[/B]" default="true"enable="!eq(-4,false)"/>
+
+      	<setting id="con-view"	type="enum" label="Confluence View" values="List|Big List|Thumbnail|Posters Wrap|Fanart|Media Info 1|Media Info 2|Media Info 3" default="3" enable="!eq(-1,false)+!eq(-5,false)"/>
+		<setting id="xpr-view"	type="enum" label="Xperience 1080 View" values="List|Info List|Thumbnail|Posters|Landscape|Banner|Panel" default="3" enable="!eq(-2,true)+!eq(-6,false)"/>
+   </category>
+   <category label="Downloads">
+    <setting id="download-folder" type="folder" label="[B]Download Folder[/B]" default=""/>
+	<setting id="delete-incomplete-downloads" type="bool" label="[B]Delete Incomplete Downloads[/B]" default="true"/>
+	<setting id="download-in-background" type="bool" label="[B]Download in Background[/B]" default="true" />
+    <setting id="notify-percent" enable="eq(-1,true)" label="[B]Notify Per[/B]" type="enum" values="2[B] %[/B]|5[B] %[/B]|10[B] %[/B]|20[B] %[/B]|25[B] %[/B]|50[B] %[/B]|100[B] %[/B]" default="2" />
+   </category>
+</settings>

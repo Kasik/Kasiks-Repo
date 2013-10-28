@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addons>
+<addon id="plugin.video.filmesonline2"
+       name="Filmesonline2"
+       version="0.0.1"
+       provider-name="Kasik">
+    <requires>
+        <import addon="xbmc.python" version="2.0"/>
+	   <import addon="script.module.urlresolver"  version="0.0.1"/>
+        <import addon="script.module.t0mm0.common" version="1.1.0"/>
+	   <import addon="script.module.metahandler"  version="1.0.2"/>
+	   <import addon="script.module.beautifulsoup"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource"
+               library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+    <summary lang="pt">Filmes Online 2 &#8211; Assistir Filmes Online Em Full HD 1080p &#8211; HD 720p</summary>
+    <description lang="pt">Filmes Online 2 &#8211; Assistir Filmes Online Em Full HD 1080p &#8211; HD 720p</description>
+    <platform>all</platform>
+  </extension>
+</addon>
+
 <addon id="plugin.video.playvid"
        name="[COLOR blue]PlayVid.com (Adult Content)[/COLOR]"
        version="0.1"
