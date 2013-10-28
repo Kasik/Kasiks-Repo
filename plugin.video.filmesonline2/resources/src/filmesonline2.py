@@ -41,9 +41,9 @@ def Index(url):
         
        
         
-        olderentries=re.compile('<a href="([^>]+)" >&laquo; Older Entries</a>').findall(link)
+        olderentries=re.compile('class="next page-numbers" href="([^"]*)">&raquo;</a>').findall(link)
         for url in olderentries:
-                main.addDir('[COLOR blue]Older Entries -> [/COLOR]',url,1,art+'/next2.png')
+                main.addDir('[COLOR blue]Next Page -> [/COLOR]',url,1,art+'/next.png')
                 xbmcplugin.setContent(int(sys.argv[1]), 'Movies')
         
 
@@ -59,7 +59,7 @@ def Categories(url):
         dialogWait.update(0, '[B]Will load instantly from now on.[/B]',remaining_display)
         for url,name in match:
                 name=name.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xc3\xa9','e').replace('&#8211;','-').replace('\xc3\xa7\xc3\xa3','c').replace('\xc3\xad','i')
-                main.addDir(name,url,1,'')
+                main.addDir(name,url,7,'')
                 loadedLinks = loadedLinks + 1
                 percent = (loadedLinks * 100)/totalLinks
                 remaining_display = 'Categorias carregado :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
@@ -113,6 +113,51 @@ def Index2(url):
                         return False   
         dialogWait.close()
         del dialogWait
+
+def CatDex(url):
+        link=main.OPENURL(url)
+        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xc3\xa9','e').replace('\xc3\xb3','o').replace('&#8211;','-').replace('\xc3\xa7\xc3\xa3','c').replace('\xc3\xad','i').replace('\xc2\xaa','').replace('&#8217;',"'")
+        match = re.findall('title="<img class=\'capa-search\' src=\'([^"]*)\'>" alt="([^"]*)\'">.+?<a href="([^"]*)" title="[^"]*">[^"]*</a>',link)
+        dialogWait = xbmcgui.DialogProgress()
+        ret = dialogWait.create('Please wait, while Series list is cached.')
+        totalLinks = len(match)
+        loadedLinks = 0
+        remaining_display = 'Series loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+        dialogWait.update(0, '[B]Will load instantly from now on.[/B]',remaining_display)
+        for thumb,name,url in match:
+                name=name.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xe2\x80\x99',"'").replace('\xe2\x80\x93','-').replace('\xe2\x80\x94','').replace("(US)","-").replace(' ','-').replace('-&amp;-','-').replace('&-','-')
+                print url
+                main.addDownLink(name,url,100,thumb,'')
+                loadedLinks = loadedLinks + 1
+                percent = (loadedLinks * 100)/totalLinks
+                remaining_display = 'Series Loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+                dialogWait.update(percent,'[B]Will load instantly from now on.[/B]',remaining_display)
+                if (dialogWait.iscanceled()):
+                        return False   
+        dialogWait.close()
+        del dialogWait
+
+def Index3(url):
+        link=main.OPENURL(url)
+        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xc3\xa9','e').replace('&#8211;','-').replace('\xc3\xa7\xc3\xa3','c').replace('\xc3\xad','i')
+        match = re.findall('<li><a class="lbp_secondary" title="([^>]+)" href="([^>]+)" target="_blank">([^"]*)</a></li>',link)
+        dialogWait = xbmcgui.DialogProgress()
+        ret = dialogWait.create('Episodes loaded.')
+        totalLinks = len(match)
+        loadedLinks = 0
+        remaining_display = 'Episodes Loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+        dialogWait.update(0, '[B]Will load instantly from now on.[/B]',remaining_display)
+        for title,url,name in match:
+                name=name.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xc3\xa9','e').replace('&#8211;','-')
+                main.addDownLink(title + '   ' + name,url,100,'','')
+                loadedLinks = loadedLinks + 1
+                percent = (loadedLinks * 100)/totalLinks
+                remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+                dialogWait.update(percent,'[B]Will load instantly from now on.[/B]',remaining_display)
+                if (dialogWait.iscanceled()):
+                        return False   
+        dialogWait.close()
+        del dialogWait        
         
       
         

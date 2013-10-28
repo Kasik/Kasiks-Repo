@@ -261,6 +261,16 @@ elif mode==6:
         print ""+url
         filmesonline2.Index2(url)
 
+elif mode==7:
+        from resources.src import filmesonline2
+        print ""+url
+        filmesonline2.CatDex(url)
+
+elif mode==8:
+        from resources.src import filmesonline2
+        print ""+url
+        filmesonline2.Index3(url)        
+
      
 
 elif mode==20:
