@@ -2,15 +2,15 @@ import urllib,urllib2,re,cookielib,os,sys
 import xbmc, xbmcgui, xbmcaddon, xbmcplugin
 import main
 
-### TvRule.com by Kasik. (2013) ###
+### FilmesOnline2 by Kasik. (2013) ###
 
 from t0mm0.common.addon import Addon
 from universal import playbackengine, watchhistory
-addon_id = 'plugin.video.tvrule'
+addon_id = 'plugin.video.filmesonline2'
 selfAddon = xbmcaddon.Addon(id=addon_id)
-addon = Addon('plugin.video.tvrule', sys.argv)
+addon = Addon('plugin.video.filmesonline2', sys.argv)
 art = main.art    
-wh = watchhistory.WatchHistory('plugin.video.tvrule')
+wh = watchhistory.WatchHistory('plugin.video.filmesonline2')
 DownloadLog=os.path.join(main.datapath,'Downloads')
 DownloadFile=os.path.join(DownloadLog,'DownloadLog')
 
@@ -73,4 +73,4 @@ def REMOVE(mname,murl):
                             xbmc.executebuiltin("Container.Refresh")
                             xbmc.executebuiltin("XBMC.Notification([B][COLOR orange]"+mname+"[/COLOR][/B],[B]Removed from Downloads[/B],1000,"")")
                         except: pass
-        else: xbmc.executebuiltin("XBMC.Notification([B][COLOR green]Tv Rule[/COLOR][/B],[B]You Have No Downloaded Content[/B],1000,"")")
+        else: xbmc.executebuiltin("XBMC.Notification([B][COLOR green]FilmesOnline2[/COLOR][/B],[B]You Have No Downloaded Content[/B],1000,"")")

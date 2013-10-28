@@ -2,7 +2,7 @@ import urllib,urllib2,re,cookielib,sys,xbmcplugin,xbmcgui,xbmcaddon,time,socket,
 from t0mm0.common.addon import Addon
 
 #SET DIRECTORIES
-addon_id = 'plugin.video.tvrule'
+addon_id = 'plugin.video.filmesonline2'
 selfAddon = xbmcaddon.Addon(id=addon_id)
 addon = Addon(addon_id)
 datapath = addon.get_profile()

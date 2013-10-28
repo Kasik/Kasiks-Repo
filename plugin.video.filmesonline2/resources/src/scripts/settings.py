@@ -1,5 +1,5 @@
 import xbmc, xbmcaddon
-addon_id = 'plugin.video.tvrule'
+addon_id = 'plugin.video.filmesonline2'
 selfAddon = xbmcaddon.Addon(id=addon_id)
 
 

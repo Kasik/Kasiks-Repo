@@ -8,9 +8,9 @@ import urllib
 import xbmc, xbmcgui, xbmcaddon
 from traceback import print_exc
 from t0mm0.common.addon import Addon
-selfAddon = xbmcaddon.Addon(id='plugin.video.tvrule')
+selfAddon = xbmcaddon.Addon(id='plugin.video.filmesonline2')
 addon_path = selfAddon.getAddonInfo('path')
-addon_id = 'plugin.video.tvrule'
+addon_id = 'plugin.video.filmesonline2'
 addon = Addon(addon_id)
 class StopDownloading(Exception): 
     def __init__(self, value): 
@@ -32,7 +32,7 @@ DeleteIncomplete = 'true'
 #DeleteIncomplete=selfAddon.getSetting('delete-incomplete-downloads')
 playFile = True
 
-art = xbmc.translatePath('special://home/addons/plugin.video.tvrule/resources/art/')
+art = xbmc.translatePath('special://home/addons/plugin.video.filmesonline2/resources/art/')
 NotifyPercents = range(0, 100 + NotifyPercent, NotifyPercent)
 start_time = time.time()
 datapath = addon.get_profile()

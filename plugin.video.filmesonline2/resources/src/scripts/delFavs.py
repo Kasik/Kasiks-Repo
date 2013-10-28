@@ -2,7 +2,7 @@ import urllib,urllib2,re,cookielib,xbmcplugin,xbmcgui,xbmcaddon,time,socket,stri
 from t0mm0.common.addon import Addon
 
 #SET DIRECTORIES
-addon_id = 'plugin.video.tvrule'
+addon_id = 'plugin.video.filmesonline2'
 selfAddon = xbmcaddon.Addon(id=addon_id)
 addon = Addon(addon_id)
 datapath = addon.get_profile()
@@ -15,7 +15,7 @@ def delFAVS(url,title):
     if os.path.exists(FavFile):
         Favs=re.compile('url="(.+?)",name="(.+?)"').findall(open(FavFile,'r').read())
         if not str(Favs).find(title):
-            xbmc.executebuiltin("XBMC.Notification([B][COLOR green]TV Rule[/COLOR][/B],[B][COLOR orange]"+title+"[/COLOR]not in Favourites.[/B],1000,"")")
+            xbmc.executebuiltin("XBMC.Notification([B][COLOR green]FilmesOnline2[/COLOR][/B],[B][COLOR orange]"+title+"[/COLOR]not in Favourites.[/B],1000,"")")
         if len(Favs)<=1 and str(Favs).find(title):
             os.remove(FavFile)
             xbmc.executebuiltin("Container.Refresh")
@@ -30,7 +30,7 @@ def delFAVS(url,title):
                             xbmc.executebuiltin("Container.Refresh")
                             xbmc.executebuiltin("XBMC.Notification([B][COLOR orange]"+title+"[/COLOR][/B],[B]Removed from Favourites[/B],1000,"")")
                         except: pass
-        else: xbmc.executebuiltin("XBMC.Notification([B][COLOR green]TV Rule[/COLOR][/B],[B]You Have No Favourites to delete[/B],1000,"")")
+        else: xbmc.executebuiltin("XBMC.Notification([B][COLOR green]FilmesOnline2[/COLOR][/B],[B]You Have No Favourites to delete[/B],1000,"")")
 
 bits = sys.argv[1].split(',')
 print "BaseUrl= "+sys.argv[0]
