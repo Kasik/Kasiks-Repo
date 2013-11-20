@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addons>
+<addon id="plugin.video.couchtuner"
+  name="CouchTuner"
+  version="0.0.1"
+  provider-name="Kasik">
+  <requires>
+    <import addon="xbmc.python" version="2.0"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource" library="default.py">
+    <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <platform>all</platform>
+    <summary>Couch Tuner TV Videos FREE: Watch Online Tv Shows</summary>
+    <description>Couch Tuner TV Videos FREE: Watch Online Tv Shows</description>
+  </extension>
+</addon>
+
 <addon id="plugin.video.filmesonline2"
        name="Filmesonline2"
        version="0.0.3"
