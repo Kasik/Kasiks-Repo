@@ -1,0 +1,23 @@
+<settings>
+
+<category label="General">
+
+<setting id="adult_content" type="bool" label="Enable Adult Content" default="false"/>
+
+</category>
+
+<category label="Auto-View">
+
+<setting id="auto-view" type="bool" label="[COLOR blue]Enable Autoview[/COLOR]" default="false"/>
+
+<setting id="movies-view" type="number" label="Movies View" default="503" enable="!eq(-1,false)"/>
+
+<setting id="shows-view" type="number" label="TV Shows View" default="503" enable="!eq(-2,false)"/>
+
+<setting id="episodes-view" type="number" label="Episodes View" default="503" enable="!eq(-3,false)"/>
+
+<setting id="default-view" type="number" label="Default View" default="50" enable="!eq(-4,false)"/>
+
+</category>
+
+</settings>
