@@ -80,7 +80,7 @@ def INDEX(url):
 
         pages=re.compile('<a href="(.+?)" class="next">Next &#187;</a></div>').findall(link)
         for nexturl in pages:
-          addDir('Next Page',base_url + nexturl,'index',art + 'Icon_Next.png','dir',False)
+          addDir('Next Page',base_url + nexturl,'index',art + 'next.png','dir',False)
           
         AUTOVIEW(types)
 
@@ -182,37 +182,41 @@ def GATHERLINKS(url):
                   
 
 def PLAY(name,host,url):
-        if 'epornik' in url:
-                link = net.http_GET(url).content
-                elink=re.compile('s1.addVariable(.+?);').findall(link)
-                dirty = re.sub("[',)(]", '', (elink[5]))
-                clean =   dirty[7:-1]
-                url = clean
-        else:
-                link = net.http_GET(url).content 
-                match=re.compile('location.href=\'(.+?)\';"').findall(link)
-                for url in match:  
-                     url = urlresolver.resolve(url)
-        meta = 0
+        link = net.http_GET(url).content
+        match=re.compile('location.href=\'(.+?)\';"').findall(link)
+        print match
+        sources = []
+        for url in match:
+                domain = re.findall(r'(.+?)',url)
+                hoster = domain
+                print hoster
+                source = urlresolver.HostedMediaFile(url=url, title=hoster)
+                sources.append(source)
         try:
-             meta = getMeta(name,types)
+             match=re.compile('location.href=\'(.+?)\';"').findall(link)
+             print match
+             for url in match:
+                  hoster = re.findall(r'src=\'([^"]*)\' scrolling',url)
+             source = urlresolver.HostedMediaFile(url=url, title=hoster[0])
+             sources.append(source)
         except:
-             pass
-        
-        params = {'name':name, 'url':url, 'mode':mode, 'thumb':thumb, 'types':types, 'host':host}
-        if meta == 0:
-             addon.add_video_item(params, {'title':name}, img=thumb)
-             liz=xbmcgui.ListItem(name, iconImage="DefaultFolder.jpg", thumbnailImage=thumb)
-        else:
-             addon.add_video_item(params, meta, fanart=meta['backdrop_url'], img=meta['cover_url'])
-             liz=xbmcgui.ListItem(name, iconImage="DefaultFolder.jpg", thumbnailImage=meta['cover_url'])
-             liz.setInfo('video',infoLabels=meta)
-        
-        xbmc.sleep(1000)
-        
-        xbmc.Player ().play(url, liz, False)                    
-          
+         pass
+    
+        urlresolver.filter_source_list(sources)
+        source = urlresolver.choose_source(sources)
+        try:
+         if source: stream_url = source.resolve()
+         else: stream_url = ''
+         liz=xbmcgui.ListItem(name, iconImage='',thumbnailImage='')
+         liz.setInfo('Video', {'Title': name} )
+         liz.setProperty("IsPlayable","true")
+         xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=stream_url,isFolder=False,listitem=liz)
+         xbmc.Player().play(stream_url)
+        except:
+         pass
 
+
+              
 def SEARCH():
         search = ''
         keyboard = xbmc.Keyboard(search,'Search Movies')
