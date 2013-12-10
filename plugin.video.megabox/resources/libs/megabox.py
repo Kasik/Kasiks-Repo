@@ -466,19 +466,43 @@ def GRABLINKS(url):
                 main.addDir('[COLOR green]'+name+'[/COLOR] [COLOR blue] Quality: '+quality+'[/COLOR] [COLOR orange]' ' Views: '+views+'[/COLOR]',base_url+url,3,'','')
                 xbmcplugin.setContent(int(sys.argv[1]), 'Movies')                
 
-             
-                
+                           
 
 
 def VIDEOLINKS(name,url):
     link=main.OPENURL(url)
     link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','')
-    match=re.compile('<strong>Watch [^"]* on ([^"]*) </strong></span><div class="clear"></div></div><div class="player"><a href="[^"]*.php[?]id=([^"]*)&movie=[^"]*&link=([^"]*)&type=older_v2&ref=1').findall(link)
+    match=re.compile('<strong>Watch [^"]* on ([^"]*) </strong></span><div class="clear"></div></div><div class="player"><a href="[^"]*.php[?]id=([^"]*)&movie=[^"]*&link=([^"]*)&type=older_v2&ref=1" target').findall(link)
     for name,link1,link2 in match:
      url = base_url + 'player.php?authid=&id='+link1+'&link='+link2+'&type=older_v2&part=&site=inactive&ref=1'
      print url
      name = '[COLOR yellow]'+name+'[/COLOR]'
      main.addDown(name,url,6,'','')
+    match1=re.compile('href="info.php[?]id=([^"]*)&older&link=([^"]*)">Part 1</a>').findall(link)
+    for link1,link2 in match1:
+     url = base_url + 'player.php?authid=&id='+link1+'&link='+link2+'&type=older_v2&part=&site=inactive&ref=1'
+     print url
+     name = '[COLOR yellow]Part 1''[/COLOR]'
+     main.addDown(name,url,6,'','')
+    match2=re.compile('href="info.php[?]id=([^"]*)&older&link=([^"]*)&part=2">Part 2</a>').findall(link)
+    for link1,link2 in match2:
+     url = base_url + 'player.php?authid=&id='+link1+'&link='+link2+'&type=older_v2&part=&site=inactive&ref=1'
+     print url
+     name = '[COLOR yellow]Part 2''[/COLOR]'
+     main.addDown(name,url,6,'','') 
+    
+      
+      
+
+def GRABMORE(name,url):
+     link=main.OPENURL(url)
+     link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','')
+     match=re.compile('<div class="player"><a href="player5.php[?]id=([^"]*)&movie=[^"]*&link=([^"]*)&type=older_v2&ref=1" target').findall(link)
+     for link1,link2 in match:
+      url = base_url + 'player.php?authid=&id='+link1+'&link='+link2+'&type=tv2&part=&site=inactive&ref=1'
+      print url
+      main.addDownLink(name,url,6,'')  
+        
 
 
 

@@ -10,3 +10,6 @@ Reworked Addon Code (Download Feature Not Fully Implemented)
 
 Version 2.0.1
 Small Code Change
+
+Version 2.0.2
+Small Code Change to Videolinks

@@ -369,6 +369,11 @@ elif mode==15:
         from resources.libs import megabox
         print ""+url
         megabox.TVVIDEOLINKS(url)
+
+elif mode==16:
+        from resources.libs import megabox
+        print ""+url
+        megabox.GRABMORE(name,url)     
         
 
 elif mode==20:
