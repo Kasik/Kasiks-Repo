@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.megabox"
        name="Megabox"
-       version="1.1"
-       provider-name="Kasik04a">
-  <requires>
-    <import addon="xbmc.python" version="2.1.0"/>
-    <import addon="script.module.urlresolver" version="2.0.9"/>
-  </requires>
-  <extension point="xbmc.python.pluginsource"
-            library="default.py">
+       version="2.0.0"
+       provider-name="Kasik">
+    <requires>
+        <import addon="xbmc.python" version="2.0"/>
+		<import addon="script.module.urlresolver"  version="0.0.1"/>
+        <import addon="script.module.t0mm0.common" version="1.1.0"/>
+		<import addon="script.module.metahandler"  version="1.0.2"/>
+		<import addon="script.module.beautifulsoup"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource"
+               library="default.py">
         <provides>video</provides>
-  </extension>
-  <extension point="xbmc.addon.metadata">
-    <summary>Featured Movies - Watch Free Movies Online Stream</summary>
-    <description>List of Featured movies at megabox: Search for any movies that you want to watch online without downloading. Stream your favorite movie just instantly just like megashare.</description>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+    <summary lang="en">Stream the latest movies from Megabox.Li</summary>
+    <description lang="en">View featured movies or Search for any movies that you want to watch online without downloading. Stream your favorite movie just instantly just like megashare all from Megabox.Li</description>
     <platform>all</platform>
   </extension>
 </addon>

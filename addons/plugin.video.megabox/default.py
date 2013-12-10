@@ -1,504 +1,540 @@
-import urllib,urllib2,re,xbmcplugin,xbmcgui,urlresolver,xbmcaddon,os
-from metahandler import metahandlers
+#-*- coding: utf-8 -*-
+import xbmc,xbmcgui, xbmcaddon, xbmcplugin
+import urllib,re,string,os,time,threading
 from BeautifulSoup import MinimalSoup as BeautifulSoup
-from t0mm0.common.addon import Addon
-from t0mm0.common.net import Net
 try:
-     import StorageServer
-except:
-     import storageserverdummy as StorageServer
+    from resources.libs import main,settings    
+except Exception, e:
+    elogo = xbmc.translatePath('special://home/addons/plugin.video.megabox/resources/art/bigx.png')
+    dialog = xbmcgui.Dialog()
+    ok=dialog.ok('[B][COLOR=FF67cc33]Megabox Import Error[/COLOR][/B]','Failed To Import Needed Modules',str(e),'Report missing Module to Fix')
+    xbmc.log('Megabox ERROR - Importing Modules: '+str(e), xbmc.LOGERROR)
 reload(sys)
-sys.setdefaultencoding( "UTF-8" )     
+sys.setdefaultencoding( "UTF-8" )   
+    
+#Megabox - by Kasik 2013.
 
+base_url ='http://megabox.li/'
 addon_id = 'plugin.video.megabox'
-addon = Addon(addon_id, sys.argv)     
-settings = xbmcaddon.Addon(id=addon_id)
-adult_content = settings.getSetting('adult_content')
+selfAddon = xbmcaddon.Addon(id=addon_id)
+art = main.art
 
+################################################################################ Directories ##########################################################################################################
+UpdatePath=os.path.join(main.datapath,'Update')
+try: os.makedirs(UpdatePath)
+except: pass
+CachePath=os.path.join(main.datapath,'Cache')
+try: os.makedirs(CachePath)
+except: pass
+CookiesPath=os.path.join(main.datapath,'Cookies')
+try: os.makedirs(CookiesPath)
+except: pass
 
-cache = StorageServer.StorageServer("megabox", 0)
-
-art = xbmc.translatePath(os.path.join('special://home/addons/plugin.video.megabox/art/', ''))
-
-USER_AGENT = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3'
-
-grab=metahandlers.MetaData()
-net = Net()
 
 def MAIN():
-        addDir('Movies','none','movies',art + 'movies.png','dir',False)
-        addDir('TV Shows','none','tv',art + 'tv.png','dir',False)
-        if adult_content == 'true':
-                addDir('Adult Movies',base_url + '?xxx','adultIndex',art + 'adult.png','dir',False)  
+
+        if xbmcaddon.Addon(id='plugin.video.megabox').getSetting("first-run") == 'true':
+
+            import shutil
+            mainfolder = os.path.abspath( os.path.join( xbmc.translatePath( xbmcaddon.Addon(id='plugin.video.megabox').getAddonInfo('path') ),".."))
+
+            folder = os.path.join( mainfolder , "plugin.video.megabox" )
+            if os.path.exists(folder):
+                shutil.rmtree(folder)
+
+            xbmcaddon.Addon(id='plugin.video.megabox').setSetting("first-run","false")
+
+
+        d = settings.getHomeItems()
+
+        for index, value in sorted(enumerate(d), key=lambda x:x[1]):
+            if value==None: continue
+            if index==0:
+                main.addDirHome('Search Movies',base_url,100,art+'/searchmovies.png')
+            elif index==1:
+                main.addDirHome('New Releases',base_url + '?sort=release',1,art+'/new.png')
+            elif index==2:
+                main.addDirHome('Latest Added',base_url + '?sort=latest-added',1,art+'/latestmovies.png')
+            elif index==3:
+                main.addDirHome('Featured',base_url + '?sort=featured',1,art+'/featmovies.png')
+            elif index==4:
+                main.addDirHome('Ratings',base_url + '?sort=ratings',1,art+'/ratings.png')
+            elif index==5:
+                main.addDirHome('Popular',base_url + '?sort=views',1,art+'/popular.png')
+            elif index==6:
+                main.addDirHome('2013 Movies',base_url + '?year=2013',1,art+'/2013.png')
+            elif index==7:
+                main.addDirHome('2012 Movies',base_url + '?year=2012',1,art+'/2012.png')
+            elif index==8:
+                main.addDirHome('Youtube Movies',base_url + '?sort=youtube-movies',50,art+'/youtube.png')
+            elif index==9:
+                main.addDirHome('Coming Soon',base_url + '?sort=coming-soon',1,art+'/comingsoon.png')
+            elif index==10:
+                main.addDirHome('Movie Genres',base_url,2,art+'/moviesgenres.png')
+            elif index==11:
+                main.addDirHome('TV SHOWS',base_url,9,art+'/tv.png')
+            main.VIEWSB()
+                     
+      
+
+def MOVIEGENRE(url):
+        main.addDir('Action',base_url +'?genre=action',1,art+'/movieaction.png')
+        main.addDir('Animation',base_url +'?genre=animation',1,art+'/movieanimation.png')
+        main.addDir('Comedy',base_url +'?genre=comedy',1,art+'/moviecomedy.png')
+        main.addDir('Crime',base_url +'?genre=crime',1,art+'/moviecrime.png')
+        main.addDir('Documentary',base_url +'?genre=documentary',1,art+'/moviedocu.png')
+        main.addDir('Drama',base_url +'?genre=drama',1,art+'/moviedrama.png')
+        main.addDir('Family',base_url +'?genre=family',1,art+'/moviefamily.png')
+        main.addDir('Horror',base_url +'?genre=horror',1,art+'/moviehorror.png')
+        main.addDir('Romance',base_url +'?genre=romance',1,art+'/movieromance.png')
+        main.addDir('Sci-Fi',base_url +'?genre=sci-fi',1,art+'/moviescifi.png')
+        main.addDir('Thriller',base_url +'?genre=thriller',1,art+'/moviethriller.png')
+        main.VIEWSB()
         
-        addDir('Resolver Settings','none','resolverSettings',art + 'settings.png','dir',False)
+####################################### TV SECTION #########################################################################################
+   
+def TV():
+        main.addDir('Search Tv Shows','none',130,art+'/searchtv.png')
+        main.addDir('Featured',base_url+'?sort=featured&tv',11,art+'/tvfeat.png')
+        main.addDir('Rating',base_url+'?sort=ratings&tv',11,art+'/tvrating.png')
+        main.addDir('Popular',base_url+'?sort=views&tv',11,art+'/poptv.png')
+        main.addDir('New Releases',base_url+'?sort=release&tv',11,art+'/tvnew.png')
+        main.addDir('Latest Added',base_url+'?sort=latest-added&tv',11,art+'/tvlatest.png')
+        main.addDir('2013 TV Shows',base_url+'?year=2013&tv',11,art+'/tv2013.png')
+        main.addDir('2012 TV Shows',base_url+'?year=2012&tv',11,art+'/tv2012.png')
+        main.addDir('Tv Genres',base_url,10,art+'/tvgenres.png')
+        main.VIEWSB() 
 
-def MOVIEGENRES():
-        addDir('Action',base_url +'?genre=action','index',art + 'movieaction.png','dir',False)
-        #addDir('Adult',base_url +'?genre=adult','index',art + 'movieadult.png','dir',False)
-        addDir('Animation',base_url +'?genre=animation','index',art + 'movieanimation.png','dir',False)
-        addDir('Comedy',base_url +'?genre=comedy','index',art + 'moviecomedy.png','dir',False)
-        addDir('Crime',base_url +'?genre=crime','index',art + 'moviecrime.png','dir',False)
-        addDir('Documentary',base_url +'?genre=documentary','index',art + 'moviedocu.png','dir',False)
-        addDir('Drama',base_url +'?genre=drama','index',art + 'moviedrama.png','dir',False)
-        addDir('Family',base_url +'?genre=family','index',art + 'moviefamily.png','dir',False)
-        addDir('Horror',base_url +'?genre=horror','index',art + 'moviehorror.png','dir',False)
-        addDir('Romance',base_url +'?genre=romance','index',art + 'movieromance.png','dir',False)
-        addDir('Sci-Fi',base_url +'?genre=sci-fi','index',art + 'moviescifi.png','dir',False)
-        addDir('Thriller',base_url +'?genre=thriller','index',art + 'moviethriller.png','dir',False)
-
-def MOVIESECTION():
-        addDir('Search Movies','none','searchmovies',art + 'searchmovies.png','dir',False)
-        addDir('Featured',base_url + '?sort=featured','index',art + 'featmovies.png','dir',False)
-        addDir('Ratings',base_url + '?sort=ratings','index',art + 'ratings.png','dir',False)
-        addDir('Popular',base_url + '?sort=views','index',art + 'popular.png','dir',False)
-        addDir('New Releases',base_url + '?sort=release','index',art + 'new.png','dir',False)
-        addDir('Latest Added',base_url + '?sort=latest-added','index',art + 'latestmovies.png','dir',False)
-        addDir('Coming Soon',base_url + '?sort=coming-soon','index',art + 'comingsoon.png','dir',False)
-        addDir('Youtube Movies',base_url + '?sort=youtube-movies','index',art + 'youtube.png','dir',False)
-        addDir('2013 Movies',base_url + '?year=2013','index',art + '2013.png','dir',False)
-        addDir('2012 Movies',base_url + '?year=2012','index',art + '2012.png','dir',False)
-        addDir('Movie Genres',base_url,'moviegenres',art + 'moviesgenres.png','dir',False)  
-
-def INDEX(url):
-        types = ''
-        sending_url = url
-        link = net.http_GET(url).content
-        match=re.compile('<a href="([^"]*)"><img alt="[^"]*" src="([^"]*)" /></a><div class="title"><a title="[^"]*" href="[^"]*">([^"]*)</a></div>').findall(link)
-        for url,thumb,name in match:
-             show=''
-             if 'XXX' in url:
-                  continue
-             else:
-                  if re.search('[Ss]\d\d[Ee]\d\d',name) or  re.search('\d[Xx]\d',name):
-                       if 'genre=15' in sending_url:
-                              types = 'episodes'
-                              addDir(name,base_url + url,'gatherlinks',thumb,'episodes',False)
-                  else:
-                     types = 'movies'
-                     addDir(name,base_url + url,'gatherlinks',thumb,'movies',False)
-
-        pages=re.compile('<a href="(.+?)" class="next">Next &#187;</a></div>').findall(link)
-        for nexturl in pages:
-          addDir('Next Page',base_url + nexturl,'index',art + 'next.png','dir',False)
-          
-        AUTOVIEW(types)
-
-
-
-def TVSECTION():
-        addDir('Search Tv Shows','none','searchtv',art + 'searchtv.png','dir',False)
-        addDir('Featured',base_url+'?sort=featured&tv','shows',art + 'feattv.png','dir',False)
-        addDir('Rating',base_url+'?sort=ratings&tv','shows',art + 'tvrating.png','dir',False)
-        addDir('Popular',base_url+'?sort=views&tv','shows',art + 'tvpp.png','dir',False)
-        addDir('New Releases',base_url+'?sort=release&tv','shows',art + 'tvnew.png','dir',False)
-        addDir('Latest Added',base_url+'?sort=latest-added&tv','shows',art + 'tvlatest.png','dir',False)
-        addDir('2013 TV Shows',base_url+'?year=2013&tv','shows',art + 'tv2013.png','dir',False)
-        addDir('2012 TV Shows',base_url+'?year=2012&tv','shows',art + 'tv2013.png','dir',False)
-        addDir('Tv Genres','none','tvgenres',art + 'tvgenres.png','dir',False)
 
 def TVGENRES():
-        addDir('Action',base_url +'index.php?genre=action&tv','shows',art + 'tvaction.png','dir',False)
-        addDir('Animation',base_url +'index.php?genre=animation&tv','shows',art + 'tvanimation.png','dir',False)
-        addDir('Comedy',base_url +'index.php?genre=comedy&tv','shows',art + 'tvcomedy.png','dir',False)
-        addDir('Crime',base_url +'index.php?genre=crime&tv','shows',art + 'tvcrime.png','dir',False)
-        addDir('Documentary',base_url +'index.php?genre=documentary&tv','shows',art + 'tvdocu.png','dir',False)
-        addDir('Drama',base_url +'index.php?genre=drama&tv','shows',art + 'tvdrama.png','dir',False)
-        addDir('Family',base_url +'index.php?genre=family&tv','shows',art + 'tvfamily.png','dir',False)
-        addDir('Horror',base_url +'index.php?genre=horror&tv','shows',art + 'tvhorror.png','dir',False)
-        addDir('Romance',base_url +'index.php?genre=romance&tv','shows',art + 'tvromance.png','dir',False)
-        addDir('Sci-Fi',base_url +'index.php?genre=sci-fi&tv','shows',art + 'tvscifi.png','dir',False)
-        addDir('Thriller',base_url +'index.php?genre=thriller&tv','shows',art + 'tvthriller.png','dir',False)       
+        main.addDir('Action',base_url +'index.php?genre=action&tv',11,art+'/tvaction.png')
+        main.addDir('Animation',base_url +'index.php?genre=animation&tv',11,art+'/tvanimation.png')
+        main.addDir('Comedy',base_url +'index.php?genre=comedy&tv',11,art+'/tvcomedy.png')
+        main.addDir('Crime',base_url +'index.php?genre=crime&tv',11,art+'/tvcrime.png')
+        main.addDir('Documentary',base_url +'index.php?genre=documentary&tv',11,art+'/tvdocu.png')
+        main.addDir('Drama',base_url +'index.php?genre=drama&tv',11,art+'/tvdrama.png')
+        main.addDir('Family',base_url +'index.php?genre=family&tv',11,art+'/tvfamily.png')
+        main.addDir('Horror',base_url +'index.php?genre=horror&tv',11,art+'/tvhorror.png')
+        main.addDir('Romance',base_url +'index.php?genre=romance&tv',11,art+'/tvromance.png')
+        main.addDir('Sci-Fi',base_url +'index.php?genre=sci-fi&tv',11,art+'/tvscifi.png')
+        main.addDir('Thriller',base_url +'index.php?genre=thriller&tv',11,art+'/tvthriller.png')    
+        main.VIEWSB()
 
-def TV(url):
-        types = ''
-        sending_url = url
-        link = net.http_GET(url).content
-        match=re.compile('<a href="([^"]*)"><img alt="[^"]*" src="([^"]*)" /></a><div class="title"><a title="[^"]*" href="[^"]*">([^"]*)</a></div>').findall(link)
-        for url,thumb,name in match:
-             show=''
-             types = 'movies'
-             addDir(name,base_url + url,'episodes',thumb,'shows',False)
+#############################################################################################################################################        
+       
 
-                  
-        pages=re.compile('<a href="(.+?)" class="next">Next &#187;</a></div>').findall(link)
-        for nexturl in pages:
-          addDir('Next Page',base_url + nexturl,'shows',art + 'Icon_Next.jpg','dir',False)
-          
-        AUTOVIEW(types)
-
-
-def SEASONS(url):
-        link = net.http_GET(url).content
-        match=re.compile('<div class="tv_episode "><a href="[^"]*&season=([^"]*)&episode=[^"]*&tv">[^"]*<span class').findall(link)
-        match.sort() # sort list so it shows season one first
-        match = f7(match)
-        for name in match:
-             name = "Season " + name
-             addDir(name,url,'episodes','','shows',False)
-        
-
-def EPISODES(url):
-        link = net.http_GET(url).content  
-        match=re.compile('<div class="tv_episode "><a href="([^"]*)&season=([^"]*)&episode=([^"]*)&tv">[^"]*<span class="ep_title">([^"]*)</span>').findall(link)
-        for url,season,episode,name in match:
-             name = '[COLOR blue]'+"Season" +season+'[/COLOR]'+ ' ' +'[COLOR red]'+ "Episode" +episode+'[/COLOR]'+ '[COLOR yellow]'+ ' '+name+'[/COLOR]'
-             url = base_url + url + '&season='+season+'&episode='+episode+'&tv'
-             addDir(name,url,'gatherlinks','','shows',False)
-             
-
-
-
-        
-
-def ADULTINDEX(url):
-        link = net.http_GET(url).content
-        pages=re.compile('<a href="([^"]*)"><img alt="[^"]*" src="([^"]*)" /></a><div class="title"><a title="[^"]*" href="[^"]*">([^"]*)</a></div>').findall(link)
-        if len(pages) > 0:
-             if not 'search' in url:
-                  if url == base_url + 'index.php?genre=14':
-                          next_page = str(pages[10][0])
-                          addDir('Next Page',base_url + '/' + next_page,6,art + 'Icon_Next.jpg','dir',False)
-                  else:
-                          next_page = str(pages[11][0])
-                          addDir('Next Page',base_url + '/' + next_page,6,art + 'Icon_Next.jpg','dir',False)
-        
-        match=re.compile('<a href="([^"]*)"><img alt="[^"]*" src="([^"]*)" /></a><div class="title"><a title="[^"]*" href="[^"]*">([^"]*)</a></div>').findall(link)
-        for url,thumb,name in match:
-             url = base_url + '/' + url
-             addADir(name,url,'videoLinks',base_url + '/' + thumbnail,plot,False)
-        AUTOVIEW('movies')
-
-def GATHERLINKS(url):
-        link = net.http_GET(url).content
-        link = link.replace('\t','').replace('\r','').replace('\n','')
-        match=re.compile('href="([^"]*)">Version[^"]*</a>.+?<div class="col3">([^"]*)</div>').findall(link)
-        for url,name in match:
-             url = base_url + url
-             name = '[COLOR orange]'+name+'[/COLOR]'
-             addDownLink(name,url,'play','')
-        
-        
-                  
-
-def PLAY(name,host,url):
-        link = net.http_GET(url).content
-        match=re.compile('location.href=\'(.+?)\';"').findall(link)
-        print match
-        sources = []
-        for url in match:
-                domain = re.findall(r'(.+?)',url)
-                hoster = domain
-                print hoster
-                source = urlresolver.HostedMediaFile(url=url, title=hoster)
-                sources.append(source)
+def getListFile(url, path, excepturl = None ):
+        link = ''
+        t = threading.Thread(target=setListFile,args=(url,path,excepturl))
+        t.start()
+        if not os.path.exists(path):
+            t.join()
+        if os.path.exists(path):
+            try: link = open(path).read()
+            except: pass
+        return link       
+def setListFile(url, path, excepturl = None):
+        content = None
         try:
-             match=re.compile('location.href=\'(.+?)\';"').findall(link)
-             print match
-             for url in match:
-                  hoster = re.findall(r'src=\'([^"]*)\' scrolling',url)
-             source = urlresolver.HostedMediaFile(url=url, title=hoster[0])
-             sources.append(source)
+            content=main.OPENURL(url, verbose=False)
         except:
-         pass
-    
-        urlresolver.filter_source_list(sources)
-        source = urlresolver.choose_source(sources)
-        try:
-         if source: stream_url = source.resolve()
-         else: stream_url = ''
-         liz=xbmcgui.ListItem(name, iconImage='',thumbnailImage='')
-         liz.setInfo('Video', {'Title': name} )
-         liz.setProperty("IsPlayable","true")
-         xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=stream_url,isFolder=False,listitem=liz)
-         xbmc.Player().play(stream_url)
-        except:
-         pass
-
-
-              
-def SEARCH():
-        search = ''
-        keyboard = xbmc.Keyboard(search,'Search Movies')
-        keyboard.doModal()
-        if keyboard.isConfirmed():
-                search = keyboard.getText()
-                search = re.sub(' ','+', search)
-                
-                url = base_url + 'index.php?search=' + search + '&movie=&x=0&y=0'
-                
-                link = net.http_GET(url).content
-                match=re.compile('<a href="([^"]*)"><img alt="[^"]*" src="([^"]*)" /></a><div class="title"><a title="[^"]*" href="[^"]*">([^"]*)</a></div>').findall(link)
-                if len(match) > 0:
-                        INDEX(url)
-                else:
-                        match=re.compile('<!--\nwindow.location = "(.+?)"\n//-->').findall(link)
-                        if len(match) > 0:
-                              if 'XXX' in str(match[0]):
-                                   return
-                                                
-                              else:
-                                   VIDEOLINKS(base_url + match[0],'')
-                        else:
-                                return
-
-
-def SEARCHTV():
-        search = ''
-        keyboard = xbmc.Keyboard(search,'Search Tv Shows')
-        keyboard.doModal()
-        if keyboard.isConfirmed():
-                search = keyboard.getText()
-                search = re.sub(' ','+', search)
-                
-                url = base_url + 'index.php?search=' + search + '&tv=&x=0&y=0'
-                
-                link = net.http_GET(url).content
-                match=re.compile('<a href="([^"]*)"><img alt="[^"]*" src="([^"]*)" /></a><div class="title"><a title="[^"]*" href="[^"]*">([^"]*)</a></div>').findall(link)
-                if len(match) > 0:
-                        TV(url)
-                else:
-                        match=re.compile('<!--\nwindow.location = "(.+?)"\n//-->').findall(link)
-                        if len(match) > 0:
-                              if 'XXX' in str(match[0]):
-                                   return
-                                                
-                              else:
-                                   VIDEOLINKS(base_url + match[0],'')
-                        else:
-                                return
-
-                              
-
-base_url = 'http://megabox.li/'                              
-                        
-mode = addon.queries['mode']
-url = addon.queries.get('url', '')
-name = addon.queries.get('name', '')
-thumb = addon.queries.get('thumb', '')
-year = addon.queries.get('year', '')
-season = addon.queries.get('season', '')
-episodes = addon.queries.get('episodes', '')
-types = addon.queries.get('types', '')
-fanart = addon.queries.get('fanart', '')
-imdb_id = addon.queries.get('imdb_id', '')
-host = addon.queries.get('host', '')
-
-print "Mode is: "+str(mode)
-print "URL is: "+str(url)
-print "Name is: "+str(name)
-print "Name: "+str(name)
-print "Thumb is: "+str(thumb)
-print "Season is: "+str(season)
-print "Season: "+str(season)
-print "episodes is: "+str(episodes)
-print "Type is: "+str(types)
-print "IMDB ID is: "+str(imdb_id)
-print "Host: "+str(host)
-
-
-def f7(seq):
-    seen = set()
-    seen_add = seen.add
-    return [ x for x in seq if x not in seen and not seen_add(x)]
-
-def cleanUnicode(string):
-    try:
-        string = string.replace("'","").replace(unicode(u'\u201c'), '"').replace(unicode(u'\u201d'), '"').replace(unicode(u'\u2019'),'').replace(unicode(u'\u2026'),'...').replace(unicode(u'\u2018'),'').replace(unicode(u'\u2013'),'-')
-        return string
-    except:
-        return string
-
-def addDownLink(name,url,mode,iconimage):
-        u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)+"&thumb="+urllib.quote_plus(iconimage)
-        ok=True
-        name=BeautifulSoup(name, convertEntities=BeautifulSoup.HTML_ENTITIES).contents[0]
-        liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
-        liz.setInfo( type="Video", infoLabels={ "Title": name } )
-        ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=False)
-        return ok     
-
-def addDir(name,url,mode,thumb,types,fav):
-        fanart = ''
-        scraped_thumb = thumb
-        scraped_name = name
-        addon_fanart = art + 'fanart.png'
-        meta = None
-        try:
-             meta = getMeta(name,types)
-        except:
-             pass
-
-        try:
-                meta['title'] = scraped_name
-                thumb = meta['cover_url']
-                fanart = meta['backdrop_url']
-        except:
-                name = scraped_name
-                
-        if thumb == '':
-                thumb = scraped_thumb
-        if fanart == '':
-             fanart = addon_fanart
-                     
-        params = {'name':name, 'url':url, 'mode':mode, 'thumb':thumb, 'types':types}
-        if meta:
-                addon.add_directory(params, meta, img=thumb, fanart=fanart)
-        else:
-                addon.add_directory(params, {'title':name}, img=thumb ,fanart=fanart)
-
-def addADir(name,url,mode,thumb,plot,fav):
-     fanart = art + 'fanart.jpg'
-     params = {'name':name, 'url':url, 'mode':mode, 'thumb':thumb, 'types':'adult'}
-     meta = {'title':name, 'cover_url':thumb, 'plot':plot}
-     addon.add_directory(params, meta, img= thumb, fanart=fanart)
-
-def addHost(host,name,url,mode,thumb):
-     fanart = art + 'fanart.jpg'
-     thumb = art + host +'.jpg'
-     params = {'name':name, 'url':url, 'mode':mode, 'thumb':thumb, 'types':types, 'host':host}
-     addon.add_directory(params, {'title':host}, img= thumb, fanart=fanart)
-
-def getMeta(name,types):
-        meta = 0
-        imdb_id = None
-        season = None
-        episodes = None
-        if types=='movies':
-                head,sep,tail = name.partition('(')
-                name = head
-                year = tail.replace(')','')
-                meta = grab.get_meta('movie',name,year)
-        elif types=='episodes':
-                show = None
-                show_meta = None
-                S00E00 = re.findall('[Ss]\d\d[Ee]\d\d',name)
-                SXE = re.findall('\d[Xx]\d',name)
-                SXEE = re.findall('\d[Xx]\d\d',name)
-                if S00E00:
-                        split = re.split('[Ss]\d\d[Ee]\d\d',name)
-                        show = str(split[0])
-
-                        S00E00 = str(S00E00)
-                        S00E00.strip('[Ss][Ee]')
-                        S00E00 = S00E00.replace("u","")
-
-                        episodes = S00E00[-4:]
-                        episodes = episodes[:-2]
-
-                        season = S00E00[:5]
-                        season = season[-2:]
-                        
-                if SXE:
-                      split = re.split('\d[Xx]\d',name)
-                      show = str(split[0])
-                      SXE = str(SXE)
-                      SXE = SXE.replace("u","")
-                      season = SXE[2]
-                      episodes = SXE[4]
-
-                if SXEE:
-                      split = re.split('\d[Xx]\d\d',name)
-                      show = str(split[0])
-                      SXEE = str(SXEE)
-                      SXEE = SXEE.replace("u","")
-                      sesaon = SXEE[2]
-                      episodes = SXEE[4] + SXEE[5]
-                      
-                if 'Once Upon a Time' in show:
-                         show = 'Once Upon a Time (2011)'
-                if 'Dracula 2013' in show:
-                         show = 'Dracula'
-                if 'Castle' in show:
-                         show = 'Castle (2009)'
-                if 'Eastbound and Down' in show:
-                         show = 'Eastbound & Down'
-                if 'Marvels Agents of' in show:
-                     show  = "Marvel's Agents of S.H.I.E.L.D."
-                      
-                show_meta = grab.get_meta('tvshow',show)
-                imdb_id = show_meta['imdb_id']
-                
-                meta = grab.get_episode_meta(show,imdb_id,int(season),int(episodes))
-     
-        return(meta)
-
-def resolvable(url):
-     status = None
-     hmf = urlresolver.HostedMediaFile(url)
-     if hmf:
-          status = True
-
-     elif 'epornik' in url:
-          status = True
-
-     else:
-          status = False
-          
-     return(status)
-
-def AUTOVIEW(content):
+            if excepturl:
+                content=main.OPENURL(excepturl, verbose=False)
         if content:
-                xbmcplugin.setContent(int(sys.argv[1]), content)
-                if settings.getSetting('auto-view') == 'true':
-                        if content == 'movies':
-                                xbmc.executebuiltin("Container.SetViewMode(%s)" % settings.getSetting('movies-view'))
-                        elif content == 'episodes':
-                                xbmc.executebuiltin("Container.SetViewMode(%s)" % settings.getSetting('episodes-view'))      
-                        else:
-                                xbmc.executebuiltin("Container.SetViewMode(%s)" % settings.getSetting('default-view'))
-                else:
-                        xbmc.executebuiltin("Container.SetViewMode(%s)" % settings.getSetting('default-view'))
-                        
-                        
+            try:
+                open(path,'w+').write(content)
+            except: pass
+        return
+
+def DownloaderClass2(url,dest):
+        try:
+            urllib.urlretrieve(url,dest)
+        except Exception, e:
+            dialog = xbmcgui.Dialog()
+            main.ErrorReport(e)
+            dialog.ok("Megabox", "Report the error below", str(e), "We will try our best to help you")
+
+
+def DownloaderClass(url,dest):
+        try:
+            dp = xbmcgui.DialogProgress()
+            dp.create("Megabox","Downloading & Copying File",'')
+            urllib.urlretrieve(url,dest,lambda nb, bs, fs, url=url: _pbhook(nb,bs,fs,url,dp))
+        except Exception, e:
+            dialog = xbmcgui.Dialog()
+            main.ErrorReport(e)
+            dialog.ok("Megabox", "Report the error below", str(e), "We will try our best to help you")
+ 
+def _pbhook(numblocks, blocksize, filesize, url=None,dp=None):
+        try:
+            percent = min((numblocks*blocksize*100)/filesize, 100)
+            dp.update(percent)
+        except:
+            percent = 100
+            dp.update(percent)
+        if (dp.iscanceled()): 
+            print "DOWNLOAD CANCELLED" # need to get this part working
+            return False
+        dp.close()
+        del dp
+
+####################Messages##########################################################################################################
+
+def Message():
+    help = SHOWMessage()
+    help.doModal()
+    
+    del help
+
+
+class SHOWMessage(xbmcgui.Window):
+    def __init__(self):
+        self.addControl(xbmcgui.ControlImage(0,0,1280,720,art+'/infoposter.png'))
+    def onAction(self, action):
+        if action == 92 or action == 10:
+            xbmc.Player().stop()
+            self.close()
+
+def TextBoxes(heading,anounce):
+        class TextBox():
+            """Thanks to BSTRDMKR for this code:)"""
+                # constants
+            WINDOW = 10147
+            CONTROL_LABEL = 1
+            CONTROL_TEXTBOX = 5
+
+            def __init__( self, *args, **kwargs):
+                # activate the text viewer window
+                xbmc.executebuiltin( "ActivateWindow(%d)" % ( self.WINDOW, ) )
+                # get window
+                self.win = xbmcgui.Window( self.WINDOW )
+                # give window time to initialize
+                xbmc.sleep( 500 )
+                self.setControls()
+
+
+            def setControls( self ):
+                # set heading
+                self.win.getControl( self.CONTROL_LABEL ).setLabel(heading)
+                try:
+                        f = open(anounce)
+                        text = f.read()
+                except:
+                        text=anounce
+                self.win.getControl( self.CONTROL_TEXTBOX ).setText(text)
+                return
+        TextBox()
+################################################################################ Modes ##########################################################################################################
+
+
+def get_params():
+        param=[]
+        paramstring=sys.argv[2]
+        if len(paramstring)>=2:
+                params=sys.argv[2]
+                cleanedparams=params.replace('?','')
+                if (params[len(params)-1]=='/'):
+                        params=params[0:len(params)-2]
+                pairsofparams=cleanedparams.split('&')
+                param={}
+                for i in range(len(pairsofparams)):
+                        splitparams={}
+                        splitparams=pairsofparams[i].split('=')
+                        if (len(splitparams))==2:
+                                param[splitparams[0]]=splitparams[1]
+                                
+        return param
+              
+params=get_params()
+
+url=None
+name=None
+mode=None
+iconimage=None
+fanart=None
+plot=None
+genre=None
+title=None
+season=None
+episode=None
+location=None
+path=None
+
+
+try:
+        name=urllib.unquote_plus(params["name"])
+except:
+        pass
+
+try:
+        
+        url=urllib.unquote_plus(params["url"])
+        
+except:
+        pass
+
+try:
+        mode=int(params["mode"])
+except:
+        pass
+
+try:
+        iconimage=urllib.unquote_plus(params["iconimage"])
+        iconimage = iconimage.replace(' ','%20')
+except:
+        pass
+try:
+        plot=urllib.unquote_plus(params["plot"])
+except:
+        pass
+try:
+        fanart=urllib.unquote_plus(params["fanart"])
+        fanart = fanart.replace(' ','%20')
+except:
+        pass
+
+try:
+        genre=urllib.unquote_plus(params["genre"])
+except:
+        pass
+
+try:
+        title=urllib.unquote_plus(params["title"])
+except:
+        pass
+try:
+        episode=int(params["episode"])
+except:
+        pass
+try:
+        season=int(params["season"])
+except:
+        pass
+try:
+        location=urllib.unquote_plus(params["location"])
+except:
+        pass
+try:
+        path=urllib.unquote_plus(params["path"])
+except:
+        pass
+
+print "Mode: "+str(mode)
+print "URL: "+str(url)
+print "Name: "+str(name)
+print "Season: "+str(season)
+
+
+
 if mode==None or url==None or len(url)<1:
-        print ""
         MAIN()
-elif mode=='movies':
+        main.VIEWSB()        
+       
+elif mode==1:
+        from resources.libs import megabox
+        megabox.MOVIES(url)
+        
+elif mode==2:
         print ""+url
-        MOVIESECTION()
-elif mode=='tv':
+        MOVIEGENRE(url)
+
+elif mode==3:
+        from resources.libs import megabox
         print ""+url
-        TVSECTION()
-elif mode=='shows':
+        megabox.VIDEOLINKS(name,url)        
+
+elif mode==4:
+        from resources.libs import megabox
         print ""+url
-        TV(url)
-elif mode=='seasons':
+        megabox.SEARCH(url)
+        
+elif mode==5:
+        from resources.libs import megabox
         print ""+url
-        SEASONS(url)
-elif mode=='episodes':
+        megabox.Searchhistory()
+
+elif mode==6:
+        from resources.libs import megabox
         print ""+url
-        EPISODES(url)
-elif mode=='resolverSettings':
+        megabox.PLAY(name,url)
+
+elif mode==7:
+        from resources.libs import megabox
         print ""+url
-        urlresolver.display_settings()
-elif mode=='index':
+        megabox.PLAYB(name,url)
+
+elif mode==8:
+        from resources.libs import megabox
         print ""+url
-        INDEX(url)
-elif mode=='index2':
+        megabox.GRABLINKS(url)
+    
+elif mode==9:
         print ""+url
-        Index2(url)        
-elif mode=='gatherlinks':
+        TV()
+        
+elif mode==10:
         print ""+url
-        GATHERLINKS(url)        
-elif mode=='moviegenres':
+        TVGENRES()
+
+elif mode==11:
+        from resources.libs import megabox
+        megabox.TV(url)
+
+elif mode==12:
+        from resources.libs import megabox
+        megabox.SEASONS(url,name)
+
+elif mode==13:
+        from resources.libs import megabox
+        megabox.EPISODES(url,season)
+
+elif mode==14:
+        from resources.libs import megabox
         print ""+url
-        MOVIEGENRES()
-elif mode=='tvgenres':
+        megabox.GRABTVLINKS(url)
+
+elif mode==15:
+        from resources.libs import megabox
         print ""+url
-        TVGENRES()        
-elif mode=='play':
-        print ""+url
-        PLAY(name,host,url)
-elif mode=='searchmovies':
-        print ""+url
-        SEARCH()
-elif mode=='searchtv':
-        print ""+url
-        SEARCHTV()        
-elif mode=='adultIndex':
-        print ""+url
-        ADULTINDEX(url)
+        megabox.TVVIDEOLINKS(url)
+        
+
+elif mode==20:
+        from resources.libs import megabox
+        megabox.Season1(url)
+elif mode==21:
+        from resources.libs import megabox
+        megabox.Season2(url)
+elif mode==22:
+        from resources.libs import megabox
+        megabox.Season3(url)
+elif mode==23:
+        from resources.libs import megabox
+        megabox.Season4(url)
+elif mode==24:
+        from resources.libs import megabox
+        megabox.Season5(url)
+elif mode==25:
+        from resources.libs import megabox
+        megabox.Season6(url)
+elif mode==26:
+        from resources.libs import megabox
+        megabox.Season7(url)
+elif mode==27:
+        from resources.libs import megabox
+        megabox.Season8(url)
+elif mode==28:
+        from resources.libs import megabox
+        megabox.Season9(url)
+elif mode==29:
+        from resources.libs import megabox
+        megabox.Season10(url)
+elif mode==30:
+        from resources.libs import megabox
+        megabox.Season11(url)
+elif mode==31:
+        from resources.libs import megabox
+        megabox.Season12(url)
+elif mode==32:
+        from resources.libs import megabox
+        megabox.Season13(url)
+elif mode==33:
+        from resources.libs import megabox
+        megabox.Season14(url)
+elif mode==34:
+        from resources.libs import megabox
+        megabox.Season15(url)
+elif mode==35:
+        from resources.libs import megabox
+        megabox.Season16(url)
+elif mode==36:
+        from resources.libs import megabox
+        megabox.Season17(url)
+elif mode==37:
+        from resources.libs import megabox
+        megabox.Season18(url)
+elif mode==38:
+        from resources.libs import megabox
+        megabox.Season19(url)
+elif mode==39:
+        from resources.libs import megabox
+        megabox.Season20(url)
+elif mode==40:
+        from resources.libs import megabox
+        megabox.Season21(url)
+elif mode==41:
+        from resources.libs import megabox
+        megabox.Season22(url)
+elif mode==42:
+        from resources.libs import megabox
+        megabox.Season23(url)
+elif mode==43:
+        from resources.libs import megabox
+        megabox.Season24(url)
+elif mode==44:
+        from resources.libs import megabox
+        megabox.Season25(url)
+elif mode==45:
+        from resources.libs import megabox
+        megabox.Season65(url)
 
 
+elif mode==50:
+        from resources.libs import megabox
+        megabox.YOUTUBE(url)
+
+
+
+        
+
+elif mode==100:
+        from resources.libs import megabox
+        print ""+url
+        megabox.Searchhistory()
+elif mode==120:
+        from resources.libs import megabox
+        print ""+url
+        megabox.SEARCH(url)
+elif mode==128:
+        main.Clearhistory(url)
+elif mode==130:
+        from resources.libs import megabox
+        print ""+url
+        megabox.Searchhistorytv()
+elif mode==135:
+        from resources.libs import megabox
+        print ""+url
+        megabox.SEARCHTV(url)        
+
+
+
+
+elif mode==150:
+        print ""+url
+        main.Download_Source(name,url)
+
+elif mode==222:
+        print ""+url
+        History()        
+
+
+elif mode == 500:
+        main.TRAILERSEARCH(url, name, iconimage)
+elif mode == 776:
+        main.jDownloader(url)   
+elif mode == 777:
+        main.ChangeWatched(iconimage, url, name, '', '')
+elif mode == 779:
+        main.ChangeWatched(iconimage, url, name, season, episode)        
+elif mode == 780:
+        main.episode_refresh(name, iconimage, season, episode)        
+
+
+
+elif mode == 1999:
+    settings.openSettings()
+
+elif mode == 2000:
+    xbmc.executebuiltin("XBMC.Container.Update(path,replace)")
+    xbmc.executebuiltin("XBMC.ActivateWindow(Home)")        
 xbmcplugin.endOfDirectory(int(sys.argv[1]))
