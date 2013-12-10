@@ -5,5 +5,8 @@ Version 1.1
 Reworked Play
 Fixed Next Image
 
-Version 2.0
+Version 2.0.0
 Reworked Addon Code (Download Feature Not Fully Implemented)
+
+Version 2.0.1
+Small Code Change

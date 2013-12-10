@@ -33,47 +33,19 @@ except: pass
 
 def MAIN():
 
-        if xbmcaddon.Addon(id='plugin.video.megabox').getSetting("first-run") == 'true':
-
-            import shutil
-            mainfolder = os.path.abspath( os.path.join( xbmc.translatePath( xbmcaddon.Addon(id='plugin.video.megabox').getAddonInfo('path') ),".."))
-
-            folder = os.path.join( mainfolder , "plugin.video.megabox" )
-            if os.path.exists(folder):
-                shutil.rmtree(folder)
-
-            xbmcaddon.Addon(id='plugin.video.megabox').setSetting("first-run","false")
-
-
-        d = settings.getHomeItems()
-
-        for index, value in sorted(enumerate(d), key=lambda x:x[1]):
-            if value==None: continue
-            if index==0:
-                main.addDirHome('Search Movies',base_url,100,art+'/searchmovies.png')
-            elif index==1:
-                main.addDirHome('New Releases',base_url + '?sort=release',1,art+'/new.png')
-            elif index==2:
-                main.addDirHome('Latest Added',base_url + '?sort=latest-added',1,art+'/latestmovies.png')
-            elif index==3:
-                main.addDirHome('Featured',base_url + '?sort=featured',1,art+'/featmovies.png')
-            elif index==4:
-                main.addDirHome('Ratings',base_url + '?sort=ratings',1,art+'/ratings.png')
-            elif index==5:
-                main.addDirHome('Popular',base_url + '?sort=views',1,art+'/popular.png')
-            elif index==6:
-                main.addDirHome('2013 Movies',base_url + '?year=2013',1,art+'/2013.png')
-            elif index==7:
-                main.addDirHome('2012 Movies',base_url + '?year=2012',1,art+'/2012.png')
-            elif index==8:
-                main.addDirHome('Youtube Movies',base_url + '?sort=youtube-movies',50,art+'/youtube.png')
-            elif index==9:
-                main.addDirHome('Coming Soon',base_url + '?sort=coming-soon',1,art+'/comingsoon.png')
-            elif index==10:
-                main.addDirHome('Movie Genres',base_url,2,art+'/moviesgenres.png')
-            elif index==11:
-                main.addDirHome('TV SHOWS',base_url,9,art+'/tv.png')
-            main.VIEWSB()
+        main.addDirHome('Search Movies',base_url,100,art+'/searchmovies.png')
+        main.addDirHome('New Releases',base_url + '?sort=release',1,art+'/new.png')
+        main.addDirHome('Latest Added',base_url + '?sort=latest-added',1,art+'/latestmovies.png')
+        main.addDirHome('Featured',base_url + '?sort=featured',1,art+'/featmovies.png')
+        main.addDirHome('Ratings',base_url + '?sort=ratings',1,art+'/ratings.png')
+        main.addDirHome('Popular',base_url + '?sort=views',1,art+'/popular.png')
+        main.addDirHome('2013 Movies',base_url + '?year=2013',1,art+'/2013.png')
+        main.addDirHome('2012 Movies',base_url + '?year=2012',1,art+'/2012.png')
+        main.addDirHome('Youtube Movies',base_url + '?sort=youtube-movies',50,art+'/youtube.png')
+        main.addDirHome('Coming Soon',base_url + '?sort=coming-soon',1,art+'/comingsoon.png')
+        main.addDirHome('Movie Genres',base_url,2,art+'/moviesgenres.png')
+        main.addDirHome('TV SHOWS',base_url,9,art+'/tv.png')
+        main.VIEWSB()
                      
       
 
