@@ -194,6 +194,14 @@ def SEASONS(url,name):
         season65 = re.findall('<h2>Season 65</h2>',link)
         if len(season65) > 0:
                main.addDir('[COLOR orange]Season 65[/COLOR]',url,45,'','')        
+
+        season2013 = re.findall('<h2>Season 2013</h2>',link)
+        if len(season2013) > 0:
+               main.addDir('[COLOR orange]Season 2013[/COLOR]',url,46,'','')
+        season2012 = re.findall('<h2>Season 2012</h2>',link)
+        if len(season2012) > 0:
+               main.addDir('[COLOR orange]Season 2012[/COLOR]',url,47,'','')       
+        
         
         
 def Season1(url):
@@ -259,7 +267,6 @@ def Season8(url):
         for showid,episode,name in match:
                 name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
                 url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                print url
                 main.addDir(name,url,14,'','')
 def Season9(url):
         link=main.OPENURL(url)
@@ -268,7 +275,6 @@ def Season9(url):
         for showid,episode,name in match:
                 name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
                 url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                print url
                 main.addDir(name,url,14,'','')
 def Season10(url):
         link=main.OPENURL(url)
@@ -277,7 +283,6 @@ def Season10(url):
         for showid,episode,name in match:
                 name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
                 url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                print url
                 main.addDir(name,url,14,'','')
 def Season11(url):
         link=main.OPENURL(url)
@@ -286,7 +291,6 @@ def Season11(url):
         for showid,episode,name in match:
                 name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
                 url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                print url
                 main.addDir(name,url,14,'','')
 def Season12(url):
         link=main.OPENURL(url)
@@ -295,7 +299,6 @@ def Season12(url):
         for showid,episode,name in match:
                 name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
                 url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                print url
                 main.addDir(name,url,14,'','')
 def Season13(url):
         link=main.OPENURL(url)
@@ -304,7 +307,6 @@ def Season13(url):
         for showid,episode,name in match:
                 name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
                 url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                print url
                 main.addDir(name,url,14,'','')
 def Season14(url):
         link=main.OPENURL(url)
@@ -313,7 +315,6 @@ def Season14(url):
         for showid,episode,name in match:
                 name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
                 url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                print url
                 main.addDir(name,url,14,'','')
 def Season15(url):
         link=main.OPENURL(url)
@@ -322,7 +323,6 @@ def Season15(url):
         for showid,episode,name in match:
                 name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
                 url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                print url
                 main.addDir(name,url,14,'','')
 def Season16(url):
         link=main.OPENURL(url)
@@ -331,7 +331,6 @@ def Season16(url):
         for showid,episode,name in match:
                 name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
                 url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                print url
                 main.addDir(name,url,14,'','')
 def Season17(url):
         link=main.OPENURL(url)
@@ -340,7 +339,6 @@ def Season17(url):
         for showid,episode,name in match:
                 name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
                 url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                print url
                 main.addDir(name,url,14,'','')
 def Season18(url):
         link=main.OPENURL(url)
@@ -349,7 +347,6 @@ def Season18(url):
         for showid,episode,name in match:
                 name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
                 url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                print url
                 main.addDir(name,url,14,'','')
 def Season19(url):
         link=main.OPENURL(url)
@@ -358,7 +355,6 @@ def Season19(url):
         for showid,episode,name in match:
                 name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
                 url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                print url
                 main.addDir(name,url,14,'','')
 def Season20(url):
         link=main.OPENURL(url)
@@ -367,7 +363,6 @@ def Season20(url):
         for showid,episode,name in match:
                 name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
                 url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                print url
                 main.addDir(name,url,14,'','')
 def Season21(url):
         link=main.OPENURL(url)
@@ -376,7 +371,6 @@ def Season21(url):
         for showid,episode,name in match:
                 name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
                 url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                print url
                 main.addDir(name,url,14,'','')
 def Season22(url):
         link=main.OPENURL(url)
@@ -385,7 +379,6 @@ def Season22(url):
         for showid,episode,name in match:
                 name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
                 url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                print url
                 main.addDir(name,url,14,'','')
 def Season23(url):
         link=main.OPENURL(url)
@@ -394,7 +387,6 @@ def Season23(url):
         for showid,episode,name in match:
                 name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
                 url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                print url
                 main.addDir(name,url,14,'','')
 def Season24(url):
         link=main.OPENURL(url)
@@ -403,7 +395,6 @@ def Season24(url):
         for showid,episode,name in match:
                 name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
                 url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                print url
                 main.addDir(name,url,14,'','')
 def Season25(url):
         link=main.OPENURL(url)
@@ -412,7 +403,6 @@ def Season25(url):
         for showid,episode,name in match:
                 name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
                 url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                print url
                 main.addDir(name,url,14,'','')
 def Season65(url):
         link=main.OPENURL(url)
@@ -421,22 +411,35 @@ def Season65(url):
         for showid,episode,name in match:
                 name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
                 url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                print url
                 main.addDir(name,url,14,'','')
+
+def Season2013(url):
+        link=main.OPENURL(url)
+        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
+        match=re.compile('<div class=".*?"><a href="info.php[?]id=([^"]*)&season=2013&episode=([^"]*)&tv">Episode .*?<span class="ep_title">([^"]*)</span> <span').findall(link)
+        for showid,episode,name in match:
+                name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
+                url = base_url+'info.php?id='+showid+'&season=2013&episode='+episode+'&tv'
+                main.addDir(name,url,14,'','')
+
+def Season2012(url):
+        link=main.OPENURL(url)
+        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
+        match=re.compile('<div class=".*?"><a href="info.php[?]id=([^"]*)&season=2012&episode=([^"]*)&tv">Episode .*?<span class="ep_title">([^"]*)</span> <span').findall(link)
+        for showid,episode,name in match:
+                name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
+                url = base_url+'info.php?id='+showid+'&season=2012&episode='+episode+'&tv'
+                main.addDir(name,url,14,'','')                
 
 def GRABTVLINKS(url):
         link=main.OPENURL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('<img src=images/star.gif>','')
-        match = re.findall('<strong>Watch [^"]* on ([^"]*) </strong></span><div class="clear"></div></div><div class="player"><a href="player5.php[?]id=([^"]*)&movie=[^"]*&episode=[^"]*&link=([^"]*)&type=tv2&ref=1" target',link)
-        for host,showid,link1 in match:
-                url = base_url + 'player.php?authid=&id='+showid+'&link='+link1+'&type=tv2&part=&site=inactive&ref=1'
-                name='[COLOR yellow]'+host+'[/COLOR]'
-                main.addDownLink(name,url,6,'')
-        match = re.findall('<div id="links"><a  href="([^"]*)"><div class="col1"><span class="([^"]*)"></span></div><div class="col2">([^"]*)</div><div class="col3">([^"]*) views</div>',link)
+        match = re.findall('<div id="links"><a href="([^"]*)"><div class="col1"><span class="([^"]*)"></span></div><div class="col2">([^"]*)</div><div class="col3">([^"]*)</di',link)
         for url,quality,host,views in match:
                 name=host
                 main.addDir('[COLOR green]'+name+'[/COLOR] [COLOR blue] Quality: '+quality+'[/COLOR] [COLOR orange]' ' Views: '+views+'[/COLOR]',base_url+url,15,'','')
                 xbmcplugin.setContent(int(sys.argv[1]), 'Shows')
+
                 
 def TVVIDEOLINKS(url):
     link=main.OPENURL(url)
@@ -446,7 +449,7 @@ def TVVIDEOLINKS(url):
      url = base_url + 'player.php?authid=&id='+link1+'&link='+link2+'&type=tv2&part=&site=inactive&ref=1'
      print url
      name = '[COLOR yellow]'+name+'[/COLOR]'
-     main.addDownLink(name,url,6,'')                   
+     main.addDown2(name,url,6,'','')                   
                 
 
 
@@ -455,7 +458,8 @@ def TVVIDEOLINKS(url):
 def GRABLINKS(url):
         link=main.OPENURL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('<img src=images/star.gif>','')
-        match = re.findall('<div id="links"><a  href="([^"]*)"><div class="col1"><span class="([^"]*)"></span></div><div class="col2">([^"]*)</div><div class="col3">([^"]*) views</div>',link)
+        match=re.findall('<a href="([^"]*)"><div class="col1"><span class="([^"]*)"></span></div><div class="col2">([^"]*)</div><div class="col3">([^"]*)</div>',link)
+        #match = re.findall('<div id="links"><a  href="([^"]*)"><div class="col1"><span class="([^"]*)"></span></div><div class="col2">([^"]*)</div><div class="col3">([^"]*) views</div>',link)
         for url,quality,host,views in match:
                 name=host
                 main.addDir('[COLOR green]'+name+'[/COLOR] [COLOR blue] Quality: '+quality+'[/COLOR] [COLOR orange]' ' Views: '+views+'[/COLOR]',base_url+url,3,'','')
@@ -472,24 +476,25 @@ def GRABLINKS(url):
 def VIDEOLINKS(name,url):
     link=main.OPENURL(url)
     link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','')
-    match=re.compile('<strong>Watch [^"]* on ([^"]*) </strong></span><div class="clear"></div></div><div class="player"><a href="[^"]*.php[?]id=([^"]*)&movie=[^"]*&link=([^"]*)&type=older_v2&ref=1" target').findall(link)
-    for name,link1,link2 in match:
-     url = base_url + 'player.php?authid=&id='+link1+'&link='+link2+'&type=older_v2&part=&site=inactive&ref=1'
+    match=re.compile('<strong>Watch [^"]* on ([^"]*)</strong></span><div class="clear"></div></div><div class="player"><a href="player5.php[?]id=([^"]*)&movie=[^"]*&link=([^"]*)&type=([^"]*)&ref=1" target').findall(link)    
+    #match=re.compile('<strong>Watch [^"]* on ([^"]*) </strong></span><div class="clear"></div></div><div class="player"><a href="[^"]*.php[?]id=([^"]*)&movie=[^"]*&link=([^"]*)&type=older_v2&ref=1" target').findall(link)
+    for name,link1,link2,types in match:
+     url = base_url + 'player.php?authid=&id='+link1+'&link='+link2+'&type='+types+'&part=&site=inactive&ref=1'
      print url
      name = '[COLOR yellow]'+name+'[/COLOR]'
-     main.addDown(name,url,6,'','')
+     main.addDown2(name,url,6,'','')
     match1=re.compile('href="info.php[?]id=([^"]*)&older&link=([^"]*)">Part 1</a>').findall(link)
     for link1,link2 in match1:
      url = base_url + 'player.php?authid=&id='+link1+'&link='+link2+'&type=older_v2&part=&site=inactive&ref=1'
      print url
      name = '[COLOR yellow]Part 1''[/COLOR]'
-     main.addDown(name,url,6,'','')
+     main.addDown2(name,url,6,'','')
     match2=re.compile('href="info.php[?]id=([^"]*)&older&link=([^"]*)&part=2">Part 2</a>').findall(link)
     for link1,link2 in match2:
      url = base_url + 'player.php?authid=&id='+link1+'&link='+link2+'&type=older_v2&part=&site=inactive&ref=1'
      print url
      name = '[COLOR yellow]Part 2''[/COLOR]'
-     main.addDown(name,url,6,'','') 
+     main.addDown2(name,url,6,'','') 
     
       
       
@@ -501,7 +506,7 @@ def GRABMORE(name,url):
      for link1,link2 in match:
       url = base_url + 'player.php?authid=&id='+link1+'&link='+link2+'&type=tv2&part=&site=inactive&ref=1'
       print url
-      main.addDownLink(name,url,6,'')  
+      main.addDown2(name,url,6,'','')  
         
 
 

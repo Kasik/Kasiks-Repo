@@ -1,24 +1,18 @@
-#-*- coding: utf-8 -*-
 import urllib,re,string,sys,os
 import xbmc, xbmcgui, xbmcaddon, xbmcplugin
 import time,threading
-from BeautifulSoup import MinimalSoup as BeautifulSoup
-from metahandler import metahandlers
-grab=metahandlers.MetaData()
-reload(sys)
-sys.setdefaultencoding( "UTF-8" )
 #MegaBox - by Kasik 2013.
 
 addon_id = 'plugin.video.megabox'
 selfAddon = xbmcaddon.Addon(id=addon_id)
-megapath = selfAddon.getAddonInfo('path')
+megaboxpath = selfAddon.getAddonInfo('path')
 grab = None
 fav = False
 Dir = xbmc.translatePath(os.path.join('special://home/addons/plugin.video.megabox', ''))
 datapath = xbmc.translatePath(selfAddon.getAddonInfo('profile'))
 
-VERSION = "2.0.0"
-PATH = "Megabox-"            
+VERSION = "2.0.3"
+PATH = "MegaBox-"            
 
 try:
     log_path = xbmc.translatePath('special://logpath')
@@ -38,7 +32,6 @@ sys.path.append( os.path.join( selfAddon.getAddonInfo('path'), 'resources', 'lib
 ################################################################################ Common Calls ##########################################################################################################
 if selfAddon.getSetting("artwork") == "false":
     art = xbmc.translatePath('special://home/addons/plugin.video.megabox/resources/art/')
-
 elogo = xbmc.translatePath('special://home/addons/plugin.video.megabox/resources/art/bigx.png')
 slogo = xbmc.translatePath('special://home/addons/plugin.video.megabox/resources/art/smallicon.png')
 
@@ -46,7 +39,7 @@ def OPENURL(url, mobile = False, q = False, verbose = True):
     import urllib2 
     UserAgent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3'
     try:
-        print "Openurl = " + url
+        print "MU-Openurl = " + url
         req = urllib2.Request(url)
         if mobile:
             req.add_header('User-Agent', 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7')
@@ -606,8 +599,10 @@ def SearchGoogle(search, site):
     return results
 ############################################################################### Resolvers ############################################################################################
 def resolve_url(url,filename = False):
-    import resolvers
-    return resolvers.resolve_url(url,filename)
+    #import resolvers
+    import urlresolver
+    #return resolvers.resolve_url(url,filename)
+    return urlresolver.resolve_url(url,filename)
 ############################################################################### Download Code ###########################################################################################
 downloadPath = selfAddon.getSetting('download-folder')
 DownloadLog=os.path.join(datapath,'Downloads')
@@ -638,6 +633,31 @@ def geturl(murl):
                 return match[0]
         else:
                 return match[0]
+
+def resolveDownloadLinks(url):
+    if re.search('watchseries.lt',url):
+        match=re.compile('(.+?)xocx(.+?)xocx').findall(url)
+        for hurl, durl in match:
+            url=geturl('http://watchseries.lt'+hurl)
+    elif re.search('iwatchonline',url):
+        name=name.split('[COLOR red]')[0]
+        name=name.replace('/','').replace('.','')
+        url=GetUrliW(url)
+    elif re.search('MegaBox',url):
+        from resources.libs import MegaBox
+        url = MegaBox.resolveM25URL(url)
+    elif url.startswith('ice'):
+        from resources.libs.movies_tv import icefilms
+        url = url.lstrip('ice')
+        url = eval(urllib.unquote(url))
+        url = icefilms.resolveIceLink(url)
+    elif 'trendico' in url or 'vk.com' in url:
+        from resources.libs.plugins import mbox
+        url = mbox.resolveMBLink(url)
+    elif 'noobroom' in url:
+        from resources.libs.movies_tv import starplay
+        url = starplay.find_noobroom_video_url(url)
+    return url
 
 def Download_Source(name,url):
     originalName=name
@@ -716,7 +736,7 @@ def QuietDownload(url, dest,originalName, videoname):
     # get notify value from settings
     NotifyPercent=int(selfAddon.getSetting('notify-percent'))
     
-    script = os.path.join( megapath, 'resources', 'libs', "DownloadInBackground.py" )
+    script = os.path.join( megaboxpath, 'resources', 'libs', "DownloadInBackground.py" )
     xbmc.executebuiltin( "RunScript(%s, %s, %s, %s, %s, %s)" % ( script, q_url, q_dest, q_vidname,q_vidOname, str(notifyValues[NotifyPercent]) ) )
     return True
  
@@ -751,7 +771,7 @@ def jDownloader(murl):
 def Message():
     return
 ################################################################################ Types of Directories ##########################################################################################################
-                
+
 def addDirX(name,url,mode,iconimage,plot='',fanart='',dur=0,genre='',year='',isFolder=True,searchMeta=False,addToFavs=True,
             id=None,fav_t='',fav_addon_t='',fav_sub_t='',metaType='Movies',menuItemPos=None,menuItems=None,down=False,replaceItems=True):
     u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)+"&iconimage="+urllib.quote_plus(iconimage)+"&plot="+urllib.quote_plus(plot)+"&fanart="+urllib.quote_plus(fanart)+"&genre="+urllib.quote_plus(genre)
@@ -814,7 +834,9 @@ def addDirX(name,url,mode,iconimage,plot='',fanart='',dur=0,genre='',year='',isF
     else:
         infoLabels={ "Title": name, "Plot": plot, "Duration": dur, "Year": year ,"Genre": genre,"OriginalTitle" : removeColoredText(name) }
     if id != None: infoLabels["count"] = id
-    Commands.append(('[B][COLOR=FF67cc33]MegaBox[/COLOR] Settings[/B]','XBMC.RunScript('+xbmc.translatePath(megapath + '/resources/libs/settings.py')+')'))
+    Commands.append(('Watch History','XBMC.Container.Update(%s?name=None&mode=222&url=None&iconimage=None)'% (sys.argv[0])))
+    Commands.append(("My Fav's",'XBMC.Container.Update(%s?name=None&mode=639&url=None&iconimage=None)'% (sys.argv[0])))
+    Commands.append(('[B][COLOR=FF67cc33]MegaBox[/COLOR] Settings[/B]','XBMC.RunScript('+xbmc.translatePath(megaboxpath + '/resources/libs/settings.py')+')'))
     if menuItemPos != None:
         for mi in reversed(menuItems):
             Commands.insert(menuItemPos,mi)
@@ -930,52 +952,6 @@ def addDirFIX(name,url,mode,iconimage,location,path):
     ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=False)
     return ok
 
-def addDown(name,url,mode,iconimage,fan):
-        contextMenuItems = []
-        u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)
-        ok=True
-        link=OPENURL(url)
-        match=re.compile('Source: <a href="([^"]*)" target="_blank"').findall(link)
-        if len(match)>0:
-            for url in match:
-                sysurl = urllib.quote_plus(url)
-        match1=re.compile('target="_blank">([^"]*)</a>').findall(link)
-        if len(match1)>0:
-            for url in match:
-                sysurl = urllib.quote_plus(url)
-        match2=re.compile('action="([^"]*)" style').findall(link)
-        if len(match2)>0:
-            for url in match:
-                sysurl = urllib.quote_plus(url)
-        match3=re.compile('location.href = \'([^"]*)\';').findall(link)
-        if len(match3)>0:
-            for url in match:
-                sysurl = urllib.quote_plus(url)
-        match4=re.compile('location.href = "([^"]*)";').findall(link)
-        if len(match4)>0:
-            for url in match:
-                sysurl = urllib.quote_plus(url)        
-        else:
-            sysurl = urllib.quote_plus(url)
-        sysname= urllib.quote_plus(name)
-        contextMenuItems.append(('Direct Download', 'XBMC.RunPlugin(%s?mode=150&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
-        contextMenuItems.append(('Download with jDownloader', 'XBMC.RunPlugin(%s?mode=776&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
-        liz=xbmcgui.ListItem(name, iconImage=art+'/vidicon.png', thumbnailImage=iconimage)
-        liz.setInfo( type="Video", infoLabels={ "Title": name } )
-        liz.setProperty('fanart_image', fan)
-        liz.addContextMenuItems(contextMenuItems, replaceItems=True)
-        ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz)
-        return ok
-
-def addDownLink(name,url,mode,iconimage):
-        u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)+"&thumb="+urllib.quote_plus(iconimage)
-        ok=True
-        name=BeautifulSoup(name, convertEntities=BeautifulSoup.HTML_ENTITIES).contents[0]
-        liz=xbmcgui.ListItem(str(name), iconImage="DefaultVideo.png", thumbnailImage=iconimage)
-        liz.setInfo( type="Video", infoLabels={ "Title": name } )
-        ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=False)
-        return ok     
-
 def addDown2(name,url,mode,iconimage,fanart):
     return addDirX(name,url,mode,iconimage,'',fanart,isFolder=0,addToFavs=0,id=id,down=1)
 
@@ -992,7 +968,7 @@ def addDown4(name,url,mode,iconimage,plot,fanart,dur,genre,year):
                        fav_t='Movies',fav_addon_t='Movie',down=1)
 
 def addInfo(name,url,mode,iconimage,genre,year):
-    mi = [('Search MegaBox','XBMC.Container.Update(%s?mode=120&url=%s)'% (sys.argv[0],'###'))]
+    mi = [('Search MegaBox','XBMC.Container.Update(%s?mode=4&url=%s)'% (sys.argv[0],'###'))]
     return addDirX(name,url,mode,iconimage,'','','',genre,year,searchMeta=1,fav_t='Movies',fav_addon_t='MegaBox',menuItemPos=0,menuItems=mi)
 
 def addDirIWO(name,url,mode,iconimage,plot,fanart,dur,genre,year):

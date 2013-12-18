@@ -294,9 +294,7 @@ except:
 print "Mode: "+str(mode)
 print "URL: "+str(url)
 print "Name: "+str(name)
-print "Season: "+str(season)
-
-
+print "Thumb: "+str(iconimage)
 
 if mode==None or url==None or len(url)<1:
         MAIN()
@@ -454,6 +452,12 @@ elif mode==44:
 elif mode==45:
         from resources.libs import megabox
         megabox.Season65(url)
+elif mode==46:
+        from resources.libs import megabox
+        megabox.Season2013(url)
+elif mode==47:
+        from resources.libs import megabox
+        megabox.Season2012(url)        
 
 
 elif mode==50:
