@@ -16,3 +16,6 @@ Small Code Change to Videolinks
 
 Version 2.0.3
 Fixed VideoLinks
+
+Version 2.0.4
+Fixed Tv Search

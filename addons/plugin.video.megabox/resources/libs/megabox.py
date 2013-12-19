@@ -646,7 +646,7 @@ def SEARCHTV(url = ''):
         dialogWait.update(0, '[B]Will load instantly from now on[/B]',remaining_display)
         for url,thumb,name,genre in match:
                 name=name.replace('-','').replace('&','').replace('acute;','').strip()
-                main.addDir(name+'[COLOR blue] Genre: '+genre+'[/COLOR]',base_url+url,8,'','')
+                main.addDir(name+'[COLOR blue] Genre: '+genre+'[/COLOR]',base_url+url,12,'','')
                 loadedLinks = loadedLinks + 1
                 percent = (loadedLinks * 100)/totalLinks
                 remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
