@@ -4,9 +4,13 @@
 
 [B]Version 0.0.2[/B]
 
-- Fixed Next
+- Fixed Next 
 
 [B]Version 0.0.3[/B]
 
-- Small Correction
+- Misc Fixes.
 
+[B]Version 0.0.4[/B]
+
+- Fixed Next in Series, Fixed Links
+for New Episodes without Titles.

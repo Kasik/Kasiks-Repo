@@ -286,7 +286,22 @@ elif mode==100:
 elif mode==150:
        from resources.src import filmesonline2
        print ""+url
-       filmesonline2.PlayB(name,url)       
+       filmesonline2.PlayB(name,url)
+
+elif mode == 778:
+        main.refresh_movie(name,iconimage)
+        
+elif mode == 779:
+        main.ChangeWatched(iconimage, url, name, season, episode)
+        
+elif mode == 780:
+        main.episode_refresh(name, iconimage, season, episode)
+        
+elif mode == 781:
+        main.trailer(url)
+        
+elif mode == 782:
+        main.TRAILERSEARCH(url, name, iconimage)       
 
        
     

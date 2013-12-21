@@ -447,6 +447,17 @@ def TRAILERSEARCH(url, name, imdb):
         except:
             return    
 
+def SearchGoogle(search, site):
+    from xgoogle.search import GoogleSearch
+    gs = GoogleSearch(''+search+' '+site)
+    gs.results_per_page = 25
+    gs.page = 0
+    try:
+        results = gs.get_results()
+    except Exception, e:
+        print '***** Error: %s' % e
+        return None
+    return results
 
 ############################################################################### Resolvers ############################################################################################
 def resolve_url(url):
@@ -1480,14 +1491,17 @@ def addInfo(name,url,mode,iconimage,gen,year):
                 video_type='movie'
                 imdb=infoLabels['imdb_id']
                 cname=urllib.quote_plus(infoLabels['metaName'])
+                Commands.append(('Play Trailer','XBMC.RunPlugin(%s?mode=782&name=%s&url=%s&iconimage=%s)'% (sys.argv[0],cname,url,imdb)))
                 Commands.append((watched_mark, 'XBMC.RunPlugin(%s?mode=777&name=%s&url=%s&iconimage=%s)' % (sys.argv[0], cname, video_type,imdb)))
-                #Commands.append(('Refresh Metadata', 'XBMC.RunPlugin(%s?mode=778&name=%s&url=%s&iconimage=%s)' % (sys.argv[0], cname, video_type,imdb)))
+                Commands.append(('Refresh Metadata', 'XBMC.RunPlugin(%s?mode=778&name=%s&url=%s&iconimage=%s)' % (sys.argv[0], cname, video_type,imdb)))
+        Commands.append(('[B][COLOR=FF67cc33]FilmesOnline2[/COLOR] Settings[/B]','XBMC.RunScript('+xbmc.translatePath(filmesonline2path + '/resources/src/scripts/settings.py')+')'))
         liz=xbmcgui.ListItem(name, iconImage=art+'/vidicon.png', thumbnailImage=infoLabels['cover_url'])
         liz.addContextMenuItems( Commands, replaceItems=True )
         liz.setInfo( type="Video", infoLabels = infoLabels)
         liz.setProperty('fanart_image', infoLabels['backdrop_url'])
         ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=True)
         return ok
+    
 def addDirIWO(name,url,mode,iconimage,plot,fanart,dur,genre,year):
         u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)+"&iconimage="+urllib.quote_plus(iconimage)+"&plot="+urllib.quote_plus(plot)+"&fanart="+urllib.quote_plus(fanart)+"&genre="+urllib.quote_plus(genre)
         ok=True

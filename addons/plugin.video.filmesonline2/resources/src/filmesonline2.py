@@ -19,7 +19,7 @@ base_url='http://www.filmesonline2.com/'
 
 def Index(url):
         link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xc3\xa9','e').replace('&#8211;','-').replace('\xc3\xa7\xc3\xa3','c').replace('\xc3\xad','i')
+        link=link.replace('\r','').replace('\n','').replace('\xc3\x9a','U').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xc3\xa9','e').replace('\xc3\xb3','o').replace('&#8211;','-').replace('\xc3\xa7\xc3\xa3','c').replace('\xc3\xad','i').replace('\xc2\xaa','').replace('&#8217;',"'")
         match = re.findall('class="capa">        <a href="([^"]*)" class="absolute-capa no-text">[^"]*</a>        <img src="([^"]*)" alt="([^"]*)" />',link)
         dialogWait = xbmcgui.DialogProgress()
         ret = dialogWait.create('Please wait, while Movie list is cached..')
@@ -28,8 +28,9 @@ def Index(url):
         remaining_display = 'Movies Loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
         dialogWait.update(0, '[B]Will load instantly from now on.[/B]',remaining_display)
         for url,thumb,name in match:
-                name=name.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xc3\xa9','e').replace('&#8211;','-')
-                main.addDownLink(name,url,100,thumb,'')
+                name=name.replace('\r','').replace('\n','').replace('\xc3\x9a','U').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xc3\xa9','e').replace('\xc3\xb3','o').replace('&#8211;','-').replace('\xc3\xa7\xc3\xa3','c').replace('\xc3\xad','i').replace('\xc2\xaa','').replace('&#8217;',"'")
+                main.addInfo(name,url,100,thumb,'','')
+                #main.addDownLink(name,url,100,thumb,'')
                 loadedLinks = loadedLinks + 1
                 percent = (loadedLinks * 100)/totalLinks
                 remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
@@ -92,6 +93,11 @@ def Series(url):
         dialogWait.close()
         del dialogWait
 
+        olderentries=re.compile('href="([^"]*)">&raquo;</a>').findall(link)
+        for url in olderentries:
+                main.addDir('[COLOR blue]Next Page -> [/COLOR]',url,3,art+'/next.png')
+                xbmcplugin.setContent(int(sys.argv[1]), 'TV')
+
 def Index2(url):
         link=main.OPENURL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xc3\xa9','e').replace('&#8211;','-').replace('\xc3\xa7\xc3\xa3','c').replace('\xc3\xad','i')
@@ -105,6 +111,27 @@ def Index2(url):
         for title,url,name in match:
                 name=name.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xc3\xa9','e').replace('&#8211;','-')
                 main.addDownLink(title + '   ' + name,url,150,'','')
+                loadedLinks = loadedLinks + 1
+                percent = (loadedLinks * 100)/totalLinks
+                remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+                dialogWait.update(percent,'[B]Will load instantly from now on.[/B]',remaining_display)
+                if (dialogWait.iscanceled()):
+                        return False   
+        dialogWait.close()
+        del dialogWait
+        link=main.OPENURL(url)
+        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xc3\xa9','e').replace('&#8211;','-').replace('\xc3\xa7\xc3\xa3','c').replace('\xc3\xad','i')
+        match = re.findall('<a href="https://docs.google.com/file/([^"]*)" target="_blank">([^"]*)</a></li>',link)
+        dialogWait = xbmcgui.DialogProgress()
+        ret = dialogWait.create('Episodes loaded.')
+        totalLinks = len(match)
+        loadedLinks = 0
+        remaining_display = 'Episodes Loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+        dialogWait.update(0, '[B]Will load instantly from now on.[/B]',remaining_display)
+        for url,name in match:
+                name=name.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xc3\xa9','e').replace('&#8211;','-')
+                url = 'https://docs.google.com/file/' + url
+                main.addDownLink(name,url,150,'','')
                 loadedLinks = loadedLinks + 1
                 percent = (loadedLinks * 100)/totalLinks
                 remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
@@ -266,9 +293,7 @@ def Play(name,url):
                                 stream_url2 = urllist[int(answer)]
                                 infoL={'Title': infoLabels['title'], 'Plot': infoLabels['plot'], 'Genre': infoLabels['genre']}
                                 # play with bookmark
-                                player = playbackengine.PlayWithoutQueueSupport(resolved_url=stream_url2, addon_id=addon_id, video_type=video_type, title=str(infoLabels
-['title']),season=str(season), episode=str(episode), year=str(infoLabels['year']),img=img,infolabels=infoL, 
-watchedCallbackwithParams=main.WatchedCallbackwithParams,imdb_id=imdb_id)
+                                player = playbackengine.PlayWithoutQueueSupport(resolved_url=stream_url2, addon_id=addon_id, video_type=video_type, title=str(infoLabels['title']),season=str(season), episode=str(episode), year=str(infoLabels['year']),img=img,infolabels=infoL, watchedCallbackwithParams=main.WatchedCallbackwithParams,imdb_id=imdb_id)
                                 player.KeepAlive()
                                 return ok
                         except Exception, e:
