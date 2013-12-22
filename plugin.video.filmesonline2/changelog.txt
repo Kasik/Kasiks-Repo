@@ -14,3 +14,7 @@
 
 - Fixed Next in Series, Fixed Links
 for New Episodes without Titles.
+
+[B]Version 0.0.5[/B]
+
+- Small Code Correction.

@@ -121,7 +121,7 @@ def Index2(url):
         del dialogWait
         link=main.OPENURL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xc3\xa9','e').replace('&#8211;','-').replace('\xc3\xa7\xc3\xa3','c').replace('\xc3\xad','i')
-        match = re.findall('<a href="https://docs.google.com/file/([^"]*)" target="_blank">([^"]*)</a></li>',link)
+        match = re.findall('href="https://docs.google.com/file/([^"]*)" target="_blank">([^"]*)</a>',link)
         dialogWait = xbmcgui.DialogProgress()
         ret = dialogWait.create('Episodes loaded.')
         totalLinks = len(match)
