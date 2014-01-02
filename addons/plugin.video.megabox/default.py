@@ -352,11 +352,11 @@ elif mode==11:
 
 elif mode==12:
         from resources.libs import megabox
-        megabox.SEASONS(url,name)
+        megabox.Seasons(url,name)
 
 elif mode==13:
         from resources.libs import megabox
-        megabox.EPISODES(url,season)
+        megabox.Episodes(url,season)
 
 elif mode==14:
         from resources.libs import megabox
@@ -373,91 +373,6 @@ elif mode==16:
         print ""+url
         megabox.GRABMORE(name,url)     
         
-
-elif mode==20:
-        from resources.libs import megabox
-        megabox.Season1(url)
-elif mode==21:
-        from resources.libs import megabox
-        megabox.Season2(url)
-elif mode==22:
-        from resources.libs import megabox
-        megabox.Season3(url)
-elif mode==23:
-        from resources.libs import megabox
-        megabox.Season4(url)
-elif mode==24:
-        from resources.libs import megabox
-        megabox.Season5(url)
-elif mode==25:
-        from resources.libs import megabox
-        megabox.Season6(url)
-elif mode==26:
-        from resources.libs import megabox
-        megabox.Season7(url)
-elif mode==27:
-        from resources.libs import megabox
-        megabox.Season8(url)
-elif mode==28:
-        from resources.libs import megabox
-        megabox.Season9(url)
-elif mode==29:
-        from resources.libs import megabox
-        megabox.Season10(url)
-elif mode==30:
-        from resources.libs import megabox
-        megabox.Season11(url)
-elif mode==31:
-        from resources.libs import megabox
-        megabox.Season12(url)
-elif mode==32:
-        from resources.libs import megabox
-        megabox.Season13(url)
-elif mode==33:
-        from resources.libs import megabox
-        megabox.Season14(url)
-elif mode==34:
-        from resources.libs import megabox
-        megabox.Season15(url)
-elif mode==35:
-        from resources.libs import megabox
-        megabox.Season16(url)
-elif mode==36:
-        from resources.libs import megabox
-        megabox.Season17(url)
-elif mode==37:
-        from resources.libs import megabox
-        megabox.Season18(url)
-elif mode==38:
-        from resources.libs import megabox
-        megabox.Season19(url)
-elif mode==39:
-        from resources.libs import megabox
-        megabox.Season20(url)
-elif mode==40:
-        from resources.libs import megabox
-        megabox.Season21(url)
-elif mode==41:
-        from resources.libs import megabox
-        megabox.Season22(url)
-elif mode==42:
-        from resources.libs import megabox
-        megabox.Season23(url)
-elif mode==43:
-        from resources.libs import megabox
-        megabox.Season24(url)
-elif mode==44:
-        from resources.libs import megabox
-        megabox.Season25(url)
-elif mode==45:
-        from resources.libs import megabox
-        megabox.Season65(url)
-elif mode==46:
-        from resources.libs import megabox
-        megabox.Season2013(url)
-elif mode==47:
-        from resources.libs import megabox
-        megabox.Season2012(url)        
 
 
 elif mode==50:

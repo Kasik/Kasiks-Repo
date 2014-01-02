@@ -19,6 +19,91 @@ art = main.art
 base_url='http://megabox.li/'
 USER_AGENT = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3'
 
+######################################################################################################################
+def addDir(name, url, mode, iconimage, metainfo=False, total=False, season=None):
+         meta = metainfo
+         ###  addDir with context menus and meta support  ###
+
+         #encode url and name, so they can pass through the sys.argv[0] related strings
+         sysname = urllib.quote_plus(name)
+         sysurl = urllib.quote_plus(url)
+         dirmode=mode
+         
+         #get nice unicode name text.
+         #name has to pass through lots of weird operations earlier in the script,
+         #so it should only be unicodified just before it is displayed.
+         #name = htmlcleaner.clean(name)
+         
+         
+         u = sys.argv[0] + "?url=" + sysurl + "&mode=" + str(mode) + "&name=" + sysname + "&season="+str(season)
+         ok = True
+         
+         if meta is not False:
+             print str(meta)
+         #handle adding context menus
+         contextMenuItems = []
+         contextMenuItems.append(('Show Information', 'XBMC.Action(Info)',))
+         
+         #handle adding meta
+         if meta == False:
+             liz = xbmcgui.ListItem(name, iconImage=iconimage, thumbnailImage=iconimage)
+             liz.setInfo(type="Video", infoLabels={"Title": name})
+
+         else:
+             
+             if meta.has_key('watched') == False :
+                 meta['watched']=6
+                 
+             liz = xbmcgui.ListItem(name, iconImage=str(meta['cover_url']), thumbnailImage=str(meta['cover_url']))
+
+
+             liz.setInfo('video', infoLabels=meta)
+             liz.setProperty('fanart_image', meta['backdrop_url'])
+
+                
+             infoLabels = {}
+             infoLabels['title'] = name
+             infoLabels['plot'] = cleanUnicode(meta['plot']) # to-check if we need cleanUnicode
+             infoLabels['duration'] = str(meta['duration'])
+             infoLabels['premiered'] = str(meta['premiered'])
+             infoLabels['mpaa'] = str(meta['mpaa'])
+             infoLabels['code'] = str(meta['imdb_id'])
+             infoLabels['rating'] = float(meta['rating'])
+             infoLabels['overlay'] = meta['watched'] # watched 7, unwatched 6
+
+            
+             
+             try:
+                     trailer_id = re.match('^[^v]+v=(.{11}).*', meta['trailer_url']).group(1)
+                     infoLabels['trailer'] = "plugin://plugin.video.youtube/?action=play_video&videoid=%s" % trailer_id
+             except:
+                     infoLabels['trailer'] = ''
+             
+             if meta.has_key('season_num'):
+                 infoLabels['Episode'] = int(meta['episode_num'])
+                 infoLabels['Season'] =int(meta['season_num'])
+                 print 'No refresh for episodes yet'
+                   
+             
+             liz.setInfo(type="Video", infoLabels=infoLabels)
+                           
+         if contextMenuItems:
+             #print str(contextMenuItems)
+             liz.addContextMenuItems(contextMenuItems, replaceItems=True)
+         #########
+
+         print '          Mode=' + str(mode) + ' URL=' + str(url)
+         #Do some crucial stuff
+         if total is False:
+             ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True)
+         else:
+             ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True, totalItems=int(total))
+         return ok
+######################################################################################################################
+
+
+
+
 def MOVIES(url):
         link=main.OPENURL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
@@ -113,105 +198,46 @@ def TV(url):
         xbmcplugin.setContent(int(sys.argv[1]), 'Movies')
         main.VIEWS()
 
-def SEASONS(url,name):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        season1 = re.findall('<h2>Season 1</h2>',link)
-        if len(season1) > 0:
-               main.addDir('[COLOR orange]Season 1[/COLOR]',url,20,'','')
-        season2 = re.findall('<h2>Season 2</h2>',link)
-        if len(season2) > 0:
-               main.addDir('[COLOR orange]Season 2[/COLOR]',url,21,'','')
-        season3 = re.findall('<h2>Season 3</h2>',link)
-        if len(season3) > 0:
-               main.addDir('[COLOR orange]Season 3[/COLOR]',url,22,'','')
-        season4 = re.findall('<h2>Season 4</h2>',link)
-        if len(season4) > 0:
-               main.addDir('[COLOR orange]Season 4[/COLOR]',url,23,'','')
-        season5 = re.findall('<h2>Season 5</h2>',link)
-        if len(season5) > 0:
-               main.addDir('[COLOR orange]Season 5[/COLOR]',url,24,'','')
-        season6 = re.findall('<h2>Season 6</h2>',link)
-        if len(season6) > 0:
-               main.addDir('[COLOR orange]Season 6[/COLOR]',url,25,'','')
-        season7 = re.findall('<h2>Season 7</h2>',link)
-        if len(season7) > 0:
-               main.addDir('[COLOR orange]Season 7[/COLOR]',url,26,'','')
-        season8 = re.findall('<h2>Season 8</h2>',link)
-        if len(season8) > 0:
-               main.addDir('[COLOR orange]Season 8[/COLOR]',url,27,'','')
-        season9 = re.findall('<h2>Season 9</h2>',link)
-        if len(season9) > 0:
-               main.addDir('[COLOR orange]Season 9[/COLOR]',url,28,'','')
-        season10 = re.findall('<h2>Season 10</h2>',link)
-        if len(season10) > 0:
-               main.addDir('[COLOR orange]Season 10[/COLOR]',url,29,'','')
-        season11 = re.findall('<h2>Season 11</h2>',link)
-        if len(season11) > 0:
-               main.addDir('[COLOR orange]Season 11[/COLOR]',url,30,'','')
-        season12 = re.findall('<h2>Season 12</h2>',link)
-        if len(season12) > 0:
-               main.addDir('[COLOR orange]Season 12[/COLOR]',url,31,'','')
-        season13 = re.findall('<h2>Season 13</h2>',link)
-        if len(season13) > 0:
-               main.addDir('[COLOR orange]Season 13[/COLOR]',url,32,'','')
-        season14 = re.findall('<h2>Season 14</h2>',link)
-        if len(season14) > 0:
-               main.addDir('[COLOR orange]Season 14[/COLOR]',url,33,'','')
-        season15 = re.findall('<h2>Season 15</h2>',link)
-        if len(season15) > 0:
-               main.addDir('[COLOR orange]Season 15[/COLOR]',url,34,'','')
-        season16 = re.findall('<h2>Season 16</h2>',link)
-        if len(season16) > 0:
-               main.addDir('[COLOR orange]Season 16[/COLOR]',url,35,'','')
-        season17 = re.findall('<h2>Season 17</h2>',link)
-        if len(season17) > 0:
-               main.addDir('[COLOR orange]Season 17[/COLOR]',url,36,'','')
-        season18 = re.findall('<h2>Season 18</h2>',link)
-        if len(season18) > 0:
-               main.addDir('[COLOR orange]Season 18[/COLOR]',url,37,'','')
-        season19 = re.findall('<h2>Season 19</h2>',link)
-        if len(season19) > 0:
-               main.addDir('[COLOR orange]Season 19[/COLOR]',url,38,'','')
-        season20 = re.findall('<h2>Season 20</h2>',link)
-        if len(season20) > 0:
-               main.addDir('[COLOR orange]Season 20[/COLOR]',url,39,'','')
-        season21 = re.findall('<h2>Season 21</h2>',link)
-        if len(season21) > 0:
-               main.addDir('[COLOR orange]Season 21[/COLOR]',url,40,'','')
-        season22 = re.findall('<h2>Season 22</h2>',link)
-        if len(season22) > 0:
-               main.addDir('[COLOR orange]Season 22[/COLOR]',url,41,'','')
-        season23 = re.findall('<h2>Season 23</h2>',link)
-        if len(season23) > 0:
-               main.addDir('[COLOR orange]Season 23[/COLOR]',url,42,'','')
-        season24 = re.findall('<h2>Season 24</h2>',link)
-        if len(season24) > 0:
-               main.addDir('[COLOR orange]Season 24[/COLOR]',url,43,'','')
-        season25 = re.findall('<h2>Season 25</h2>',link)
-        if len(season25) > 0:
-               main.addDir('[COLOR orange]Season 25[/COLOR]',url,44,'','')
-        season65 = re.findall('<h2>Season 65</h2>',link)
-        if len(season65) > 0:
-               main.addDir('[COLOR orange]Season 65[/COLOR]',url,45,'','')        
+def f7(seq):
+    seen = set()
+    seen_add = seen.add
+    return [ x for x in seq if x not in seen and not seen_add(x)]
 
-        season2013 = re.findall('<h2>Season 2013</h2>',link)
-        if len(season2013) > 0:
-               main.addDir('[COLOR orange]Season 2013[/COLOR]',url,46,'','')
-        season2012 = re.findall('<h2>Season 2012</h2>',link)
-        if len(season2012) > 0:
-               main.addDir('[COLOR orange]Season 2012[/COLOR]',url,47,'','')       
+
+def Seasons(url,name):
+        req = urllib2.Request(url)
+        req.add_header('User-Agent', USER_AGENT)
+        response = urllib2.urlopen(req)
+        link=response.read()
+        response.close()
+        match=re.compile('<h2>Season ([^"]*)</h2>').findall(link)
+        #match.sort() # sort list so it shows season one first
+        #match = f7(match)
+        for season in match:
+                print 'SeAsOn:'+season
+                #main.addDir("Season "+season,url,13,'','')
+                addDir('[COLOR blue]'+'SEASON '+season+'[/COLOR]',url,13,'',season=season)
         
-        
-        
-def Season1(url):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match=re.compile('<div class=".*?"><a href="info.php[?]id=([^"]*)&season=1&episode=([^"]*)&tv">Episode .*?<span class="ep_title">([^"]*)</span> <span').findall(link)
-        for showid,episode,name in match:
-                name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
-                url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
+def Episodes(url,season):
+        req = urllib2.Request(url)
+        req.add_header('User-Agent', USER_AGENT)
+        response = urllib2.urlopen(req)
+        link=response.read().replace('&#039;',"'")
+        response.close()
+        season = str(season)
+        print 'SeaSon:'+season
+        match=re.compile('<a href="info.php[?]id=([^"]*)&season='+season+'&episode=([^"]*)&tv">[^"]*<span class="ep_title">([^"]*)</span> <span class="total">([^"]*)</span>').findall(link)
+        #match.sort() # sort list so it shows first episode first
+     
+        for linkid,episode,title,links in match:
+                url = base_url + 'info.php?id='+linkid+'&season='+season+'&episode='+episode+'&tv'
+                name = '[COLOR green]'+"Episode "+episode + '[/COLOR] ' + '[COLOR aqua]'+title + '[/COLOR]  ' + '[COLOR red]' +links+'[/COLOR]'
                 main.addDir(name,url,14,'','')
+
+
+
+
+                
 def Season2(url):
         link=main.OPENURL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
@@ -702,6 +728,53 @@ def PLAYB(name,url):
                     main.ErrorReport(e)
             return ok
 
+####################################
+def get_params():
+        param=[]
+        paramstring=sys.argv[2]
+        if len(paramstring)>=2:
+                params=sys.argv[2]
+                cleanedparams=params.replace('?','')
+                if (params[len(params)-1]=='/'):
+                        params=params[0:len(params)-2]
+                pairsofparams=cleanedparams.split('&')
+                param={}
+                for i in range(len(pairsofparams)):
+                        splitparams={}
+                        splitparams=pairsofparams[i].split('=')
+                        if (len(splitparams))==2:
+                                param[splitparams[0]]=splitparams[1]
+                                
+        return param
 
+              
+params=get_params()
+url=None
+name=None
+mode=None
+season=None
+
+try:
+        season=urllib.unquote_plus(params["season"])
+except:
+        pass
+try:
+        url=urllib.unquote_plus(params["url"])
+except:
+        pass
+try:
+        name=urllib.unquote_plus(params["name"])
+except:
+        pass
+try:
+        mode=int(params["mode"])
+except:
+        pass
+
+print "Mode: "+str(mode)
+print "URL: "+str(url)
+print "Name: "+str(name)
+print "Season: "+str(season)        
+####################################        
 
      
