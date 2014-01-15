@@ -13,7 +13,7 @@ addon_id = 'plugin.video.filmesonline2'
 selfAddon = xbmcaddon.Addon(id=addon_id)
 addon = Addon('plugin.video.filmesonline2', sys.argv)
 art = main.art
-    
+datapath = addon.get_profile()
 base_url='http://www.filmesonline2.com/'
 
 
@@ -264,44 +264,64 @@ def Play(name,url):
         fanart =infoLabels['backdrop_url']
         imdb_id=infoLabels['imdb_id']
         infolabels = { 'supports_meta' : 'true', 'video_type':video_type, 'name':str(infoLabels['title']), 'imdb_id':str(infoLabels['imdb_id']), 'season':str(season), 'episode':str(episode), 'year':str(infoLabels['year']) }
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        docUrl= re.compile('<iframe src="([^"]*)" width="690" height="450"></iframe></div>').findall(link)
+        link2=main.OPENURL(url)
+        link2=link2.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('iframe src="//www.facebook.com','')
+        docUrl= re.compile('iframe src="(.+?)"').findall(link2)
+        if len(docUrl)==0:
+            link3=dekode(link2)
+            print "moo " +link3
+            try:
+                    docUrl= re.compile('iframe src="(.+?)"').findall(link3)
+            except:
+                youtube= re.compile('<iframe width=".+?" height=".+?" src="http://www.youtube.com/embed/(.+?)" scrolling=".+?"').findall(link2)
+                url = "plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid="+youtube[0]+"&hd=1"
+                stream_url = url
+                # play with bookmark
+                player = playbackengine.PlayWithoutQueueSupport(resolved_url=stream_url, addon_id=addon_id, video_type='', title=mname,season='', episode='', year='',img=thumb,infolabels='', watchedCallbackwithParams=main.WatchedCallbackwithParams,imdb_id='')
+                #WatchHistory
+                if selfAddon.getSetting("whistory") == "true":
+                    wh.add_item(mname+' '+'[COLOR green]FilmesOnline2[/COLOR]', sys.argv[0]+sys.argv[2], infolabels='', img=thumb, fanart='', is_folder=False)
+                player.KeepAlive()
+                return ok
+
         if docUrl:
-            link2=main.OPENURL(docUrl[0])
-            match= re.compile('url_encoded_fmt_stream_map\":\"(.+?),\"').findall(link2)
-            if match:
-                streams_map = str(match)
-                stream= re.compile('url=(.+?)&type=.+?&quality=(.+?)[,\"]{1}').findall(streams_map)
-                for group1,group2 in stream:#Thanks to the-one for google-doc resolver
-                    stream_url = str(group1)
-                    stream_url = unescape(stream_url)
-                    urllist.append(stream_url)
-                    stream_qlty = str(group2.upper())
-                    if (stream_qlty == 'HD720'):
-                        stream_qlty = 'HD-720p'
-                    elif (stream_qlty == 'LARGE'):
-                        stream_qlty = 'SD-480p'
-                    elif (stream_qlty == 'MEDIUM'):
-                        stream_qlty = 'SD-360p'
-                    namelist.append(stream_qlty)
-                dialog = xbmcgui.Dialog()
-                answer =dialog.select("Quality Select", namelist)
-                if answer != -1:
-                        try:
-                                xbmc.executebuiltin("XBMC.Notification(Please Wait!,Resolving Link,3000)")
+                
+                xbmc.executebuiltin("XBMC.Notification(Please Wait!,Collecting Links,3000)")
+                link2=main.OPENURL(docUrl[0])
+                link2=link2.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\/','/').replace('\\','=')
+                match= re.compile('url_encoded_fmt_stream_map\":\"(.+?),\"').findall(link2)
+                if match:
+                        streams_map = str(match)
+                        stream= re.compile('url=u003d(.+?)=u0026type=u003d.+?=u0026quality=u003d(.+?),itag').findall(streams_map)
+                        for group1,group2 in stream:#Thanks to the-one for google-doc resolver
+                                stream_url = str(group1)
+                                stream_url = main.unescapes(stream_url)
+                                urllist.append(stream_url)
+                                stream_qlty = str(group2.upper())
+                                if (stream_qlty == 'HD720'):
+                                    stream_qlty = 'HD-720p'
+                                elif (stream_qlty == 'LARGE'):
+                                    stream_qlty = 'SD-480p'
+                                elif (stream_qlty == 'MEDIUM'):
+                                    stream_qlty = 'SD-360p'
+                                namelist.append(stream_qlty)
+                        dialog = xbmcgui.Dialog()
+                        answer =dialog.select("Quality Select", namelist)
+                        if answer != -1:
+                                xbmc.executebuiltin("XBMC.Notification(Please Wait!,Opening Link,3000)")
                                 stream_url2 = urllist[int(answer)]
                                 infoL={'Title': infoLabels['title'], 'Plot': infoLabels['plot'], 'Genre': infoLabels['genre']}
                                 # play with bookmark
-                                player = playbackengine.PlayWithoutQueueSupport(resolved_url=stream_url2, addon_id=addon_id, video_type=video_type, title=str(infoLabels['title']),season=str(season), episode=str(episode), year=str(infoLabels['year']),img=img,infolabels=infoL, watchedCallbackwithParams=main.WatchedCallbackwithParams,imdb_id=imdb_id)
+                                player = playbackengine.PlayWithoutQueueSupport(resolved_url=stream_url, addon_id=addon_id, video_type=video_type, title=str(infoLabels['title']),season=str(season), episode=str(episode), year=str(infoLabels['year']),img=img,infolabels=infoL, watchedCallbackwithParams=main.WatchedCallbackwithParams,imdb_id=imdb_id)
+                                #WatchHistory
+                                if selfAddon.getSetting("whistory") == "true":
+                                    wh.add_item(mname+' '+'[COLOR green]FilmesOnline2[/COLOR]', sys.argv[0]+sys.argv[2], infolabels='', img=thumb, fanart='', is_folder=False)
                                 player.KeepAlive()
-                                return ok
-                        except Exception, e:
-                                if stream_url != False:
-                                        main.ErrorReport(e)
-                return ok
-        xbmc.executebuiltin("XBMC.Notification(Sorry!,Link Not Available,3000)")
-        return ok       
+                                 
+
+                        return ok
+        else:
+                        xbmc.executebuiltin("XBMC.Notification(Sorry!,Protected Link,5000)")
 
 
 

@@ -18,3 +18,8 @@ for New Episodes without Titles.
 [B]Version 0.0.5[/B]
 
 - Small Code Correction.
+
+[B]Version 0.0.6[/B]
+
+- Fixed Quality Selection and Play Function.
+

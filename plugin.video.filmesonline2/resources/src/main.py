@@ -23,7 +23,7 @@ fav = favorites.Favorites(addon_id, sys.argv)
 datapath = addon.get_profile()
 
 
-VERSION = "0.0.3"
+VERSION = "0.0.6"
 PATH = "filmesonline2-"            
 
 
