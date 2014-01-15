@@ -23,3 +23,7 @@ for New Episodes without Titles.
 
 - Fixed Quality Selection and Play Function.
 
+[B]Version 0.0.7[/B]
+
+- Fixed Quality Selection and Play Function in Series Section.
+

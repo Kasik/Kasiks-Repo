@@ -339,11 +339,11 @@ def PlayB(name,url):
         imdb_id=infoLabels['imdb_id']
         infolabels = { 'supports_meta' : 'true', 'video_type':video_type, 'name':str(infoLabels['title']), 'imdb_id':str(infoLabels['imdb_id']), 'season':str(season), 'episode':str(episode), 'year':str(infoLabels['year']) }
         link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
+        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\/','/').replace('\\','=')
         match= re.compile('url_encoded_fmt_stream_map\":\"(.+?),\"').findall(link)
         if match:
                 streams_map = str(match)
-                stream= re.compile('url=(.+?)&type=.+?&quality=(.+?)[,\"]{1}').findall(streams_map)
+                stream= re.compile('url=u003d(.+?)=u0026type=u003d.+?=u0026quality=u003d(.+?),itag').findall(streams_map)
                 for group1,group2 in stream:#Thanks to the-one for google-doc resolver
                     stream_url = str(group1)
                     stream_url = unescape(stream_url)
