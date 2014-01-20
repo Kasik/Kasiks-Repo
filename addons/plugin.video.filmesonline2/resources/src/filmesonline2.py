@@ -264,32 +264,14 @@ def Play(name,url):
         fanart =infoLabels['backdrop_url']
         imdb_id=infoLabels['imdb_id']
         infolabels = { 'supports_meta' : 'true', 'video_type':video_type, 'name':str(infoLabels['title']), 'imdb_id':str(infoLabels['imdb_id']), 'season':str(season), 'episode':str(episode), 'year':str(infoLabels['year']) }
-        link2=main.OPENURL(url)
-        link2=link2.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('iframe src="//www.facebook.com','')
-        docUrl= re.compile('iframe src="(.+?)"').findall(link2)
-        if len(docUrl)==0:
-            link3=dekode(link2)
-            print "moo " +link3
-            try:
-                    docUrl= re.compile('iframe src="(.+?)"').findall(link3)
-            except:
-                youtube= re.compile('<iframe width=".+?" height=".+?" src="http://www.youtube.com/embed/(.+?)" scrolling=".+?"').findall(link2)
-                url = "plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid="+youtube[0]+"&hd=1"
-                stream_url = url
-                # play with bookmark
-                player = playbackengine.PlayWithoutQueueSupport(resolved_url=stream_url, addon_id=addon_id, video_type='', title=mname,season='', episode='', year='',img=thumb,infolabels='', watchedCallbackwithParams=main.WatchedCallbackwithParams,imdb_id='')
-                #WatchHistory
-                if selfAddon.getSetting("whistory") == "true":
-                    wh.add_item(mname+' '+'[COLOR green]FilmesOnline2[/COLOR]', sys.argv[0]+sys.argv[2], infolabels='', img=thumb, fanart='', is_folder=False)
-                player.KeepAlive()
-                return ok
-
+        link=main.OPENURL(url)
+        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
+        docUrl= re.compile('iframe src="(.+?)"').findall(link)
         if docUrl:
-                
                 xbmc.executebuiltin("XBMC.Notification(Please Wait!,Collecting Links,3000)")
-                link2=main.OPENURL(docUrl[0])
-                link2=link2.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\/','/').replace('\\','=')
-                match= re.compile('url_encoded_fmt_stream_map\":\"(.+?),\"').findall(link2)
+                link=main.OPENURL(docUrl[0])
+                link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\/','/').replace('\\','=')
+                match= re.compile('url_encoded_fmt_stream_map\":\"(.+?),\"').findall(link)
                 if match:
                         streams_map = str(match)
                         stream= re.compile('url=u003d(.+?)=u0026type=u003d.+?=u0026quality=u003d(.+?),itag').findall(streams_map)
