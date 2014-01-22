@@ -110,7 +110,8 @@ def Index2(url):
         dialogWait.update(0, '[B]Will load instantly from now on.[/B]',remaining_display)
         for title,url,name in match:
                 name=name.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xc3\xa9','e').replace('&#8211;','-')
-                main.addDownLink(title + '   ' + name,url,150,'','')
+                main.addPlayL(title + '   ' + name,url,150,'','','','','','')
+                #main.addDownLink(title + '   ' + name,url,150,'','')
                 loadedLinks = loadedLinks + 1
                 percent = (loadedLinks * 100)/totalLinks
                 remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
@@ -131,7 +132,8 @@ def Index2(url):
         for url,name in match:
                 name=name.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xc3\xa9','e').replace('&#8211;','-')
                 url = 'https://docs.google.com/file/' + url
-                main.addDownLink(name,url,150,'','')
+                main.addPlayL(name,url,150,'','','','','','')
+                #main.addDownLink(name,url,150,'','')
                 loadedLinks = loadedLinks + 1
                 percent = (loadedLinks * 100)/totalLinks
                 remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
@@ -154,7 +156,8 @@ def CatDex(url):
         for thumb,name,url in match:
                 name=name.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xe2\x80\x99',"'").replace('\xe2\x80\x93','-').replace('\xe2\x80\x94','').replace("(US)","-").replace(' ','-').replace('-&amp;-','-').replace('&-','-')
                 print url
-                main.addDownLink(name,url,100,thumb,'')
+                main.addPlayL(name,url,100,thumb,'','','','','')
+                #main.addDownLink(name,url,100,thumb,'')
                 loadedLinks = loadedLinks + 1
                 percent = (loadedLinks * 100)/totalLinks
                 remaining_display = 'Series Loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
@@ -182,7 +185,8 @@ def Index3(url):
         dialogWait.update(0, '[B]Will load instantly from now on.[/B]',remaining_display)
         for title,url,name in match:
                 name=name.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xc3\xa9','e').replace('&#8211;','-')
-                main.addDownLink(title + '   ' + name,url,100,'','')
+                main.addPlayL(title + '   ' + name,url,100,thumb,'','','','','')
+                #main.addDownLink(title + '   ' + name,url,100,'','')
                 loadedLinks = loadedLinks + 1
                 percent = (loadedLinks * 100)/totalLinks
                 remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'

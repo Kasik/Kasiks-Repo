@@ -12,7 +12,7 @@ fav = False
 Dir = xbmc.translatePath(os.path.join('special://home/addons/plugin.video.filmesonline2', ''))
 datapath = xbmc.translatePath(selfAddon.getAddonInfo('profile'))
 
-VERSION = "0.0.8"
+VERSION = "0.0.9"
 PATH = "FilmesOnline2-"            
 
 try:
@@ -884,6 +884,17 @@ def addDirb(name,url,mode,iconimage,fanart):
 
 def addDirc(name,url,mode,iconimage,plot,fanart,dur,genre,year):
     return addDirX(name,url,mode,iconimage,plot,fanart,dur,genre,year,addToFavs=0)
+
+def addDownLink(name,url,mode,iconimage,fan):
+        u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)+"&thumb="+urllib.quote_plus(iconimage)
+        ok=True
+        name=BeautifulSoup(name, convertEntities=BeautifulSoup.HTML_ENTITIES).contents[0]
+        liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
+        liz.setInfo( type="Video", infoLabels={ "Title": name } )
+        liz.setProperty('fanart_image', fan)
+        ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=False)
+        return ok    
+
 
 def addDirXml(name,url,mode,iconimage,plot,fanart,dur,genre,year):
         contextMenuItems = []
