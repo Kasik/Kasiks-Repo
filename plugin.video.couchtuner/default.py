@@ -1,105 +1,47 @@
-import xbmc, xbmcgui, xbmcplugin, os
-import urllib, urllib2, mechanize
-import re, string, urlresolver, xbmcaddon
-from metahandler import metahandlers
-try:
-    from addon.common.addon import Addon
-    from addon.common.net import Net
-except:
-    print 'Failed to import script.module.addon.common'
-    xbmcgui.Dialog().ok("CouchTuner Import Failure", "Failed to import addon.common", "A component needed by CouchTuner is missing on your system", "Please visit www.xbmchub.com for support")
-
-addon_id = 'plugin.video.couchtuner'
-local = xbmcaddon.Addon(id=addon_id)
-addon = Addon('plugin.video.couchtuner', sys.argv)
-net = Net()
-Dir = xbmc.translatePath(os.path.join('special://home/addons/plugin.video.couchtuner', ''))
-grab = metahandlers.MetaData(preparezip = False)
-metaget = metahandlers.MetaData()
-
-#Art Setting
-art = xbmc.translatePath('special://home/addons/plugin.video.couchtuner/resources/art/')
-error_logo = xbmc.translatePath('special://home/addons/plugin.video.couchtuner/resources/art/sadface.png')
-    
- 
-#Common Cache
-import xbmcvfs
-dbg = False # Set to false if you don't want debugging
-
-#Common Cache
-try:
-  import StorageServer
-except:
-  import storageserverdummy as StorageServer
-cache = StorageServer.StorageServer('plugin.video.couchtuner')
-
+import xbmc,xbmcgui, xbmcaddon, xbmcplugin,urllib2
+import urllib,re,string,os,time,threading
 from BeautifulSoup import MinimalSoup as BeautifulSoup
+try:
+    from resources.libs import main,settings    
+except Exception, e:
+    elogo = xbmc.translatePath('special://home/addons/plugin.video.couchtuner/resources/art/bigx.png')
+    dialog = xbmcgui.Dialog()
+    ok=dialog.ok('[B][COLOR=FF67cc33]couchtuner Import Error[/COLOR][/B]','Failed To Import Needed Modules',str(e),'Report missing Module to Fix')
+    xbmc.log('couchtuner ERROR - Importing Modules: '+str(e), xbmc.LOGERROR)
 
-#PATHS
-AddonPath = addon.get_path()
-IconPath = AddonPath + "/icons/"
+    
+#CouchTuner - by Kasik 2014.
 
-def icon_path(filename):
-    return IconPath + filename
+base_url ='http://www.couchtuner.eu/'
+addon_id = 'plugin.video.couchtuner'
+selfAddon = xbmcaddon.Addon(id=addon_id)
+art = main.art
 
-######################
-#Metahandler
-def GRABMETA(name,types):
-        type = types
-        EnableMeta = local.getSetting('Enable-Meta')
-        if EnableMeta == 'true':
-                if 'Movie' in type:
-                        meta = grab.get_meta('movie',name,'',None,None,overlay=6)
-                        infoLabels = {'rating': meta['rating'],'duration': meta['duration'],'genre': meta['genre'],'mpaa':"rated %s"%meta['mpaa'],
-                          'plot': meta['plot'],'title': meta['title'],'writer': meta['writer'],'cover_url': meta['cover_url'],
-                          'director': meta['director'],'cast': meta['cast'],'backdrop_url': meta['backdrop_url'],'tmdb_id': meta['tmdb_id'],'year': meta['year']}
-                elif 'tvshow' in type:
-                        meta = grab.get_meta('tvshow',name,'','',None,overlay=6)
-                        infoLabels = {'rating': meta['rating'],'genre': meta['genre'],'mpaa':"rated %s"%meta['mpaa'],
-                              'plot': meta['plot'],'title': meta['title'],'cover_url': meta['cover_url'],
-                              'cast': meta['cast'],'studio': meta['studio'],'banner_url': meta['banner_url'],
-                              'backdrop_url': meta['backdrop_url'],'status': meta['status']}
-        return infoLabels
-
-#########################
+################################################################################ Directories ##########################################################################################################
+UpdatePath=os.path.join(main.datapath,'Update')
+try: os.makedirs(UpdatePath)
+except: pass
+CachePath=os.path.join(main.datapath,'Cache')
+try: os.makedirs(CachePath)
+except: pass
+CookiesPath=os.path.join(main.datapath,'Cookies')
+try: os.makedirs(CookiesPath)
+except: pass
     
 
 
 def MAIN():
-        addDir('New Release',base_url,1,art+'/new.png')
-        addDir('Tv Show List',base_url+'tv-streaming/',2,art+'/allshows.png')
-        
-       
 
-def NEWRELEASE(url):
-        EnableMeta = local.getSetting('Enable-Meta')
-        req = urllib2.Request(url)
-        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-        response = urllib2.urlopen(req)
-        link=response.read().replace('&#8230;','-...').replace('&#8217;',"'").replace('\t','').replace('\n','').replace('\r','')
-        response.close()
-		
-        match=re.compile('<span class="tvbox">.+?<a href="([^"]*)" title="[^"]*&#8211;([^"]*)" ><span style="background-image: url([^"]*)" class="episode"></span>([^"]*)<br />([^"]*)</a>').findall(link)
-        for url, episode, thumb, show, season in match:
-                name = '[COLOR blue]'+show+'[/COLOR]' +' ' + ' ' +'[COLOR yellow]'+ season+ '[/COLOR]' + ' ' + '[COLOR green]'+ episode + '[/COLOR]'
-                thumb = base_url + thumb
-                name = name.replace('Online','')
-                print url
-                if EnableMeta == 'true':
-                               addDirB(name,url,6,thumb,'tvshow')
-                if EnableMeta == 'false':
-                               addDirB(name,url,6,thumb,None)                               
-               
-                       
+        main.addDirHome('New Releases',base_url,1,art+'/New.png')
+        main.addDirHome('Tv Show List',base_url + 'tv-streaming/',2,art+'/showlist.png')
+        main.VIEWSB()
 
-        matchpage=re.compile('<div class="prev-page"><strong>Previous <a href="([^"]*)">[^"]*</a></strong>').findall(link)
-        for nexturl in matchpage: 
-                addDir('Next Page >>',base_url + nexturl, 1,art+'/next.png')
+########################################################        
 
 
 def TVLIST(url):
         for i in string.ascii_uppercase:
-                addDir(i,base_url +'tv-streaming/#'+i.upper(),3,art+'/'+i.lower()+'.png')
+                main.addDir(i,base_url +'tv-streaming/#'+i.upper(),3,art+'/'+i.lower()+'.png')
 
 def TVLISTB(url):
         req = urllib2.Request(url)
@@ -112,7 +54,7 @@ def TVLISTB(url):
             title=name+title
             url = base_url + url
             print url
-            addDir(title,url,4,'')  
+            main.addDir(title,url,5,'')  
         xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_TITLE)
 
         xbmcplugin.endOfDirectory(int(sys.argv[1]))
@@ -126,48 +68,31 @@ def Seasons(url):
 		
         match=re.compile('<span style="color: #339966;"><strong>([^"]*)</strong></span></p><ul><li>').findall(link)
         for season in match:
-                addDir(season,url,5,'')
+                main.addDir(season,url,5,'')
 
 def Episodes(url):
         req = urllib2.Request(url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
         response = urllib2.urlopen(req)
-        link=response.read().replace('&#8230;','-...').replace('&#8217;',"'").replace('\n','').replace('\t','').replace('\r','')
+        link=response.read().replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&#8211;','-').replace('&#8217;',"'").replace('season-','s').replace('episode-','e').replace('#038;','')
         response.close()
 		
-        match=re.compile('<strong><a href="([^"]*)">([^"]*)</a> &#8211;[%s]([^"]*)</strong></li>'% name).findall(link)
+        match=re.compile('<a href="http://www.couchtuner.eu/([^"]*)/">([^"]*)</a>([^"]*)</strong></li>').findall(link)
         for url,episode,title in match:
                 title='[COLOR blue]'+episode+'[/COLOR]'+ ' - ' +'[COLOR red]'+title+'[/COLOR]'
-                addDir(title,url,6,'')        
-
-
-
-def VIDEOLINKS(url,name):
-        req = urllib2.Request(url)
-        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-        response = urllib2.urlopen(req)
-        link=response.read().replace('&#8230;','-...').replace('&#8217;',"'").replace('\n','').replace('\t','').replace('\r','').replace('YouWa','Youwatch').replace('Putloc','Putlocker').replace('Socksh','Sockshare')
-        response.close()
-        match=re.compile('<a href="([^"]*html)">([^"]*)</a></strong></p>').findall(link)
-        for url,name in match:
-                name = '[COLOR red]'+name+'[/COLOR]'
-                addDir(name,url,6,'')
-        matcha=re.compile('<b>([^"]*)</b></span><br /><IFRAME SRC="([^"]*)"').findall(link)
-        for name,url in matcha:
-                    addDir(name,url,50,'')
-        matchb=re.compile('<b>([^"]*)</b></span><br /><iframe src="([^"]*)"').findall(link)
-        for name,url in matchb:
-                    addDir(name,url,50,'')
-
-
-
-
-def Resolve():
-    addLink('Play',urlresolver.resolve(url),art+'/play.png')
-    
+                url = 'http://www.zzstream.li/'+url+'.html'
+                print ""+url
+                main.addPlayTE(title,url,75,'','','','','','')
+        match=re.compile('<a href="http://www.zzstream.li/([^"]*)">([^"]*)</a>([^"]*)</strong>').findall(link)
+        for url,episode,title in match:
+                title='[COLOR blue]'+episode+'[/COLOR]'+ ' - ' +'[COLOR red]'+title+'[/COLOR]'
+                url='http://www.zzstream.li/'+url
+                print ""+url
+                main.addPlayTE(title,url,75,'','','','','','')     
                 
-                
+        
 
+################################################################################
                 
 def get_params():
         param=[]
@@ -271,11 +196,12 @@ print "Name: "+str(name)
 if mode==None or url==None or len(url)<1:
         print base_url 
         MAIN()
-       
-elif mode==1:
-        print " "+url
-        NEWRELEASE(url)
 
+elif mode==1:
+        from resources.libs import couchtuner
+        print " "+url
+        couchtuner.NEWRELEASE(url)
+       
 elif mode==2:
         print " "+url
         TVLIST(url)
@@ -290,17 +216,29 @@ elif mode==4:
 
 elif mode==5:
         print " "+url
-        Episodes(url)        
-       
+        Episodes(url)
+
 elif mode==6:
+        from resources.libs import couchtuner
         print " "+url
-        VIDEOLINKS(url,name)
-        
+        couchtuner.VIDEOLINKS(url,name)
+
+      
 
         
+
 elif mode==50:
+        from resources.libs import couchtuner
         print " "+url
-        Resolve()       
+        couchtuner.Resolve()
+
+
+elif mode==75:
+        from resources.libs import couchtuner
+        print " "+url
+        couchtuner.Play(url,name)         
+
+       
 
 
         
