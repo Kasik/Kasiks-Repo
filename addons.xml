@@ -89,8 +89,8 @@
 </addon>
 
 <addon id="plugin.video.playvid"
-       name="[COLOR blue]PlayVid.com (Adult Content)[/COLOR]"
-       version="0.1"
+       name="PlayVid.com (Adult Content)"
+       version="0.2"
        provider-name="Kasik">
   <requires>
         <import addon="xbmc.python" version="2.1.0"/>

@@ -1,2 +1,5 @@
 [B]Version 0.1[/B]
 Initial Release
+
+[B]Version 0.2[/B]
+Partial Fix, Some Features Are Not Working!!
