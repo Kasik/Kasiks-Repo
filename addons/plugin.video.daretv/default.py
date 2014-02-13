@@ -19,7 +19,7 @@ from resources.src import main
 from resources.src.scripts import settings
 
 
-#The DareTv - by Kasik 2013.
+#The DareTv - by Kasik 2014.
 
 
 base_url ='http://www.thedarewall.com/tv/'

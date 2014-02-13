@@ -2,3 +2,8 @@
 
 - Intial release
 
+[B]Version 0.0.2[/B]
+
+- Fixed VideoLinks
+(Putlocker may/may not work till Firedrive resolver made)
+

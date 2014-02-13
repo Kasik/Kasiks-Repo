@@ -230,39 +230,199 @@ def search():
 
 def VIDEOLINKS(name,url):
         link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','')
-        putlocker=re.compile('<a href="http://www.putlocker.com/([^"]*)" target="_blank">Open video</a>', re.DOTALL).findall(link)
-        for url in putlocker:
+        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('IFRAME','iframe').replace('SRC','src')
+        putlockera=re.compile('<iframe src="http://www.putlocker.com/([^"]*)"', re.DOTALL).findall(link)
+        for url in putlockera:
                 url = 'http://www.putlocker.com/' + url
                 main.addDownLink('[COLOR green][B]Putlocker[/B][/COLOR]',url,100,'','')
-        vidto=re.compile('<a href="http://vidto.me/([^"]*)" target="_blank">Open video</a>', re.DOTALL).findall(link)
-        for url in vidto:
+        putlockerb=re.compile('<a href="http://www.putlocker.com/([^"]*)" target="_blank">Open video</a>', re.DOTALL).findall(link)
+        for url in putlockerb:
+                url = 'http://www.putlocker.com/' + url
+                main.addDownLink('[COLOR green][B]Putlocker[/B][/COLOR]',url,100,'','')
+
+        socksharea=re.compile('<a href="http://www.sockshare.com/([^"]*)" target="_blank">Open video</a>', re.DOTALL).findall(link)
+        for url in socksharea:
+                url = 'http://www.sockshare.com/' + url
+                main.addDownLink('[COLOR green][B]Sockshare[/B][/COLOR]',url,100,'','')
+        sockshareb=re.compile('<iframe src="http://www.sockshare.com/([^"]*)"', re.DOTALL).findall(link)
+        for url in sockshareb:
+                url = 'http://www.sockshare.com/' + url
+                main.addDownLink('[COLOR green][B]Sockshare[/B][/COLOR]',url,100,'','')
+
+        vidtoa=re.compile('<a href="http://vidto.me/([^"]*)" target="_blank">Open video</a>', re.DOTALL).findall(link)
+        for url in vidtoa:
                 url = 'http://vidto.me/' + url
                 main.addDownLink('[COLOR green][B]Vidto[/B][/COLOR]',url,100,'','')
-        allmyvideos=re.compile('<a href="http://allmyvideos.net/([^"]*)" target="_blank">Open video</a>', re.DOTALL).findall(link)
-        for url in allmyvideos:
+        vidtob=re.compile('<iframe src="http://vidto.me/([^"]*)" ', re.DOTALL).findall(link)
+        for url in vidtob:
+                url = 'http://vidto.me/' + url
+                main.addDownLink('[COLOR green][B]Vidto[/B][/COLOR]',url,100,'','')        
+                
+        allmyvideosa=re.compile('<a href="http://allmyvideos.net/([^"]*)" target="_blank">Open video</a>', re.DOTALL).findall(link)
+        for url in allmyvideosa:
                 url = 'http://allmyvideos.net/' + url
                 main.addDownLink('[COLOR green][B]All My Videos[/B][/COLOR]',url,100,'','')
-        vshare=re.compile('<a href="http://vshare.eu/([^"]*)" target="_blank">Open video</a>', re.DOTALL).findall(link)
-        for url in vshare:
+        allmyvideosb=re.compile('<iframe src="http://allmyvideos.net/([^"]*)" ', re.DOTALL).findall(link)
+        for url in allmyvideosb:
+                url = 'http://allmyvideos.net/' + url
+                main.addDownLink('[COLOR green][B]All My Videos[/B][/COLOR]',url,100,'','')        
+                
+        vsharea=re.compile('<a href="http://vshare.eu/([^"]*)" target="_blank">Open video</a>', re.DOTALL).findall(link)
+        for url in vsharea:
                 url = 'http://vshare.eu/' + url
                 main.addDownLink('[COLOR green][B]Vshare[/B][/COLOR]',url,100,'','')
-        vidspot=re.compile('"><a href="http://vidspot.net/([^"]*)" target="_blank">Open video</a>', re.DOTALL).findall(link)
-        for url in vidspot:
+        vshareb=re.compile('<a href="http://vshare.eu/([^"]*)" target="_blank">Open video</a>', re.DOTALL).findall(link)
+        for url in vshareb:
+                url = 'http://vshare.eu/' + url
+                main.addDownLink('[COLOR green][B]Vshare[/B][/COLOR]',url,100,'','')
+                
+        vidspota=re.compile('<a href="http://vidspot.net/([^"]*)" target="_blank">Open video</a>', re.DOTALL).findall(link)
+        for url in vidspota:
                 url = 'http://vidspot.net/' + url
                 main.addDownLink('[COLOR green][B]Vidspot[/B][/COLOR]',url,100,'','')
-        gorilla=re.compile('<a href="http://gorillavid.in/([^"]*)" target', re.DOTALL).findall(link)
-        for url in gorilla:
+        vidspotb=re.compile('<iframe src="http://vidspot.net/([^"]*)" ', re.DOTALL).findall(link)
+        for url in vidspotb:
+                url = 'http://vidspot.net/' + url
+                main.addDownLink('[COLOR green][B]Vidspot[/B][/COLOR]',url,100,'','')        
+                
+        gorillaa=re.compile('<a href="http://gorillavid.in/([^"]*)" target="_blank">Open video</a>', re.DOTALL).findall(link)
+        for url in gorillaa:
                 url = 'http://gorillavid.in/' + url
                 main.addDownLink('[COLOR green][B]Gorillavid[/B][/COLOR]',url,100,'','')
-        gorilla2=re.compile('SRC="http://gorillavid.in/([^"]*)"', re.DOTALL).findall(link)
-        for url in gorilla2:
+        gorillab=re.compile('<iframe src="http://gorillavid.in/([^"]*)"', re.DOTALL).findall(link)
+        for url in gorillab:
                 url = 'http://gorillavid.in/' + url
                 main.addDownLink('[COLOR green][B]Gorillavid[/B][/COLOR]',url,100,'','')
-        filenuke=re.compile('href="http://filenuke.com/([^"]*)"', re.DOTALL).findall(link)
-        for url in filenuke:
+                
+        filenukea=re.compile('<a href="http://filenuke.com/([^"]*)" target="_blank">Open video</a>', re.DOTALL).findall(link)
+        for url in filenukea:
                 url = 'http://filenuke.com/' + url
                 main.addDownLink('[COLOR green][B]Filenuke[/B][/COLOR]',url,100,'','')
+        filenukeb=re.compile('<iframe src="http://filenuke.com/([^"]*)"', re.DOTALL).findall(link)
+        for url in filenukeb:
+                url = 'http://filenuke.com/' + url
+                main.addDownLink('[COLOR green][B]Filenuke[/B][/COLOR]',url,100,'','')        
+                
+        ishareda=re.compile('href="http://ishared.eu/video/([^"]*)" target="_blank">Open video</a></li>', re.DOTALL).findall(link)
+        for url in ishareda:
+                url = 'http://ishared.eu/video/' + url
+                main.addDownLink('[COLOR green][B]Ishared[/B][/COLOR]',url,100,'','')
+        isharedb=re.compile('<iframe src="http://ishared.eu/embed/([^"]*)" ', re.DOTALL).findall(link)
+        for url in isharedb:
+                url = 'http://ishared.eu/embed/' + url
+                main.addDownLink('[COLOR green][B]Ishared[/B][/COLOR]',url,100,'','')
+        isharedc=re.compile('<iframe id="iframe1"  name="iframe1"  src="http://ishared.eu/([^"]*)"', re.DOTALL).findall(link)
+        for url in isharedc:
+                url = 'http://ishared.eu/' + url
+                main.addDownLink('[COLOR green][B]Ishared[/B][/COLOR]',url,100,'','')        
+                
+        youwatcha=re.compile('<a href="http://youwatch.org/([^"]*)" target="_blank">Open video</a>', re.DOTALL).findall(link)
+        for url in youwatcha:
+                url = 'http://youwatch.org/' + url
+                main.addDownLink('[COLOR green][B]Youwatch[/B][/COLOR]',url,100,'','')
+        youwatchb=re.compile('<a href="http://youwatch.org/([^"]*)" target="_blank">Open video</a>', re.DOTALL).findall(link)
+        for url in youwatchb:
+                url = 'http://youwatch.org/' + url
+                main.addDownLink('[COLOR green][B]Youwatch[/B][/COLOR]',url,100,'','')        
+                
+        arkvida=re.compile('<a href="http://arkvid.tv/player/[?]v=([^"]*)" target="_blank">Open video</a>', re.DOTALL).findall(link)
+        for url in arkvida:
+                url = 'http://arkvid.tv/player/?v=' + url
+                main.addDownLink('[COLOR green][B]Arkvid[/B][/COLOR]',url,100,'','')
+        arkvidb=re.compile('<iframe src="http://arkvid.tv/player/[?]v=([^"]*)" ', re.DOTALL).findall(link)
+        for url in arkvidb:
+                url = 'http://arkvid.tv/player/?v=' + url
+                main.addDownLink('[COLOR green][B]Arkvid[/B][/COLOR]',url,100,'','')
+                
+        video44a=re.compile('<a href="http://www.video44.net/gogo/[?]file=([^"]*)" target="_blank">Open video</a>', re.DOTALL).findall(link)
+        for url in video44a:
+                url = 'http://www.video44.net/gogo/?file=' + url
+                main.addDownLink('[COLOR green][B]Video44[/B][/COLOR]',url,100,'','')
+        video44b=re.compile('<iframe src="http://www.video44.net/gogo/[?]file=([^"]*)"', re.DOTALL).findall(link)
+        for url in video44b:
+                url = 'http://www.video44.net/gogo/?file=' + url
+                main.addDownLink('[COLOR green][B]Video44[/B][/COLOR]',url,100,'','')        
+                
+        mp4uploada=re.compile('<a href="http://www.mp4upload.com/([^"]*)" target="_blank">Open video</a>', re.DOTALL).findall(link)
+        for url in mp4uploada:
+                url = 'http://www.mp4upload.com/' + url
+                main.addDownLink('[COLOR green][B]Mp4upload[/B][/COLOR]',url,100,'','')
+        mp4uploadb=re.compile('<iframe src="http://www.mp4upload.com/([^"]*)" ', re.DOTALL).findall(link)
+        for url in mp4uploadb:
+                url = 'http://www.mp4upload.com/' + url
+                main.addDownLink('[COLOR green][B]Mp4upload[/B][/COLOR]',url,100,'','')
+                
+        auenginea=re.compile('<a href="http://auengine.com/embed.php[?]file=([^"]*)" target="_blank">Open video</a>', re.DOTALL).findall(link)
+        for url in auenginea:
+                url = 'http://auengine.com/embed.php?file=' + url
+                main.addDownLink('[COLOR green][B]Auengine[/B][/COLOR]',url,100,'','')
+        auengineb=re.compile('<iframe src="http://auengine.com/embed.php[?]file=([^"]*)" ', re.DOTALL).findall(link)
+        for url in auengineb:
+                url = 'http://auengine.com/embed.php?file=' + url
+                main.addDownLink('[COLOR green][B]Auengine[/B][/COLOR]',url,100,'','')
+
+
+        vodlockera=re.compile('<a href="http://vodlocker.com/([^"]*)" target="_blank">Open video</a>', re.DOTALL).findall(link)
+        for url in vodlockera:
+                url = 'http://vodlocker.com/' + url
+                main.addDownLink('[COLOR green][B]Vodlocker[/B][/COLOR]',url,100,'','')
+        vodlockerb=re.compile('<iframe src="http://vodlocker.com/([^"]*)" ', re.DOTALL).findall(link)
+        for url in vodlockerb:
+                url = 'http://vodlocker.com/' + url
+                main.addDownLink('[COLOR green][B]Vodlocker[/B][/COLOR]',url,100,'','')         
+                
+                
+        vidbulla=re.compile('<a href="http://vidbull.com/([^"]*)" target="_blank">Open video</a>', re.DOTALL).findall(link)
+        for url in vidbulla:
+                url = 'http://vidbull.com/' + url
+                main.addDownLink('[COLOR green][B]Vidbull[/B][/COLOR]',url,100,'','')
+        vidbullb=re.compile('<iframe src="http://vidbull.com/([^"]*)" ', re.DOTALL).findall(link)
+        for url in vidbullb:
+                url = 'http://vidbull.com/' + url
+                main.addDownLink('[COLOR green][B]Vidbull[/B][/COLOR]',url,100,'','')
+
+        sharesixa=re.compile('<a href="http://sharesix.com/([^"]*)" target="_blank">Open video</a>', re.DOTALL).findall(link)
+        for url in sharesixa:
+                url = 'http://sharesix.com/' + url
+                main.addDownLink('[COLOR green][B]Sharesix[/B][/COLOR]',url,100,'','')
+        sharesixb=re.compile('<iframe src="http://www.thedarewall.com/thedarewall/embed.php[?]url=http://sharesix.com/([^"]*)"', re.DOTALL).findall(link)
+        for url in sharesixb:
+                url = 'http://sharesix.com/' + url
+                main.addDownLink('[COLOR green][B]Sharesix[/B][/COLOR]',url,100,'','')
+
+
+        vka=re.compile('<a href="http://vk.com/video_ext.php[?]oid=([^"]*)" target="_blank">Open video</a>', re.DOTALL).findall(link)
+        for url in vka:
+                url = 'http://vk.com/video_ext.php?oid=' + url
+                main.addDownLink('[COLOR green][B]VK[/B][/COLOR]',url,100,'','')
+        vkb=re.compile('iframe src="http://vk.com/video_ext.php[?]oid=([^"]*)"', re.DOTALL).findall(link)
+        for url in vkb:
+                url = 'http://vk.com/video_ext.php?oid=' + url
+                main.addDownLink('[COLOR green][B]VK[/B][/COLOR]',url,100,'','')
+        vkc=re.compile('<iframe id="iframe1"  name="iframe1"  src="http://vk.com/video_ext.php[?]oid=([^"]*)"', re.DOTALL).findall(link)
+        for url in vkc:
+                url = 'http://vk.com/video_ext.php?oid=' + url
+                main.addDownLink('[COLOR green][B]VK[/B][/COLOR]',url,100,'','')        
+
+        nosvideoa=re.compile('<a href="http://nosvideo.com/[?]v=([^"]*)" target="_blank">Open video</a>', re.DOTALL).findall(link)
+        for url in nosvideoa:
+                url = 'http://nosvideo.com/?v=' + url
+                main.addDownLink('[COLOR green][B]Nosvideo[/B][/COLOR]',url,100,'','')
+        nosvideob=re.compile('<iframe src="http://nosvideo.com/embed/([^"]*)"', re.DOTALL).findall(link)
+        for url in nosvideob:
+                url = 'http://nosvideo.com/embed/' + url
+                main.addDownLink('[COLOR green][B]Nosvideo[/B][/COLOR]',url,100,'','')
+
+        novamova=re.compile('<a href="http://novamov.com/video/([^"]*)" target="_blank">Open video</a>', re.DOTALL).findall(link)
+        for url in novamova:
+                url = 'http://novamov.com/video/' + url
+                main.addDownLink('[COLOR green][B]Novamov[/B][/COLOR]',url,100,'','')
+        novamovb=re.compile('src="http://embed.novamov.com/embed.php[?]width=620&height=360&v=([^"]*)" scrolling="no">', re.DOTALL).findall(link)
+        for url in novamovb:
+                url = 'http://embed.novamov.com/embed.php?width=620&height=360&v=' + url
+                main.addDownLink('[COLOR green][B]Novamov[/B][/COLOR]',url,100,'','')                
+
+                
                 
                 #addDownLink(name,url,mode,iconimage,fan):
 
@@ -277,7 +437,7 @@ def Play(url,name):
         listitem = xbmcgui.ListItem(name)
         listitem.setInfo('video', infoLabels=infoLabels)
         listitem.setThumbnailImage(infoLabels['cover_url'])
-        player.play(videoLink,listitem)
+        player.play(str(videoLink),listitem)
         main.addLink('Restart Video '+ name,str(videoLink),'')
         xbmcplugin.endOfDirectory(int(sys.argv[1]))
 
