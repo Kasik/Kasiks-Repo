@@ -270,7 +270,7 @@ def Play(name,url):
         infolabels = { 'supports_meta' : 'true', 'video_type':video_type, 'name':str(infoLabels['title']), 'imdb_id':str(infoLabels['imdb_id']), 'season':str(season), 'episode':str(episode), 'year':str(infoLabels['year']) }
         link=main.OPENURL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        docUrl= re.compile('iframe src="(.+?)"').findall(link)
+        docUrl= re.compile('class="embeds-video"><iframe src="(.+?)"').findall(link)
         if docUrl:
                 xbmc.executebuiltin("XBMC.Notification(Please Wait!,Collecting Links,3000)")
                 link=main.OPENURL(docUrl[0])
@@ -300,8 +300,8 @@ def Play(name,url):
                                 # play with bookmark
                                 player = playbackengine.PlayWithoutQueueSupport(resolved_url=stream_url, addon_id=addon_id, video_type=video_type, title=str(infoLabels['title']),season=str(season), episode=str(episode), year=str(infoLabels['year']),img=img,infolabels=infoL, watchedCallbackwithParams=main.WatchedCallbackwithParams,imdb_id=imdb_id)
                                 #WatchHistory
-                                if selfAddon.getSetting("whistory") == "true":
-                                    wh.add_item(mname+' '+'[COLOR green]FilmesOnline2[/COLOR]', sys.argv[0]+sys.argv[2], infolabels='', img=thumb, fanart='', is_folder=False)
+                                #if selfAddon.getSetting("whistory") == "true":
+                                 #   wh.add_item(mname+' '+'[COLOR green]FilmesOnline2[/COLOR]', sys.argv[0]+sys.argv[2], infolabels='', img=thumb, fanart='', is_folder=False)
                                 player.KeepAlive()
                                  
 

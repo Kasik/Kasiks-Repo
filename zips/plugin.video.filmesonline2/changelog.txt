@@ -33,5 +33,9 @@ for New Episodes without Titles.
 
 [B]Version 0.0.9[/B]
 
-- (My Goof) - addDownLink in main.py corrected
+- main.addDownLink corrected
+
+[B]Version 0.1.0[/B]
+
+- Fixed Play Links
 
