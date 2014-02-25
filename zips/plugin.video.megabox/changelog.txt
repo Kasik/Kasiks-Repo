@@ -25,3 +25,6 @@ Reworked Seasons and Episodes
 
 Version 2.0.6
 Fixed String Error
+
+Version 2.0.7
+Fixed Trailer Search and Search History. 

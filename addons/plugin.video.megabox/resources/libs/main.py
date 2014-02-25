@@ -11,10 +11,8 @@ grab = None
 hostlist = None
 Dir = xbmc.translatePath(os.path.join('special://home/addons/plugin.video.megabox', ''))
 datapath = xbmc.translatePath(selfAddon.getAddonInfo('profile'))
-supportsite = 'Megaboxxbmc.com'
-hosts = 'putlocker,firedrive,sockshare,billionuploads,hugefiles,mightyupload,movreel,lemuploads,180upload,megarelease,filenuke,flashx,gorillavid,bayfiles,veehd,vidto,mailru,videomega,epicshare,bayfiles,2gbhosting,alldebrid,allmyvideos,vidspot,castamp,cheesestream,clicktoview,crunchyroll,cyberlocker,daclips,dailymotion,divxstage,donevideo,ecostream,entroupload,facebook,filebox,hostingbulk,hostingcup,jumbofiles,limevideo,movdivx,movpod,movshare,movzap,muchshare,nolimitvideo,nosvideo,novamov,nowvideo,ovfile,play44_net,played,playwire,premiumize_me,primeshare,promptfile,purevid,rapidvideo,realdebrid,rpnet,seeon,sharefiles,sharerepo,sharesix,skyload,stagevu,stream2k,streamcloud,thefile,tubeplus,tunepk,ufliq,upbulk,uploadc,uploadcrazynet,veoh,vidbull,vidcrazynet,video44,videobb,videofun,videotanker,videoweed,videozed,videozer,vidhog,vidpe,vidplay,vidstream,vidup,vidx,vidxden,vidzur,vimeo,vureel,watchfreeinhd,xvidstage,yourupload,youtube,youwatch,zalaa,zooupload,zshare'
 
-VERSION = "2.0.6"
+VERSION = "2.0.7"
 PATH = "Megabox-"            
 
 
@@ -1124,11 +1122,10 @@ def addDirX(name,url,mode,iconimage,plot='',fanart='',dur=0,genre='',year='',imd
     if down:
         sysurl = urllib.quote_plus(url)
         sysname= urllib.quote_plus(name)
-        Commands.append(('Direct Download', 'XBMC.RunPlugin(%s?mode=190&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
+        Commands.append(('Direct Download', 'XBMC.RunPlugin(%s?mode=150&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
         Commands.append(('Download with jDownloader', 'XBMC.RunPlugin(%s?mode=776&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
   
     if searchMeta:
-        Commands.append(('[B]Super Search [COLOR=FF67cc33]Me[/COLOR][/B]','XBMC.Container.Update(%s?mode=21&name=%s&url=%s)'% (sys.argv[0], urllib.quote_plus(name),'###')))
         if metaType == 'TV' and selfAddon.getSetting("meta-view-tv") == "true":
             xbmcplugin.setContent(int(sys.argv[1]), 'episodes')
             cname = infoLabels['title']
@@ -1156,7 +1153,7 @@ def addDirX(name,url,mode,iconimage,plot='',fanart='',dur=0,genre='',year='',imd
             if infoLabels['overlay'] == 6: watched_mark = 'Mark as Watched'
             else: watched_mark = 'Mark as Unwatched'
             Commands.append((watched_mark, 'XBMC.RunPlugin(%s?mode=777&name=%s&url=%s&iconimage=%s)' % (sys.argv[0], cname, 'movie',imdb_id)))
-            Commands.append(('Play Trailer','XBMC.RunPlugin(%s?mode=782&name=%s&url=%s&iconimage=%s)'% (sys.argv[0],cname,'_',imdb_id)))
+            Commands.append(('Play Trailer','XBMC.RunPlugin(%s?mode=500&name=%s&url=%s&iconimage=%s)'% (sys.argv[0],cname,'_',imdb_id)))
             Commands.append(('Refresh Metadata', 'XBMC.RunPlugin(%s?mode=778&name=%s&url=%s&iconimage=%s)' % (sys.argv[0], cname, 'movie',imdb_id)))
     else:
         infoLabels={ "Title": name, "Plot": plot, "Duration": dur, "Year": year ,"Genre": genre,"OriginalTitle" : removeColoredText(name) }
