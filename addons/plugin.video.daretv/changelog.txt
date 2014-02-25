@@ -7,3 +7,9 @@
 - Fixed VideoLinks
 (Putlocker may/may not work till Firedrive resolver made)
 
+[B]Version 0.0.3[/B]
+
+- Fixed VideoLinks
+(Putlocker/Firedrive working with new resolver)
+
+

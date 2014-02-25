@@ -144,6 +144,14 @@ def VIDEOLINKS(name,url):
         for url in putlocker:
                 url = 'http://www.putlocker.com/' + url
                 main.addDownLink('[COLOR green][B]Putlocker[/B][/COLOR]',url,100,'','')
+        firedrive=re.compile('http://www.firedrive.com/([^"]*)"', re.DOTALL).findall(link)
+        for url in firedrive:
+                url = 'http://www.firedrive.com/' + url
+                main.addDownLink('[COLOR green][B]Putlocker/Firedrive[/B][/COLOR]',url,100,'','')        
+        sockshare=re.compile('http://www.sockshare.com/([^"]*)"', re.DOTALL).findall(link)
+        for url in sockshare:
+                url = 'http://www.sockshare.com/' + url
+                main.addDownLink('[COLOR green][B]Sockshare[/B][/COLOR]',url,100,'','')        
         vidto=re.compile('http://vidto.me/([^"]*)"', re.DOTALL).findall(link)
         for url in vidto:
                 url = 'http://vidto.me/' + url
