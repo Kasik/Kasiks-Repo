@@ -31,3 +31,6 @@ Fixed Trailer Search and Search History.
 
 Version 2.0.8
 Fixed Search History. 
+
+Version 2.0.9
+Misc. Code Corrections.
