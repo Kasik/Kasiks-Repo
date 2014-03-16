@@ -19,7 +19,7 @@ Dir = xbmc.translatePath(os.path.join('special://home/addons/plugin.video.daretv
 datapath = addon.get_profile()
 
 
-VERSION = "0.0.3"
+VERSION = "0.0.4"
 PATH = "darewall-"            
 
 

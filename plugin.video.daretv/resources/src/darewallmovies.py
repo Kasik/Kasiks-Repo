@@ -31,7 +31,7 @@ def MoviesIndex(url,name): #################  Movie Index #################
                 main.addInfo(name+ '  ' + " Rating "+rating,url,80,thumb,'','')
                 loadedLinks = loadedLinks + 1
                 percent = (loadedLinks * 100)/totalLinks
-                remaining_display = 'Tv Schedule loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+                remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
                 dialogWait.update(percent,'[B]Will load instantly from now on[/B]',remaining_display)
                 if (dialogWait.iscanceled()):
                         return False   
@@ -60,14 +60,14 @@ def MovieIndex2(url,name): ################# Movie Genre Index #################
         ret = dialogWait.create('Please wait until Show list is cached.')
         totalLinks = len(match)
         loadedLinks = 0
-        remaining_display = 'Tv Schedule loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+        remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
         dialogWait.update(0, '[B]Will load instantly from now on[/B]',remaining_display)
         for thumb,url,name,rating in match:
                 name=name.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xe2\x80\x99',"'").replace('\xe2\x80\x93','-').replace('\xe2\x80\x94','').replace('&-','-')
                 main.addInfo(name+' Rating ' + rating,url,80,thumb,'','')
                 loadedLinks = loadedLinks + 1
                 percent = (loadedLinks * 100)/totalLinks
-                remaining_display = 'Tv Schedule loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+                remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
                 dialogWait.update(percent,'[B]Will load instantly from now on[/B]',remaining_display)
                 if (dialogWait.iscanceled()):
                         return False   
@@ -180,9 +180,9 @@ def VIDEOLINKS(name,url):
         for url in clicktoview:
                 url = 'http://clicktoview.org/' + url
                 main.addDownLink('[COLOR green][B]Clicktoview[/B][/COLOR]',url,100,'','')
-        nowvideo=re.compile('src="http://embed.nowvideo.eu/embed.php[?]v=([^"]*)&amp;width=620&amp;height=360"', re.DOTALL).findall(link)
+        nowvideo=re.compile('src="http://embed.nowvideo.eu/embed.php[?]v=([^"]*)', re.DOTALL).findall(link)
         for url in nowvideo:
-                url = 'http://embed.nowvideo.eu/embed.php?v=' + url + '&amp;width=620&amp;height=360'
+                url = 'http://embed.nowvideo.eu/embed.php?v=' + url 
                 main.addDownLink('[COLOR green][B]Nowvideo[/B][/COLOR]',url,100,'','')
         nosvideo=re.compile('SRC="http://www.thedarewall.com/thedarewall/embed.php[?]url=http://nosvideo.com/[?]v=([^"]*)" FRAMEBORDER" FRAMEBORDER', re.DOTALL).findall(link)
         for url in nosvideo:

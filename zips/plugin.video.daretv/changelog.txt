@@ -12,4 +12,9 @@
 - Fixed VideoLinks
 (Putlocker/Firedrive working with new resolver)
 
+[B]Version 0.0.4[/B]
+
+- Added Youtube Links, Misc. Code Correction.
+
+
 

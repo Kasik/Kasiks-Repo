@@ -420,7 +420,15 @@ def VIDEOLINKS(name,url):
         novamovb=re.compile('src="http://embed.novamov.com/embed.php[?]width=620&height=360&v=([^"]*)" scrolling="no">', re.DOTALL).findall(link)
         for url in novamovb:
                 url = 'http://embed.novamov.com/embed.php?width=620&height=360&v=' + url
-                main.addDownLink('[COLOR green][B]Novamov[/B][/COLOR]',url,100,'','')                
+                main.addDownLink('[COLOR green][B]Novamov[/B][/COLOR]',url,100,'','')
+        youtube=re.compile('href="https://www.youtube.com/watch[?]v=([^"]*)"', re.DOTALL).findall(link)
+        for url in youtube:
+                url = 'https://www.youtube.com/watch?v=' + url
+                main.addDownLink('[COLOR green][B]Youtube[/B][/COLOR]',url,100,'','')
+        youtubepart2=re.compile('src="//www.youtube.com/embed/([^"]*)" frameborder="0" allowfullscreen></iframe> Part 2 <', re.DOTALL).findall(link)
+        for url in youtubepart2:
+                url = 'https://www.youtube.com/embed/' + url
+                main.addDownLink('[COLOR green][B]Youtube Part 2[/B][/COLOR]',url,100,'','')        
 
                 
                 
