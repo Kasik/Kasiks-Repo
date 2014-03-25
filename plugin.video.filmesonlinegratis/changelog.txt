@@ -1,0 +1,5 @@
+Version 0.0.1
+Initial Release
+(May Contain Bugs, Series is not fully functional,
+VIDIG Resolver will need to be created)
+
