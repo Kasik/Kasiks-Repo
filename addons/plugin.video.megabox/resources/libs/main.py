@@ -12,7 +12,7 @@ hostlist = None
 Dir = xbmc.translatePath(os.path.join('special://home/addons/plugin.video.megabox', ''))
 datapath = xbmc.translatePath(selfAddon.getAddonInfo('profile'))
 
-VERSION = "2.0.9"
+VERSION = "2.1.0A"
 PATH = "Megabox-"            
 
 

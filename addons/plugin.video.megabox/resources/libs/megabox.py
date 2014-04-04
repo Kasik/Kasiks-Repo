@@ -460,10 +460,11 @@ def Season2012(url):
 def GRABTVLINKS(url):
         link=main.OPENURL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('<img src=images/star.gif>','')
-        match = re.findall('<div id="links"><a href="([^"]*)"><div class="col1"><span class="([^"]*)"></span></div><div class="col2">([^"]*)</div><div class="col3">([^"]*)</di',link)
-        for url,quality,host,views in match:
+        match = re.findall('<a id="link-[^"]*" href="info.php[?]id=([^"]*)&season=[^"]*&episode=[^"]*&tv&link=([^"]*)&host=([^"]*)">',link)
+        for link1,link2,host in match:
                 name=host
-                main.addDir('[COLOR green]'+name+'[/COLOR] [COLOR blue] Quality: '+quality+'[/COLOR] [COLOR orange]' ' Views: '+views+'[/COLOR]',base_url+url,15,'','')
+                url = base_url + 'player.php?authid=&id='+link1+'&link='+link2+'&type=tv2'
+                main.addDown2('[COLOR yellow]'+name+'[/COLOR]',url,6,'','')
                 xbmcplugin.setContent(int(sys.argv[1]), 'Shows')
 
                 
@@ -484,18 +485,12 @@ def TVVIDEOLINKS(url):
 def GRABLINKS(url):
         link=main.OPENURL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('<img src=images/star.gif>','')
-        match=re.findall('<a href="([^"]*)"><div class="col1"><span class="([^"]*)"></span></div><div class="col2">([^"]*)</div><div class="col3">([^"]*)</div>',link)
-        #match = re.findall('<div id="links"><a  href="([^"]*)"><div class="col1"><span class="([^"]*)"></span></div><div class="col2">([^"]*)</div><div class="col3">([^"]*) views</div>',link)
-        for url,quality,host,views in match:
-                name=host
-                main.addDir('[COLOR green]'+name+'[/COLOR] [COLOR blue] Quality: '+quality+'[/COLOR] [COLOR orange]' ' Views: '+views+'[/COLOR]',base_url+url,3,'','')
-                xbmcplugin.setContent(int(sys.argv[1]), 'Movies')
-        match = re.findall('<a class="active" href="([^"]*)"><div class="col1"><span class="([^"]*)"></span></div><div class="col2"> ([^"]*)</div><div class="col3">([^"]*)</div>',link)
-        for url,quality,host,views in match:
-                name=host
-                main.addDir('[COLOR green]'+name+'[/COLOR] [COLOR blue] Quality: '+quality+'[/COLOR] [COLOR orange]' ' Views: '+views+'[/COLOR]',base_url+url,3,'','')
-                xbmcplugin.setContent(int(sys.argv[1]), 'Movies')                
-
+        match=re.compile('id="link-[^"]*" href="info.php[?]id=([^"]*)&older&link=([^"]*)&host=([^"]*)">').findall(link)
+        for link1,link2,name in match:
+         #url = base_url + 'player.php?authid=&id='+link1+'&link='+link2+'&type=older_v2&part=&site=inactive&ref=1'
+         url = base_url + 'player.php?authid=&id='+link1+'&link='+link2+'&type=older_v2&ref=1'
+         main.addDown2('[COLOR yellow]'+name+'[/COLOR]',url,6,'','')         
+               
                            
 
 
@@ -532,7 +527,12 @@ def GRABMORE(name,url):
      for link1,link2 in match:
       url = base_url + 'player.php?authid=&id='+link1+'&link='+link2+'&type=tv2&part=&site=inactive&ref=1'
       print url
-      main.addDown2(name,url,6,'','')  
+      main.addDown2(name,url,6,'','')
+     match2=re.compile('<div class="player"><a href="player5.php[?]id=([^"]*)&movie=[^"]*&link=([^"]*)&type=older_v2&ref=1" target').findall(link)
+     for link1,link2 in match2:
+      url = base_url + 'player.php?authid=&id='+link1+'&link='+link2+'&type=tv2&part=&site=inactive&ref=1'
+      print url
+      main.addDown2(name,url,6,'','')   
         
 
 
