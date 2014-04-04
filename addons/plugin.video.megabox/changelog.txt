@@ -34,3 +34,6 @@ Fixed Search History.
 
 Version 2.0.9
 Misc. Code Corrections.
+
+Version 2.1.0
+Fixed Video Links
