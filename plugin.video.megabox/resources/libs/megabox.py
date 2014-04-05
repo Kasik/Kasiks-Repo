@@ -485,11 +485,16 @@ def TVVIDEOLINKS(url):
 def GRABLINKS(url):
         link=main.OPENURL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('<img src=images/star.gif>','')
-        match=re.compile('id="link-[^"]*" href="info.php[?]id=([^"]*)&older&link=([^"]*)&host=([^"]*)">').findall(link)
-        for link1,link2,name in match:
-         #url = base_url + 'player.php?authid=&id='+link1+'&link='+link2+'&type=older_v2&part=&site=inactive&ref=1'
+        match=re.compile('<a id="link-[^"]*" href="info.php[?]id=([^"]*)&link=([^"]*)&host=([^"]*)"><div class="col1"><span class="([^"]*)">').findall(link)
+        for link1,link2,name,quality in match:
+         url = base_url + 'player.php?authid=&id='+link1+'&link='+link2+'&type=new&part=&site=inactive&ref=1'
+         main.addDown2('[COLOR yellow]'+name+'[/COLOR]'+'[COLOR red] Quality:  ' +quality+'[/COLOR]',url,6,'','')
+        match2=re.compile('<a id="link-[^"]*" href="info.php[?]id=([^"]*)&older&link=([^"]*)&host=([^"]*)"><div class="col1"><span class="([^"]*)">').findall(link)
+        for link1,link2,name,quality in match2:
          url = base_url + 'player.php?authid=&id='+link1+'&link='+link2+'&type=older_v2&ref=1'
-         main.addDown2('[COLOR yellow]'+name+'[/COLOR]',url,6,'','')         
+         main.addDown2('[COLOR blue]'+name+'[/COLOR]'+'[COLOR red] Quality:  ' +quality+'[/COLOR]',url,6,'','') 
+         
+          
                
                            
 

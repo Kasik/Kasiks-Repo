@@ -40,3 +40,6 @@ Fixed Video Links
 
 Version 2.1.0A
 Small Correction
+
+Version 2.1.0B
+Fixed videolinks (bug remains/shows duplicate links)
