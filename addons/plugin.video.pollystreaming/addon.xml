@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.video.pollystreaming"
+       name="Polly Streaming"
+       version="0.0.1"
+       provider-name="Kasik">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+    <import addon="script.module.beautifulsoup" version="3.2.1"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+            library="default.py">
+        <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary>Polly Streaming - Videos</summary>
+    <description>Polly Streaming is a website that streams Movies,TV shows, Sports,Cartoons,Anime and Documentaries. If you don’t see something on the site you want just ask and it will be added as soon as possible.</description>
+    <platform>all</platform>
+  </extension>
+</addon>
