@@ -24,7 +24,7 @@ USER_AGENT = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/
 def MOVIES(url):
         link=main.OPEN_URL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&#8211; ',' - ')
-        match = re.findall('title="([^"]*)">[^"]*</a></h2><div class="capa"><a href="([^"]*html)"><img src="http://static.filmesonlinegratis.net/thumb.php[?]src=([^"]*)&amp;w=135&amp;h=185" alt="[^"]*" title="[^"]*" /></a><span class="qualidade">([^"]*)</span>',link)
+        match = re.findall('title="([^"]*)">[^"]*</a></h2><divclass="capa"> <ahref="([^"]*)"><imgsrc="http://static.filmesonlinegratis.net/thumb.php[?]src=([^"]*)&amp;w=135&amp;h=185" alt="[^"]*" title="[^"]*" /></a> <spanclass="qualidade">([^"]*)</span>',link)
         dialogWait = xbmcgui.DialogProgress()
         ret = dialogWait.create('Please wait until Movie list is cached.')
         totalLinks = len(match)
@@ -33,7 +33,7 @@ def MOVIES(url):
         dialogWait.update(0, '[B]Will load instantly from now on[/B]',remaining_display)
         for name,url,thumb,quality in match:
                 #main.addDirb(name+'[COLOR blue]  Quality: '+quality+'[/COLOR]',str(url),8,thumb,'')
-                main.addInfo(name+'[COLOR blue]  Quality: '+quality+'[/COLOR]',url,8,thumb,'','')
+                main.addInfo(name+'[COLOR blue]  Quality: '+quality+'[/COLOR]',url,7,thumb,'','')
                 loadedLinks = loadedLinks + 1
                 percent = (loadedLinks * 100)/totalLinks
                 remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
@@ -100,18 +100,38 @@ def GRABLINKS(url):
         if len(vidig) > 0:
                 name = '[COLOR yellow] Vidig [/COLOR]'
                 main.addDown2(name,url,8,'','')
+        vidig2 = re.findall('<iframesrc="http://vidig.biz/([^"]*)"',link)
+        if len(vidig2) > 0:
+                name = '[COLOR yellow] Vidig [/COLOR]'
+                main.addDown2(name,url,8,'','')        
+
         vk = re.findall('title="http://vk.com/([^"]*)" ',link)
         if len(vk) > 0:                
                 name = '[COLOR yellow] VK [/COLOR]'
                 main.addDown2(name,url,8,'','')
+        vk2 = re.findall('<iframedata-src="http://vk.com/([^"]*)"',link)
+        if len(vk2) > 0:                
+                name = '[COLOR yellow] VK [/COLOR]'
+                main.addDown2(name,url,8,'','')        
+                
         firedrive = re.findall('title=\'http://www.firedrive.com/([^"]*)\'>',link)
         if len(firedrive) > 0:                
                 name = '[COLOR yellow] Firedrive [/COLOR]'
                 main.addDown2(name,url,8,'','')
+        firedrive2 = re.findall('data-src=\'https://www.firedrive.com/([^"]*)\'>',link)
+        if len(firedrive2) > 0:                
+                name = '[COLOR yellow] Firedrive [/COLOR]'
+                main.addDown2(name,url,8,'','')        
+
         dropvideo = re.findall('title="http://dropvideo.com/([^"]*) ',link)
         if len(dropvideo) > 0:                
                 name = '[COLOR yellow] Dropvideo [/COLOR]'
-                main.addDown2(name,url,8,'','')   
+                main.addDown2(name,url,8,'','')
+        dropvideo2 = re.findall('<iframedata-src="http://dropvideo.com/([^"]*)"',link)
+        if len(dropvideo2) > 0:                
+                name = '[COLOR yellow] Dropvideo [/COLOR]'
+                main.addDown2(name,url,8,'','')
+                
                 xbmcplugin.setContent(int(sys.argv[1]), 'Shows')
 
 
@@ -121,25 +141,25 @@ def PLAY(name,url):
         link=main.OPEN_URL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','')
         xbmc.executebuiltin("XBMC.Notification(Please Wait!,Opening Link,2000)")
-        match=re.compile('src="http://vidig.biz/([^"]*)"').findall(link)
+        match=re.compile('http://vidig.biz/([^"]*)').findall(link)
         for url in match:
                 url=url = 'http://vidig.biz/' + url
                 print url
                 hosted_media = urlresolver.HostedMediaFile(url=url)
                 sources.append(hosted_media)
-        match=re.compile('title="http://vk.com/([^"]*)"').findall(link)
+        match=re.compile('http://vk.com/([^"]*)').findall(link)
         for url in match:
                 url = 'http://vk.com/' + url
                 print url
                 hosted_media = urlresolver.HostedMediaFile(url=url)
                 sources.append(hosted_media)
-        match=re.compile('title=\'http://www.firedrive.com/([^"]*)\'>').findall(link)
+        match=re.compile('http://www.firedrive.com/([^"]*)\'').findall(link)
         for url in match:
                 url = 'http://www.firedrive.com/' + url
                 print url
                 hosted_media = urlresolver.HostedMediaFile(url=url)
                 sources.append(hosted_media)
-        match=re.compile('title="http://dropvideo.com/([^"]*)').findall(link)
+        match=re.compile('http://dropvideo.com/([^"]*)').findall(link)
         for url in match:
                 url = 'http://dropvideo.com/' + url
                 print url
@@ -283,7 +303,7 @@ def SEARCH(url = ''):
         surl='http://www.filmesonlinegratis.net/?s=' + encode + '&s-btn=Buscar'
         link=main.OPEN_URL(surl)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&#8211; ',' - ')
-        match = re.findall('title="([^"]*)">[^"]*</a></h2><div class="capa"><a href="([^"]*html)"><img src="http://static.filmesonlinegratis.net/thumb.php[?]src=([^"]*)&amp;w=135&amp;h=185" alt="[^"]*" title="[^"]*" /></a><span class="qualidade">([^"]*)</span>',link)
+        match = re.findall('title="([^"]*)">[^"]*</a></h2><divclass="capa"> <ahref="([^"]*)"><imgsrc="http://static.filmesonlinegratis.net/thumb.php[?]src=([^"]*)&amp;w=135&amp;h=185" alt="[^"]*" title="[^"]*" /></a> <spanclass="qualidade">([^"]*)</span>',link)
         dialogWait = xbmcgui.DialogProgress()
         ret = dialogWait.create('Please wait until Movie list is cached.')
         totalLinks = len(match)

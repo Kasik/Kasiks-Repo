@@ -1,5 +1,5 @@
 import xbmc, xbmcaddon
-addon_id = 'plugin.video.megabox'
+addon_id = 'plugin.video.filmesonlinegratis'
 selfAddon = xbmcaddon.Addon(id=addon_id)
 
 def getHomeItems():

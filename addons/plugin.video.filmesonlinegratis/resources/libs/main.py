@@ -6,14 +6,14 @@ import time,threading
 
 addon_id = 'plugin.video.filmesonlinegratis'
 selfAddon = xbmcaddon.Addon(id=addon_id)
-mashpath = selfAddon.getAddonInfo('path')
+filmesonlinegratispath = selfAddon.getAddonInfo('path')
 grab = None
 fav = False
 hostlist = None
 Dir = xbmc.translatePath(os.path.join('special://home/addons/plugin.video.filmesonlinegratis', ''))
 datapath = xbmc.translatePath(selfAddon.getAddonInfo('profile'))
 
-VERSION = "0.0.1"
+VERSION = "0.0.2"
 PATH = "Filmesonlinegratis-"
 
 try:
@@ -804,7 +804,7 @@ def QuietDownload(url, dest,originalName, videoname):
     # get notify value from settings
     NotifyPercent=int(selfAddon.getSetting('notify-percent'))
     
-    script = os.path.join( mashpath, 'resources', 'libs', "DownloadInBackground.py" )
+    script = os.path.join( filmesonlinegratispath, 'resources', 'libs', "DownloadInBackground.py" )
     xbmc.executebuiltin( "RunScript(%s, %s, %s, %s, %s, %s)" % ( script, q_url, q_dest, q_vidname,q_vidOname, str(notifyValues[NotifyPercent]) ) )
     return True
  
@@ -839,7 +839,6 @@ def jDownloader(murl):
 def Message():
     help = SHOWMessage()
     help.doModal()
-    main.GA("None","Mash2k3Info")
     del help
 
 
@@ -881,195 +880,6 @@ def TextBoxes(heading,anounce):
                 return
         TextBox()
     
-################################################################################ Google Analytics ##########################################################################################################
-
-def parseDate(dateString,datetime):
-    try:
-        return datetime.datetime.fromtimestamp(time.mktime(time.strptime(dateString.encode('utf-8', 'replace'), "%Y-%m-%d %H:%M:%S")))
-    except:
-        return datetime.datetime.today() - datetime.timedelta(days = 1) #force update
-
-
-def checkGA():
-    if selfAddon.getSetting("gastatus") == "true":
-        import datetime
-        secsInHour = 60 * 60
-        threshold  = 2 * secsInHour
-
-        now   = datetime.datetime.today()
-        prev  = parseDate(selfAddon.getSetting('ga_time'),datetime)
-        delta = now - prev
-        nDays = delta.days
-        nSecs = delta.seconds
-
-        doUpdate = (nDays > 0) or (nSecs > threshold)
-        if not doUpdate:
-            return
-
-        selfAddon.setSetting('ga_time', str(now).split('.')[0])
-        threading.Thread(target=APP_LAUNCH).start()
-    else:
-        print "Filmesonlinegratis Google Analytics disabled"
-    
-                    
-def send_request_to_google_analytics(utm_url):
-    ua='Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3'
-    import urllib2
-    try:
-        req = urllib2.Request(utm_url, None,
-                                    {'User-Agent':ua}
-                                     )
-        response = urllib2.urlopen(req).read()
-    except:
-        print ("GA fail: %s" % utm_url)         
-    return response
-       
-def GA(group,name):
-    if selfAddon.getSetting("gastatus") == "true":
-        threading.Thread(target=GAthread, args=(group,name)).start()
-
-def GAthread(group,name):
-        try:
-            try:
-                from hashlib import md5
-            except:
-                from md5 import md5
-            from random import randint
-            import time
-            from urllib import unquote, quote
-            from os import environ
-            from hashlib import sha1
-            VISITOR = selfAddon.getSetting('visitor_ga')
-            utm_gif_location = "http://www.google-analytics.com/__utm.gif"
-            if not group=="None":
-                    utm_track = utm_gif_location + "?" + \
-                            "utmwv=" + VERSION + \
-                            "&utmn=" + str(randint(0, 0x7fffffff)) + \
-                            "&utmt=" + "event" + \
-                            "&utme="+ quote("5("+PATH+"*"+group+"*"+name+")")+\
-                            "&utmp=" + quote(PATH) + \
-                            "&utmac=" + UATRACK + \
-                            "&utmcc=__utma=%s" % ".".join(["1", VISITOR, VISITOR, VISITOR,VISITOR,"2"])
-                    try:
-                        print "============================ POSTING TRACK EVENT ============================"
-                        send_request_to_google_analytics(utm_track)
-                    except:
-                        print "============================  CANNOT POST TRACK EVENT ============================" 
-            if name=="None":
-                    utm_url = utm_gif_location + "?" + \
-                            "utmwv=" + VERSION + \
-                            "&utmn=" + str(randint(0, 0x7fffffff)) + \
-                            "&utmp=" + quote(PATH) + \
-                            "&utmac=" + UATRACK + \
-                            "&utmcc=__utma=%s" % ".".join(["1", VISITOR, VISITOR, VISITOR, VISITOR,"2"])
-            else:
-                if group=="None":
-                       utm_url = utm_gif_location + "?" + \
-                                "utmwv=" + VERSION + \
-                                "&utmn=" + str(randint(0, 0x7fffffff)) + \
-                                "&utmp=" + quote(PATH+"/"+name) + \
-                                "&utmac=" + UATRACK + \
-                                "&utmcc=__utma=%s" % ".".join(["1", VISITOR, VISITOR, VISITOR, VISITOR,"2"])
-                else:
-                       utm_url = utm_gif_location + "?" + \
-                                "utmwv=" + VERSION + \
-                                "&utmn=" + str(randint(0, 0x7fffffff)) + \
-                                "&utmp=" + quote(PATH+"/"+group+"/"+name) + \
-                                "&utmac=" + UATRACK + \
-                                "&utmcc=__utma=%s" % ".".join(["1", VISITOR, VISITOR, VISITOR, VISITOR,"2"])
-                                
-            print "============================ POSTING ANALYTICS ============================"
-            send_request_to_google_analytics(utm_url)
-            
-        except:
-            print "================  CANNOT POST TO ANALYTICS  ================"
-
-def APP_LAUNCH():
-        versionNumber = int(xbmc.getInfoLabel("System.BuildVersion" )[0:2])
-        if versionNumber < 12:
-            if xbmc.getCondVisibility('system.platform.osx'):
-                if xbmc.getCondVisibility('system.platform.atv2'):
-                    log_path = '/var/mobile/Library/Preferences'
-                else:
-                    log_path = os.path.join(os.path.expanduser('~'), 'Library/Logs')
-            elif xbmc.getCondVisibility('system.platform.ios'):
-                log_path = '/var/mobile/Library/Preferences'
-            elif xbmc.getCondVisibility('system.platform.windows'):
-                log_path = xbmc.translatePath('special://home')
-            elif xbmc.getCondVisibility('system.platform.linux'):
-                log_path = xbmc.translatePath('special://home/temp')
-            else:
-                log_path = xbmc.translatePath('special://logpath')
-        else:
-            print '======================= more than ===================='
-            log_path = xbmc.translatePath('special://logpath')
-        log = os.path.join(log_path, 'xbmc.log')
-        try:
-            logfile = open(log, 'r').read()
-        except:
-            logfile='Starting XBMC ('+str(versionNumber)+'.0 Git:.+?Platform: Unknown. Built.+?'
-        match=re.compile('Starting XBMC \((.+?) Git:.+?Platform: (.+?)\. Built.+?').findall(logfile)
-        print '==========================   '+PATH+' '+VERSION+'   =========================='
-        try:
-            repo = os.path.join(repopath, 'addon.xml')
-            repofile = open(repo, 'r').read()
-            repov=re.compile('name="All Addons by Mash2k3" version="(.+?)" provider-name="Mash2k3').findall(repofile)
-            if repov:
-                RepoVer = repov[0]
-                
-        except:
-            RepoVer='Repo Not Intalled'
-        try:
-            from hashlib import md5
-        except:
-            from md5 import md5
-        from random import randint
-        import time
-        from urllib import unquote, quote
-        from os import environ
-        from hashlib import sha1
-        import platform
-        VISITOR = selfAddon.getSetting('visitor_ga')
-        for build, PLATFORM in match:
-            if re.search('12.0',build,re.IGNORECASE): 
-                build="Frodo" 
-            if re.search('11.0',build,re.IGNORECASE): 
-                build="Eden" 
-            if re.search('13.0',build,re.IGNORECASE): 
-                build="Gotham" 
-            print build
-            print PLATFORM
-            print "Repo Ver. "+RepoVer
-            utm_gif_location = "http://www.google-analytics.com/__utm.gif"
-            utm_track = utm_gif_location + "?" + \
-                    "utmwv=" + VERSION + \
-                    "&utmn=" + str(randint(0, 0x7fffffff)) + \
-                    "&utmt=" + "event" + \
-                    "&utme="+ quote("5(APP LAUNCH*"+"Filmesonlinegratis v"+VERSION+"/ Repo v"+RepoVer+"*"+build+"*"+PLATFORM+")")+\
-                    "&utmp=" + quote(PATH) + \
-                    "&utmac=" + UATRACK + \
-                    "&utmcc=__utma=%s" % ".".join(["1", VISITOR, VISITOR, VISITOR,VISITOR,"2"])
-            try:
-                print "============================ POSTING APP LAUNCH TRACK EVENT ============================"
-                send_request_to_google_analytics(utm_track)
-            except:
-                print "============================  CANNOT POST APP LAUNCH TRACK EVENT ============================"
-            utm_track = utm_gif_location + "?" + \
-                    "utmwv=" + VERSION + \
-                    "&utmn=" + str(randint(0, 0x7fffffff)) + \
-                    "&utmt=" + "event" + \
-                    "&utme="+ quote("5(APP LAUNCH*"+"Filmesonlinegratis v"+VERSION+"/ Repo v"+RepoVer+"*"+PLATFORM+")")+\
-                    "&utmp=" + quote(PATH) + \
-                    "&utmac=" + UATRACK + \
-                    "&utmcc=__utma=%s" % ".".join(["1", VISITOR, VISITOR, VISITOR,VISITOR,"2"])
-            try:
-                print "============================ POSTING APP LAUNCH TRACK EVENT ============================"
-                send_request_to_google_analytics(utm_track)
-            except:
-                print "============================  CANNOT POST APP LAUNCH TRACK EVENT ============================"
-
- 
-checkGA()
 
 ################################################################################ Types of Directories ##########################################################################################################
 
@@ -1132,7 +942,7 @@ def addDirX(name,url,mode,iconimage,plot='',fanart='',dur=0,genre='',year='',imd
         infoLabels={ "Title": name, "Plot": plot, "Duration": dur, "Year": year ,"Genre": genre,"OriginalTitle" : removeColoredText(name) }
     if id != None: infoLabels["count"] = id
     Commands.append(('Watch History','XBMC.Container.Update(%s?name=None&mode=222&url=None&iconimage=None)'% (sys.argv[0])))
-    Commands.append(('[B][COLOR=FF67cc33]Filmesonlinegratis[/COLOR] Settings[/B]','XBMC.RunScript('+xbmc.translatePath(mashpath + '/resources/libs/settings.py')+')'))
+    Commands.append(('[B][COLOR=FF67cc33]Filmesonlinegratis[/COLOR] Settings[/B]','XBMC.RunScript('+xbmc.translatePath(filmesonlinegratispath + '/resources/libs/settings.py')+')'))
     Commands.append(("My Fav's",'XBMC.Container.Update(%s?name=None&mode=639&url=None&iconimage=None)'% (sys.argv[0])))
     if menuItemPos != None:
         for mi in reversed(menuItems):
