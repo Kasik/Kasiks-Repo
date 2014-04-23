@@ -2,7 +2,7 @@ import urllib,urllib2,re,xbmcplugin,xbmcgui
 from BeautifulSoup import MinimalSoup as BeautifulSoup
 
 
-#Hornbunny.com - by Kasik 2013.
+#PollyStreaming - by Kasik 2014.
 
 
 def _get_keyboard( default="", heading="", hidden=False ):
