@@ -35,3 +35,8 @@ for New Episodes without Titles.
 
 - main.addDownLink corrected
 
+[B]Version 0.1.0[/B]- Fixed Play Links
+
+[B]Version 0.1.1[/B]- Changed the way video links are called/played, added name/title for video currently playing, updated bits of code.
+
+

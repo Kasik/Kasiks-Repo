@@ -29,8 +29,8 @@ def Index(url):
         dialogWait.update(0, '[B]Will load instantly from now on.[/B]',remaining_display)
         for url,thumb,name in match:
                 name=name.replace('\r','').replace('\n','').replace('\xc3\x9a','U').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xc3\xa9','e').replace('\xc3\xb3','o').replace('&#8211;','-').replace('\xc3\xa7\xc3\xa3','c').replace('\xc3\xad','i').replace('\xc2\xaa','').replace('&#8217;',"'")
-                main.addInfo(name,url,100,thumb,'','')
-                #main.addDownLink(name,url,100,thumb,'')
+                #main.addInfo(name,url,100,thumb,'','')
+                main.addDown2("[COLOR blue]"+name.strip()+"[/COLOR]",url,100,thumb,thumb)
                 loadedLinks = loadedLinks + 1
                 percent = (loadedLinks * 100)/totalLinks
                 remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
@@ -102,47 +102,18 @@ def Index2(url):
         link=main.OPENURL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xc3\xa9','e').replace('&#8211;','-').replace('\xc3\xa7\xc3\xa3','c').replace('\xc3\xad','i')
         match = re.findall('<li><a class="lbp_secondary" title="([^>]+)" href="([^>]+)" target="_blank">([^"]*)</a></li>',link)
-        dialogWait = xbmcgui.DialogProgress()
-        ret = dialogWait.create('Episodes loaded.')
-        totalLinks = len(match)
-        loadedLinks = 0
-        remaining_display = 'Episodes Loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
-        dialogWait.update(0, '[B]Will load instantly from now on.[/B]',remaining_display)
         for title,url,name in match:
                 name=name.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xc3\xa9','e').replace('&#8211;','-')
-                main.addPlayL(title + '   ' + name,url,150,'','','','','','')
-                #main.addDownLink(title + '   ' + name,url,150,'','')
-                loadedLinks = loadedLinks + 1
-                percent = (loadedLinks * 100)/totalLinks
-                remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
-                dialogWait.update(percent,'[B]Will load instantly from now on.[/B]',remaining_display)
-                if (dialogWait.iscanceled()):
-                        return False   
-        dialogWait.close()
-        del dialogWait
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xc3\xa9','e').replace('&#8211;','-').replace('\xc3\xa7\xc3\xa3','c').replace('\xc3\xad','i')
-        match = re.findall('href="https://docs.google.com/file/([^"]*)" target="_blank">([^"]*)</a>',link)
-        dialogWait = xbmcgui.DialogProgress()
-        ret = dialogWait.create('Episodes loaded.')
-        totalLinks = len(match)
-        loadedLinks = 0
-        remaining_display = 'Episodes Loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
-        dialogWait.update(0, '[B]Will load instantly from now on.[/B]',remaining_display)
-        for url,name in match:
+                #main.addPlayL(title + '   ' + name,url,150,'','','','','','')
+                main.addDown2("[COLOR blue]"+name+"[/COLOR]",url,150,'','')
+                
+        match2 = re.findall('href="https://docs.google.com/file/([^"]*)" target="_blank">([^"]*)</a>',link)
+        for url,name in match2:
                 name=name.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xc3\xa9','e').replace('&#8211;','-')
                 url = 'https://docs.google.com/file/' + url
-                main.addPlayL(name,url,150,'','','','','','')
-                #main.addDownLink(name,url,150,'','')
-                loadedLinks = loadedLinks + 1
-                percent = (loadedLinks * 100)/totalLinks
-                remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
-                dialogWait.update(percent,'[B]Will load instantly from now on.[/B]',remaining_display)
-                if (dialogWait.iscanceled()):
-                        return False   
-        dialogWait.close()
-        del dialogWait
-
+                main.addDown2("[COLOR blue]"+name.strip()+"[/COLOR]",url,150,'','')
+                #main.addPlayL(name,url,150,'','','','','','')
+                
 def CatDex(url):
         link=main.OPENURL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xc3\xa9','e').replace('\xc3\xb3','o').replace('&#8211;','-').replace('\xc3\xa7\xc3\xa3','c').replace('\xc3\xad','i').replace('\xc2\xaa','').replace('&#8217;',"'")
@@ -260,7 +231,7 @@ def Play(name,url):
         ok=True
         namelist=[]
         urllist=[]
-        infoLabels =main.GETMETAT('','','','')
+        infoLabels =main.GETMETAT(name,'','','')
         video_type='movie'
         season=''
         episode=''
@@ -316,7 +287,7 @@ def PlayB(name,url):
         ok=True
         namelist=[]
         urllist=[]
-        infoLabels =main.GETMETAT('','','','')
+        infoLabels =main.GETMETAT(name,'','','')
         video_type='show'
         season=''
         episode=''

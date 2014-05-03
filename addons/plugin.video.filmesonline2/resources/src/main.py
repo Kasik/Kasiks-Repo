@@ -1,20 +1,21 @@
-import urllib,re,string,sys,os
+import urllib,urllib2,re,string,sys,os
 import xbmc, xbmcgui, xbmcaddon, xbmcplugin
 import time,threading
+
 #Filmesonline2 - by Kasik 2013.
 
 addon_id = 'plugin.video.filmesonline2'
 selfAddon = xbmcaddon.Addon(id=addon_id)
-fimesonline2path = selfAddon.getAddonInfo('path')
+filmesonline2path = selfAddon.getAddonInfo('path')
 grab = None
 fav = False
 hostlist = None
 Dir = xbmc.translatePath(os.path.join('special://home/addons/plugin.video.filmesonline2', ''))
 datapath = xbmc.translatePath(selfAddon.getAddonInfo('profile'))
-hosts = 'googledocs'
+hosts = 'putlocker,firedrive,sockshare,billionuploads,hugefiles,mightyupload,movreel,lemuploads,180upload,megarelease,filenuke,flashx,gorillavid,bayfiles,veehd,vidto,mailru,videomega,epicshare,bayfiles,2gbhosting,alldebrid,allmyvideos,vidspot,castamp,cheesestream,clicktoview,crunchyroll,cyberlocker,daclips,dailymotion,divxstage,donevideo,ecostream,entroupload,facebook,filebox,hostingbulk,hostingcup,jumbofiles,limevideo,movdivx,movpod,movshare,movzap,muchshare,nolimitvideo,nosvideo,novamov,nowvideo,ovfile,play44_net,played,playwire,premiumize_me,primeshare,promptfile,purevid,rapidvideo,realdebrid,rpnet,seeon,sharefiles,sharerepo,sharesix,skyload,stagevu,stream2k,streamcloud,thefile,tubeplus,tunepk,ufliq,upbulk,uploadc,uploadcrazynet,veoh,vidbull,vidcrazynet,video44,videobb,videofun,videotanker,videoweed,videozed,videozer,vidhog,vidpe,vidplay,vidstream,vidup,vidx,vidxden,vidzur,vimeo,vureel,watchfreeinhd,xvidstage,yourupload,youtube,youwatch,zalaa,zooupload,zshare'
 
-VERSION = "0.1.0"
-PATH = "Filmesonline2-"            
+VERSION = "0.1.1"
+PATH = "Filmesonline2-"  
 
 
 try:
@@ -33,17 +34,28 @@ except:
 
 sys.path.append( os.path.join( selfAddon.getAddonInfo('path'), 'resources', 'libs' ))
 ################################################################################ Common Calls ##########################################################################################################
-fanartimage='None'
-art = xbmc.translatePath('special://home/addons/plugin.video.filmesonline2/resources/src/art/')
+art = xbmc.translatePath('special://home/addons/plugin.video.filmesonline2/resources/art/')
+fanartimage=Dir+'fanart2.jpg'
+elogo = xbmc.translatePath('special://home/addons/plugin.video.filmesonline2/resources/art/bigx.jpg')
+slogo = xbmc.translatePath('special://home/addons/plugin.video.filmesonline2/resources/art/smallicon.png')
 
-elogo = xbmc.translatePath('special://home/addons/plugin.video.filmesonline2/resources/src/art/bigx.png')
-slogo = xbmc.translatePath('special://home/addons/plugin.video.filmesonline2/resources/src/art/smallicon.png')
+def OPEN_URL(url):
+    req = urllib2.Request(url)
+    req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+    #req.add_header('Referer', '')
 
-def OPENURL(url, mobile = False, q = False, verbose = True, timeout = 5, cookie = None, data = None, cookiejar = False):
+    response = urllib2.urlopen(req)
+    link=response.read().replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&player=2','').replace("",'').replace('\xe2\x80\x99',"'").replace('\xe2\x80\x93','-')
+    response.close()
+    return link
+
+
+def OPENURL(url, mobile = False, q = False, verbose = True, timeout = 10, cookie = None, data = None, cookiejar = False, log = True, headers = [], type = ''):
     import urllib2 
     UserAgent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3'
     try:
-        print "Openurl = " + url
+        if log:
+            print "Openurl = " + url
         if cookie and not cookiejar:
             import cookielib
             cookie_file = os.path.join(os.path.join(datapath,'Cookies'), cookie+'.cookies')
@@ -63,8 +75,15 @@ def OPENURL(url, mobile = False, q = False, verbose = True, timeout = 5, cookie 
             opener.addheaders = [('User-Agent', 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7')]
         else:
             opener.addheaders = [('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')]
+        for header in headers:
+            opener.addheaders.append(header)
         if data:
-            response = opener.open(url, urllib.urlencode(data), timeout)
+            if type == 'json': 
+                import json
+                data = json.dumps(data)
+                opener.addheaders.append(('Content-Type', 'application/json'))
+            else: data = urllib.urlencode(data)
+            response = opener.open(url, data, timeout)
         else:
             response = opener.open(url, timeout=timeout)
         if cookie and not cookiejar:
@@ -77,9 +96,12 @@ def OPENURL(url, mobile = False, q = False, verbose = True, timeout = 5, cookie 
         link=link.replace('%3A',':').replace('%2F','/')
         if q: q.put(link)
         return link
-    except:
+    except Exception as e:
         if verbose:
             xbmc.executebuiltin("XBMC.Notification(Sorry!,Source Website is Down,3000,"+elogo+")")
+        xbmc.log('***********Website Error: '+str(e)+'**************', xbmc.LOGERROR)
+        import traceback
+        traceback.print_exc()
         link ='website down'
         if q: q.put(link)
         return link
@@ -132,6 +154,12 @@ def setGrab():
         from metahandler import metahandlers
         grab = metahandlers.MetaData()
         
+def getFav():
+    global fav
+    if not fav:
+        from resources.universal import favorites
+        fav = favorites.Favorites(addon_id, sys.argv)
+    return fav
 
 def getRDHosts():
     CachePath = os.path.join(datapath,'Cache')
@@ -177,9 +205,9 @@ def SwitchUp():
     xbmc.executebuiltin("XBMC.Container.Refresh")
 
 def ErrorReport(e):
-    elogo = xbmc.translatePath('special://home/addons/plugin.video.FilmesOnline2/resources/art/bigx.png')
-    xbmc.executebuiltin("XBMC.Notification([COLOR=FF67cc33]FilmesOnline2 Error[/COLOR],"+str(e)+",10000,"+elogo+")")
-    xbmc.log('***********FilmesOnline2 Error: '+str(e)+'**************', xbmc.LOGERROR)
+    elogo = xbmc.translatePath('special://home/addons/plugin.video.filmesonline2/resources/art/bigx.jpg')
+    xbmc.executebuiltin("XBMC.Notification([COLOR=FF67cc33]Filmesonline2 Error[/COLOR],"+str(e)+",10000,"+elogo+")")
+    xbmc.log('***********Filmesonline2 Error: '+str(e)+'**************', xbmc.LOGERROR)
         
 def CloseAllDialogs():
     xbmc.executebuiltin("XBMC.Dialog.Close(all,true)")
@@ -262,7 +290,7 @@ def downloadFile(url,dest,silent = False,cookie = None):
         main.ErrorReport(e)
         if not silent:
             dialog = xbmcgui.Dialog()
-            dialog.ok("FilmesOnline2", "Report the error below at " + supportsite, str(e), "We will try our best to help you")
+            dialog.ok("Filmesonline2", "Report the error below at " + supportsite, str(e), "We will try our best to help you")
         return False
             
 def updateSearchFile(searchQuery,searchType,defaultValue = '###',searchMsg = ''):
@@ -272,7 +300,7 @@ def updateSearchFile(searchQuery,searchType,defaultValue = '###',searchMsg = '')
         searchHistoryFile = "SearchHistoryTv"
         if not searchMsg: searchMsg = 'Search For TV Shows' 
     else:
-        searchHistoryFile = "SearchHistory25"
+        searchHistoryFile = "SearchHistoryMV"
         if not searchMsg: searchMsg = 'Search For Movies' 
     SearchFile=os.path.join(searchpath,searchHistoryFile)
     searchQuery=urllib.unquote(searchQuery)
@@ -317,7 +345,29 @@ def updateSearchFile(searchQuery,searchType,defaultValue = '###',searchMsg = '')
 def supportedHost(host):
     if 'ul' == host: host = 'uploaded'
     return host.lower() in getHostList()
-
+######################################################################## Live Stream do Regex ############################################################
+def doRegex(murl):
+    #rname=rname.replace('><','').replace('>','').replace('<','')
+    import urllib2
+    url=re.compile('([^<]+)<regex>',re.DOTALL).findall(murl)[0]
+    doRegexs = re.compile('\$doregex\[([^\]]*)\]').findall(url)
+    for k in doRegexs:
+        if k in murl:
+            regex=re.compile('<name>'+k+'</name><expres>(.+?)</expres><page>(.+?)</page><referer>(.+?)</referer></regex>',re.DOTALL).search(murl)
+            referer=regex.group(3)
+            if referer=='':
+                referer=regex.group(2)
+            req = urllib2.Request(regex.group(2))
+            req.add_header('User-Agent','Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:10.0a1) Gecko/20111029 Firefox/10.0a1')
+            req.add_header('Referer',referer)
+            response = urllib2.urlopen(req)
+            link=response.read()
+            response.close()
+            link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\/','/')
+            r=re.compile(regex.group(1),re.DOTALL).findall(link)[0]
+            url = url.replace("$doregex[" + k + "]", r)
+   
+    return url
     
 ################################################################################ AutoView ##########################################################################################################
 
@@ -694,9 +744,9 @@ def resolveDownloadLinks(url):
         name=name.split('[COLOR red]')[0]
         name=name.replace('/','').replace('.','')
         url=GetUrliW(url)
-    elif re.search('FilmesOnline2',url):
-        from resources.libs import FilmesOnline2
-        url = FilmesOnline2.resolveM25URL(url)
+    elif re.search('Filmesonline2',url):
+        from resources.libs import Filmesonline2
+        url = Filmesonline2.resolveM25URL(url)
     elif url.startswith('ice'):
         from resources.libs.movies_tv import icefilms
         url = url.lstrip('ice')
@@ -787,7 +837,7 @@ def QuietDownload(url, dest,originalName, videoname):
     # get notify value from settings
     NotifyPercent=int(selfAddon.getSetting('notify-percent'))
     
-    script = os.path.join( fimesonline2path, 'resources', 'libs', "DownloadInBackground.py" )
+    script = os.path.join( filmesonline2path, 'resources', 'libs', "DownloadInBackground.py" )
     xbmc.executebuiltin( "RunScript(%s, %s, %s, %s, %s, %s)" % ( script, q_url, q_dest, q_vidname,q_vidOname, str(notifyValues[NotifyPercent]) ) )
     return True
  
@@ -892,7 +942,6 @@ def addDirX(name,url,mode,iconimage,plot='',fanart='',dur=0,genre='',year='',imd
         Commands.append(('Download with jDownloader', 'XBMC.RunPlugin(%s?mode=776&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
   
     if searchMeta:
-        Commands.append(('[B]Super Search [COLOR=FF67cc33]Me[/COLOR][/B]','XBMC.Container.Update(%s?mode=21&name=%s&url=%s)'% (sys.argv[0], urllib.quote_plus(name),'###')))
         if metaType == 'TV' and selfAddon.getSetting("meta-view-tv") == "true":
             xbmcplugin.setContent(int(sys.argv[1]), 'episodes')
             cname = infoLabels['title']
@@ -925,9 +974,7 @@ def addDirX(name,url,mode,iconimage,plot='',fanart='',dur=0,genre='',year='',imd
     else:
         infoLabels={ "Title": name, "Plot": plot, "Duration": dur, "Year": year ,"Genre": genre,"OriginalTitle" : removeColoredText(name) }
     if id != None: infoLabels["count"] = id
-    Commands.append(('Watch History','XBMC.Container.Update(%s?name=None&mode=222&url=None&iconimage=None)'% (sys.argv[0])))
-    Commands.append(('[B][COLOR=FF67cc33]FilmesOnline2[/COLOR] Settings[/B]','XBMC.RunScript('+xbmc.translatePath(fimesonline2path + '/resources/libs/settings.py')+')'))
-    Commands.append(("My Fav's",'XBMC.Container.Update(%s?name=None&mode=639&url=None&iconimage=None)'% (sys.argv[0])))
+    Commands.append(('[B][COLOR=FF67cc33]Filmesonline2[/COLOR] Settings[/B]','XBMC.RunScript('+xbmc.translatePath(filmesonline2path + '/resources/libs/settings.py')+')'))
     if menuItemPos != None:
         for mi in reversed(menuItems):
             Commands.insert(menuItemPos,mi)
@@ -1030,8 +1077,8 @@ def addLink(name,url,iconimage):
     liz.setProperty('fanart_image', fanartimage)
     return xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=url,listitem=liz)
 
-def addDir(name,url,mode,iconimage,plot=''):
-    return addDirX(name,url,mode,iconimage,plot,addToFavs=0,replaceItems=False)
+def addDir(name,url,mode,iconimage,plot='',fanart=''):
+    return addDirX(name,url,mode,iconimage,plot,fanart,addToFavs=0,replaceItems=False)
 
 def addDirHome(name,url,mode,iconimage):
     return addDirX(name,url,mode,iconimage,addToFavs=0)
@@ -1064,9 +1111,9 @@ def addDown4(name,url,mode,iconimage,plot,fanart,dur,genre,year):
                        fav_t='Movies',fav_addon_t='Movie',down=not f)
 
 def addInfo(name,url,mode,iconimage,genre,year):
-#     mi = [('Search FilmesOnline2','XBMC.Container.Update(%s?mode=4&url=%s)'% (sys.argv[0],'###'))]
-#     return addDirX(name,url,mode,iconimage,'','','',genre,year,searchMeta=1,fav_t='Movies',fav_addon_t='FilmesOnline2',menuItemPos=0,menuItems=mi)
-    return addDirX(name,url,mode,iconimage,'','','',genre,year,searchMeta=1,fav_t='Movies',fav_addon_t='FilmesOnline2')
+#     mi = [('Search Filmesonline2','XBMC.Container.Update(%s?mode=4&url=%s)'% (sys.argv[0],'###'))]
+#     return addDirX(name,url,mode,iconimage,'','','',genre,year,searchMeta=1,fav_t='Movies',fav_addon_t='Filmesonline2',menuItemPos=0,menuItems=mi)
+    return addDirX(name,url,mode,iconimage,'','','',genre,year,searchMeta=1,fav_t='Movies',fav_addon_t='Filmesonline2')
 
 def addDirIWO(name,url,mode,iconimage,plot,fanart,dur,genre,year):
     return addDirX(name,url,mode,iconimage,plot,fanart,dur,genre,year,searchMeta=1,fav_t='Movies',fav_addon_t='iWatchOnline')
