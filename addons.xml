@@ -116,7 +116,7 @@
 
 <addon id="plugin.video.playvid"
        name="PlayVid.com (Adult Content)"
-       version="0.2"
+       version="0.3"
        provider-name="Kasik">
   <requires>
         <import addon="xbmc.python" version="2.1.0"/>

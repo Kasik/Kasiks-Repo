@@ -3,3 +3,6 @@ Initial Release
 
 [B]Version 0.2[/B]
 Partial Fix, Some Features Are Not Working!!
+
+[B]Version 0.3[/B]
+Code reflected to mobile version of site
