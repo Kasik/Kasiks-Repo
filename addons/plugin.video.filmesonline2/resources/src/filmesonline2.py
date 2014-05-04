@@ -1,11 +1,8 @@
-import urllib,urllib2,re,cookielib, urlresolver,sys,os
+import urllib,re,sys,os
 import xbmc, xbmcgui, xbmcaddon, xbmcplugin
 import main
-from t0mm0.common.addon import Addon
 from BeautifulSoup import BeautifulSoup
-from universal import playbackengine
-
-
+from t0mm0.common.addon import Addon
 ### FilmesOnline2.com  by Kasik. (2013) ###
 
 
@@ -269,6 +266,7 @@ def Play(name,url):
                                 stream_url2 = urllist[int(answer)]
                                 infoL={'Title': infoLabels['title'], 'Plot': infoLabels['plot'], 'Genre': infoLabels['genre']}
                                 # play with bookmark
+                                from resources.universal import playbackengine
                                 player = playbackengine.PlayWithoutQueueSupport(resolved_url=stream_url, addon_id=addon_id, video_type=video_type, title=str(infoLabels['title']),season=str(season), episode=str(episode), year=str(infoLabels['year']),img=img,infolabels=infoL, watchedCallbackwithParams=main.WatchedCallbackwithParams,imdb_id=imdb_id)
                                 #WatchHistory
                                 #if selfAddon.getSetting("whistory") == "true":
@@ -321,6 +319,7 @@ def PlayB(name,url):
                                 stream_url2 = urllist[int(answer)]
                                 infoL={'Title': infoLabels['title'], 'Plot': infoLabels['plot'], 'Genre': infoLabels['genre']}
                                 # play with bookmark
+                                from resources.universal import playbackengine
                                 player = playbackengine.PlayWithoutQueueSupport(resolved_url=stream_url2, addon_id=addon_id, video_type=video_type, title=str(infoLabels
 ['title']),season=str(season), episode=str(episode), year=str(infoLabels['year']),img=img,infolabels=infoL, 
 watchedCallbackwithParams=main.WatchedCallbackwithParams,imdb_id=imdb_id)

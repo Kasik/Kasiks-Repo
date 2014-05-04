@@ -34,10 +34,10 @@ except:
 
 sys.path.append( os.path.join( selfAddon.getAddonInfo('path'), 'resources', 'libs' ))
 ################################################################################ Common Calls ##########################################################################################################
-art = xbmc.translatePath('special://home/addons/plugin.video.filmesonline2/resources/art/')
+art = xbmc.translatePath('special://home/addons/plugin.video.filmesonline2/resources/src/art/')
 fanartimage=Dir+'fanart2.jpg'
-elogo = xbmc.translatePath('special://home/addons/plugin.video.filmesonline2/resources/art/bigx.jpg')
-slogo = xbmc.translatePath('special://home/addons/plugin.video.filmesonline2/resources/art/smallicon.png')
+elogo = xbmc.translatePath('special://home/addons/plugin.video.filmesonline2/resources/src/art/bigx.jpg')
+slogo = xbmc.translatePath('special://home/addons/plugin.video.filmesonline2/resources/src/art/smallicon.png')
 
 def OPEN_URL(url):
     req = urllib2.Request(url)

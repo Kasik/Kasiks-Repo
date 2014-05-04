@@ -3,20 +3,18 @@ import urllib,urllib2,re,cookielib,string,urlparse,os,time,datetime,threading
 from BeautifulSoup import BeautifulSoup
 try:
     import urlresolver
-    from t0mm0.common.net import Net as net
+    from resources.src import main
+    from resources.src.scripts import settings
     from t0mm0.common.addon import Addon
-    from metahandler import metahandlers
-    
     
 except Exception, e:
     elogo = xbmc.translatePath('special://home/addons/plugin.video.filmesonline2/resources/art/sadface.png')
     dialog = xbmcgui.Dialog()
-    ok=dialog.ok('[B][COLOR=FF67cc33]TV Rule Import Error[/COLOR][/B]','Failed To Import Needed Modules',str(e),'Report missing Module at [COLOR=FF67cc33]Xbmchub.com[/COLOR] to Fix')
+    ok=dialog.ok('[B][COLOR=FF67cc33]TV Rule Import Error[/COLOR][/B]','Failed To Import Needed Modules',str(e),'Report missing Module at [COLOR=FF67cc33]Twitter @Kasik04a[/COLOR] to Fix')
     xbmc.log('Filmesonline2 ERROR - Importing Modules: '+str(e))
 
     
-from resources.src import main
-from resources.src.scripts import settings
+
     
 #Filmesonline2 - by Kasik 2013.
 
@@ -24,12 +22,10 @@ from resources.src.scripts import settings
 base_url ='http://www.filmesonline2.com/'
 addon_id = 'plugin.video.filmesonline2'
 selfAddon = xbmcaddon.Addon(id=addon_id)
-#grab = metahandlers.MetaData(preparezip = False)
-addon = Addon(addon_id)
 art = main.art
 
 
-
+############################################################################
 
 UpdatePath=os.path.join(main.datapath,'Update')
 try:
