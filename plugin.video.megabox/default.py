@@ -200,22 +200,21 @@ def TextBoxes(heading,anounce):
 
 
 def get_params():
-        param=[]
-        paramstring=sys.argv[2]
-        if len(paramstring)>=2:
-                params=sys.argv[2]
-                cleanedparams=params.replace('?','')
-                if (params[len(params)-1]=='/'):
-                        params=params[0:len(params)-2]
-                pairsofparams=cleanedparams.split('&')
-                param={}
-                for i in range(len(pairsofparams)):
-                        splitparams={}
-                        splitparams=pairsofparams[i].split('=')
-                        if (len(splitparams))==2:
-                                param[splitparams[0]]=splitparams[1]
-                                
-        return param
+    param=[]
+    paramstring=sys.argv[2]
+    if len(paramstring)>=2:
+        params=sys.argv[2]
+        cleanedparams=params.replace('?','')
+        if (params[len(params)-1]=='/'):
+            params=params[0:len(params)-2]
+        pairsofparams=cleanedparams.split('&')
+        param={}
+        for i in range(len(pairsofparams)):
+            splitparams={}
+            splitparams=pairsofparams[i].split('=')
+            if (len(splitparams))==2:
+                param[splitparams[0]]=splitparams[1]
+    return param
               
 params=get_params()
 
@@ -232,69 +231,44 @@ episode=None
 location=None
 path=None
 
-
+try: name=urllib.unquote_plus(params["name"])
+except: pass
+try: url=urllib.unquote_plus(params["url"])
+except: pass
+try: mode=int(params["mode"])
+except: pass
 try:
-        name=urllib.unquote_plus(params["name"])
-except:
-        pass
-
+    iconimage=urllib.unquote_plus(params["iconimage"])
+    iconimage = iconimage.replace(' ','%20')
+except: pass
+try: plot=urllib.unquote_plus(params["plot"])
+except: pass
 try:
-        
-        url=urllib.unquote_plus(params["url"])
-        
-except:
-        pass
-
-try:
-        mode=int(params["mode"])
-except:
-        pass
-
-try:
-        iconimage=urllib.unquote_plus(params["iconimage"])
-        iconimage = iconimage.replace(' ','%20')
-except:
-        pass
-try:
-        plot=urllib.unquote_plus(params["plot"])
-except:
-        pass
-try:
-        fanart=urllib.unquote_plus(params["fanart"])
-        fanart = fanart.replace(' ','%20')
-except:
-        pass
-
-try:
-        genre=urllib.unquote_plus(params["genre"])
-except:
-        pass
-
-try:
-        title=urllib.unquote_plus(params["title"])
-except:
-        pass
-try:
-        episode=int(params["episode"])
-except:
-        pass
-try:
-        season=int(params["season"])
-except:
-        pass
-try:
-        location=urllib.unquote_plus(params["location"])
-except:
-        pass
-try:
-        path=urllib.unquote_plus(params["path"])
-except:
-        pass
+    fanart=urllib.unquote_plus(params["fanart"])
+    fanart = fanart.replace(' ','%20')
+except: pass
+try: genre=urllib.unquote_plus(params["genre"])
+except: pass
+try: title=urllib.unquote_plus(params["title"])
+except: pass
+try: episode=int(params["episode"])
+except: pass
+try: season=int(params["season"])
+except: pass
+try: location=urllib.unquote_plus(params["location"])
+except: pass
+try: path=urllib.unquote_plus(params["path"])
+except: pass
 
 print "Mode: "+str(mode)
 print "URL: "+str(url)
 print "Name: "+str(name)
 print "Thumb: "+str(iconimage)
+
+
+
+
+
 
 if mode==None or url==None or len(url)<1:
         MAIN()

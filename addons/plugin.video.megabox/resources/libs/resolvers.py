@@ -1,3 +1,4 @@
+# -*- coding: cp1252 -*-
 import urllib,urllib2,re,cookielib,string,os
 import xbmc, xbmcgui, xbmcaddon, xbmcplugin
 from t0mm0.common.net import Net as net
@@ -9,10 +10,10 @@ elogo = xbmc.translatePath('special://home/addons/plugin.video.megabox/resources
 
 class ResolverError(Exception):
     def __init__(self, value, value2):
-        self.value = value
-        self.value2 = value2
+        value = value
+        value2 = value2
     def __str__(self):
-        return repr(self.value,self.value2)
+        return repr(value,value2)
 
 def resolve_url(url, filename = False):
     stream_url = False
@@ -20,6 +21,7 @@ def resolve_url(url, filename = False):
         try:
             url = url.split('"')[0]
             match = re.search('xoxv(.+?)xoxe(.+?)xoxc',url)
+            print "host "+url
             if(match):
                 import urlresolver
                 source = urlresolver.HostedMediaFile(host=match.group(1), media_id=match.group(2))
@@ -45,11 +47,37 @@ def resolve_url(url, filename = False):
                 stream_url=resolve_megarelease(url)
             elif re.search('movreel',url,re.I):
                 stream_url=resolve_movreel(url)
+            elif re.search('bayfiles',url,re.I):
+                stream_url=resolve_bayfiles(url)
+            elif re.search('nowvideo',url,re.I):
+                stream_url=resolve_nowvideo(url)
+            elif re.search('novamov',url,re.I):
+                stream_url=resolve_novamov(url)
+            elif re.search('vidspot',url,re.I):
+                stream_url=resolve_vidspot(url)
+            elif re.search('videomega',url,re.I):
+                stream_url=resolve_videomega(url)
+            elif re.search('youwatch',url,re.I):
+                stream_url=resolve_youwatch(url)
+            elif re.search('vk.com',url,re.I):
+                stream_url=resolve_VK(url)
+            elif re.search('(?i)(firedrive|putlocker)',url):
+                stream_url=resolve_firedrive(url)               
+            elif re.search('project-free-upload',url,re.I):
+                stream_url=resolve_projectfreeupload(url)
+            elif re.search('yify.tv',url,re.I):
+                stream_url=resolve_yify(url)
+            elif re.search('mail.ru',url,re.I):
+                stream_url=resolve_mailru(url)
             elif re.search('youtube',url,re.I):
-                url=url.split('watch?v=')[1]
+                try:url=url.split('watch?v=')[1]
+                except:
+                    try:url=url.split('com/v/')[1]
+                    except:url=url.split('com/embed/')[1]
                 stream_url='plugin://plugin.video.youtube/?action=play_video&videoid=' +url
             else:
                 import urlresolver
+                print "host "+url
                 source = urlresolver.HostedMediaFile(url)
                 if source:
                     stream_url = source.resolve()
@@ -65,7 +93,7 @@ def resolve_url(url, filename = False):
                 pass
         except ResolverError as e:
             #logerror(str(e))
-            #showpopup('[COLOR=FF67cc33]MegaBox URLresolver Error[/COLOR] ' + e.value2,'[B][COLOR red]'+e.value+'[/COLOR][/B]',5000, elogo)
+            #showpopup('[COLOR=FF67cc33]Megabox URLresolver Error[/COLOR] ' + e.value2,'[B][COLOR red]'+e.value+'[/COLOR][/B]',5000, elogo)
             try:
                 import urlresolver
                 source = urlresolver.HostedMediaFile(url)
@@ -76,16 +104,16 @@ def resolve_url(url, filename = False):
                         stream_url = False
             except Exception as e:
                 logerror(str(e))
-                showpopup('[COLOR=FF67cc33]MegaBox URLresolver Error[/COLOR]','[B][COLOR red]'+str(e)+'[/COLOR][/B]',5000, elogo)
+                showpopup('[COLOR=FF67cc33]Megabox URLresolver Error[/COLOR]','[B][COLOR red]'+str(e)+'[/COLOR][/B]',5000, elogo)
         except Exception as e:
             logerror(str(e))
-            showpopup('[COLOR=FF67cc33]MegaBox URLresolver Error[/COLOR]','[B][COLOR red]'+str(e)+'[/COLOR][/B]',5000, elogo)
+            showpopup('[COLOR=FF67cc33]Megabox URLresolver Error[/COLOR]','[B][COLOR red]'+str(e)+'[/COLOR][/B]',5000, elogo)
     else:
         logerror("video url not valid")
-        showpopup('[COLOR=FF67cc33]MegaBox URLresolver Error[/COLOR]','[B][COLOR red]video url not valid[/COLOR][/B]',5000, elogo)
+        showpopup('[COLOR=FF67cc33]Megabox URLresolver Error[/COLOR]','[B][COLOR red]video url not valid[/COLOR][/B]',5000, elogo)
     if stream_url and re.search('\.(zip|rar|7zip)$',stream_url,re.I):
         logerror("video url found is an archive")
-        showpopup('[COLOR=FF67cc33]MegaBox URLresolver Error[/COLOR]','[B][COLOR red]video url found is an archive[/COLOR][/B]',5000, elogo)
+        showpopup('[COLOR=FF67cc33]Megabox URLresolver Error[/COLOR]','[B][COLOR red]video url found is an archive[/COLOR][/B]',5000, elogo)
         return False
     return stream_url
 
@@ -133,6 +161,347 @@ def grab_cloudflare(url):
 
     return response
 
+def millis():
+      import time as time_
+      return int(round(time_.time() * 1000))
+    
+def load_json(data):
+      def to_utf8(dct):
+            rdct = {}
+            for k, v in dct.items() :
+                  if isinstance(v, (str, unicode)) :
+                        rdct[k] = v.encode('utf8', 'ignore')
+                  else :
+                        rdct[k] = v
+            return rdct
+      try :        
+            from lib import simplejson
+            json_data = simplejson.loads(data, object_hook=to_utf8)
+            return json_data
+      except:
+            try:
+                  import json
+                  json_data = json.loads(data, object_hook=to_utf8)
+                  return json_data
+            except:
+                  import sys
+                  for line in sys.exc_info():
+                        print "%s" % line
+      return None
+
+
+def resolve_firedrive(url):
+    try:
+        url=url.replace('putlocker.com','firedrive.com').replace('putlocker.to','firedrive.com')
+        dialog = xbmcgui.DialogProgress()
+        dialog.create('Resolving', 'Resolving MashUp Firedrive Link...')       
+        dialog.update(0)
+        print 'MashUp Firedrive - Requesting GET URL: %s' % url
+        html = net().http_GET(url).content
+        dialog.update(50)
+        if dialog.iscanceled(): return None
+        post_data = {}
+        r = re.findall(r'(?i)<input type="hidden" name="(.+?)" value="(.+?)"', html)
+        for name, value in r:
+            post_data[name] = value
+        post_data['referer'] = url
+        html = net().http_POST(url, post_data).content
+        embed=re.findall('(?sim)href="([^"]+?)">Download file</a>',html)
+        if not embed:
+            embed=re.findall('(?sim)href="(http://dl.firedrive.com[^"]+?)"',html)
+        if dialog.iscanceled(): return None
+        if embed:
+            dialog.update(100)
+            return embed[0]
+        else:
+            logerror('Megabox: Resolve Firedrive - File Not Found')
+            xbmc.executebuiltin("XBMC.Notification(File Not Found,Firedrive,2000)")
+            return False
+    except Exception, e:
+        logerror('**** Firedrive Error occured: %s' % e)
+        xbmc.executebuiltin('[B][COLOR white]Firedrive[/COLOR][/B]','[COLOR red]%s[/COLOR]' % e, 5000, elogo)
+
+       
+        
+def resolve_bayfiles(url):
+    try:
+        dialog = xbmcgui.DialogProgress()
+        dialog.create('Resolving', 'Resolving MashUp Bayfiles Link...')       
+        dialog.update(0)
+        print 'MashUp Bayfiles - Requesting GET URL: %s' % url
+        html = net().http_GET(url).content
+        try: vfid = re.compile('var vfid = ([^;]+);').findall(html)[0]
+        except:pass
+        try:urlpremium='http://'+ re.compile('<a class="highlighted-btn" href="http://(.+?)">Premium Download</a>').findall(html)[0]
+        except:urlpremium=[]
+        if urlpremium:
+                return urlpremium
+        else:
+                try:
+                    delay = re.compile('var delay = ([^;]+);').findall(html)[0]
+                    delay = int(delay)
+                except: delay = 300
+                t = millis()
+                html2 = net().http_GET("http://bayfiles.net/ajax_download?_=%s&action=startTimer&vfid=%s"%(t,vfid)).content
+                datajson=load_json(html2)
+                if datajson['set']==True:
+                    token=datajson['token']
+                    url_ajax = 'http://bayfiles.net/ajax_download'
+                    post = "action=getLink&vfid=%s&token=%s" %(vfid,token)
+                    finaldata=net().http_GET(url_ajax + '?' + post).content
+                    patron = 'onclick="javascript:window.location.href = \'(.+?)\''
+                    matches = re.compile(patron,re.DOTALL).findall(finaldata)
+                    return matches[0] #final url mp4
+    except:
+        html = net().http_GET(url).content
+        try:
+                match2=re.compile('<div id="content-inner">\n\t\t\t\t<center><strong style="color:#B22B13;">Your IP (.+?) has recently downloaded a file. Upgrade to premium or wait (.+?) min.</strong>').findall(html)[0]
+                raise ResolverError('You recently downloaded a file. Upgrade to premium or wait',"Bayfiles")
+                return
+        except:
+                match3=re.compile('<div id="content-inner">\n\t\t\t\t<center><strong style="color:#B22B13;">Your IP (.+?) is already downloading. Upgrade to premium or wait.</strong>').findall(html)
+                raise ResolverError('You are already downloading. Upgrade to premium or wait.',"Bayfiles")
+                return
+
+def resolve_mailru(url):
+    try:
+        dialog = xbmcgui.DialogProgress()
+        dialog.create('Resolving', 'Resolving MashUp MailRU Link...')       
+        dialog.update(0)
+        print 'MashUp MailRU - Requesting GET URL: %s' % url
+        link = net().http_GET(url).content
+        match=re.compile('videoSrc = "(.+?)",',re.DOTALL).findall(link)
+        cj = cookielib.CookieJar()
+        opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj), urllib2.HTTPHandler())
+        req = urllib2.Request(url)
+        f = opener.open(req)
+        html = f.read()
+        for cookie in cj:
+            cookie=str(cookie)
+
+        rcookie=cookie.replace('<Cookie ','').replace(' for .video.mail.ru/>','')
+
+        vlink=match[0]+'&Cookie='+rcookie
+        return vlink
+    except Exception, e:
+        logerror('**** MailRU Error occured: %s' % e)
+        xbmc.executebuiltin('[B][COLOR white]MailRU[/COLOR][/B]','[COLOR red]%s[/COLOR]' % e, 5000, elogo)
+
+
+def resolve_yify(url):
+    try:
+        dialog = xbmcgui.DialogProgress()
+        dialog.create('Resolving', 'Resolving MashUp Yify Link...')       
+        dialog.update(0)
+        print 'MashUp Yify - Requesting GET URL: %s' % url
+        html = net().http_GET(url).content
+        url = re.compile('showPkPlayer[(]"(.+?)"[)]').findall(html)[0]
+        url = 'http://yify.tv/reproductor2/pk/pk/plugins/player_p.php?url=https%3A//picasaweb.google.com/' + url
+        html = net().http_GET(url).content
+        html = re.compile('{(.+?)}').findall(html)[-1]
+        stream_url = re.compile('"url":"(.+?)"').findall(html)[0]
+        return stream_url
+    except Exception, e:
+        logerror('**** Yify Error occured: %s' % e)
+        xbmc.executebuiltin('[B][COLOR white]Yify[/COLOR][/B]','[COLOR red]%s[/COLOR]' % e, 5000, elogo)
+
+
+def resolve_VK(url):
+    try:
+        dialog = xbmcgui.DialogProgress()
+        dialog.create('Resolving', 'Resolving MashUp VK Link...')       
+        dialog.update(0)
+        print 'MashUp VK - Requesting GET URL: %s' % url
+        useragent='Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7'
+        link2 = net(user_agent=useragent).http_GET(url).content
+        if re.search('This video has been removed', link2, re.I):
+            logerror('***** MashUp VK - This video has been removed')
+            xbmc.executebuiltin("XBMC.Notification(This video has been removed,VK,2000)")
+            return Fals
+        urllist=[]
+        quaList=[]
+        match=re.findall('(?sim)<source src="([^"]+)"',link2)
+        for url in match:
+            print url
+            urllist.append(url)
+            qua=re.findall('(?sim).(\d+).mp4',url)
+            quaList.append(str(qua[0]))
+        dialog2 = xbmcgui.Dialog()
+        ret = dialog2.select('[COLOR=FF67cc33][B]Select Quality[/COLOR][/B]',quaList)
+        if ret == -1:
+            return False
+        stream_url = urllist[ret]
+        if match: 
+            return stream_url.replace("\/",'/')
+    except Exception, e:
+        logerror('**** VK Error occured: %s' % e)
+        xbmc.executebuiltin('[B][COLOR white]VK[/COLOR][/B]','[COLOR red]%s[/COLOR]' % e, 5000, elogo)
+
+def resolve_youwatch(url):
+    try:
+        dialog = xbmcgui.DialogProgress()
+        dialog.create('Resolving', 'Resolving MashUp Youwatch Link...')       
+        dialog.update(0)
+        print 'MashUp Youwatch - Requesting GET URL: %s' % url
+        if 'embed' not in url:
+            mediaID = re.findall('http://youwatch.org/([^<]+)', url)[0]
+            url='http://youwatch.org/embed-'+mediaID+'.html'
+        else:url=url
+        html = net().http_GET(url).content
+        try:
+                html=html.replace('|','/')
+                stream=re.compile('/mp4/video/(.+?)/(.+?)/(.+?)/setup').findall(html)
+                for id,socket,server in stream:
+                    continue
+        except:
+                raise ResolverError('This file is not available on',"Youwatch")
+        stream_url='http://'+server+'.youwatch.org:'+socket+'/'+id+'/video.mp4?start=0'
+        return stream_url
+    except Exception, e:
+        logerror('**** Youwatch Error occured: %s' % e)
+        xbmc.executebuiltin('[B][COLOR white]Youwatch[/COLOR][/B]','[COLOR red]%s[/COLOR]' % e, 5000, elogo)
+
+
+def resolve_projectfreeupload(url):
+    try:
+        import jsunpack
+        dialog = xbmcgui.DialogProgress()
+        dialog.create('Resolving', 'Resolving MashUp Project Free Link...')       
+        dialog.update(0)
+        print 'MashUp Project Free - Requesting GET URL: %s' % url
+        html = net().http_GET(url).content
+        r = re.findall(r'\"hidden\"\sname=\"?(.+?)\"\svalue=\"?(.+?)\"\>', html, re.I)
+        post_data = {}
+        for name, value in r:
+            post_data[name] = value
+        post_data['referer'] = url
+        post_data['method_premium']=''
+        post_data['method_free']=''
+        html = net().http_POST(url, post_data).content
+        embed=re.findall('<IFRAME SRC="(.+?)"',html)
+        html = net().http_GET(embed[0]).content
+        r = re.findall(r'(eval\(function\(p,a,c,k,e,d\)\{while.+?)</script>',html,re.M|re.DOTALL)
+        try:unpack=jsunpack.unpack(r[1])
+        except:unpack=jsunpack.unpack(r[0])
+        stream_url=re.findall('<param name="src"value="(.+?)"/>',unpack)[0]
+        return stream_url
+        if dialog.iscanceled(): return None
+    except Exception, e:
+        logerror('**** Project Free Error occured: %s' % e)
+        xbmc.executebuiltin('[B][COLOR white]Project Free[/COLOR][/B]','[COLOR red]%s[/COLOR]' % e, 5000, elogo)
+
+def resolve_videomega(url):
+    try:
+        dialog = xbmcgui.DialogProgress()
+        dialog.create('Resolving', 'Resolving MashUp Videomega Link...')       
+        dialog.update(0)
+        print 'MashUp Videomega - Requesting GET URL: %s' % url
+        try:
+            mediaID = re.findall('http://videomega.tv/.?ref=([^<]+)', url)[0]
+            url='http://videomega.tv/iframe.php?ref='+mediaID
+        except:url=url
+        html = net().http_GET(url).content
+        try:
+                encodedurl=re.compile('unescape.+?"(.+?)"').findall(html)
+        except:
+                raise ResolverError('This file is not available on',"VideoMega")
+        url2=urllib.unquote(encodedurl[0])
+        stream_url=re.compile('file: "(.+?)"').findall(url2)[0]
+        return stream_url
+    except Exception, e:
+        logerror('**** Videomega Error occured: %s' % e)
+        xbmc.executebuiltin('[B][COLOR white]Videomega[/COLOR][/B]','[COLOR red]%s[/COLOR]' % e, 5000, elogo)
+    
+def resolve_vidspot(url):
+    try:
+        dialog = xbmcgui.DialogProgress()
+        dialog.create('Resolving', 'Resolving MashUp Vidspot Link...')       
+        dialog.update(0)
+        print 'MashUp Vidspot - Requesting GET URL: %s' % url
+        mediaID=re.findall('http://vidspot.net/([^<]+)',url)[0]
+        url='http://vidspot.net/embed-'+mediaID+'.html'
+        print url
+        html = net().http_GET(url).content
+        r = re.search('"file" : "(.+?)",', html)
+        if r:
+            stream_url = urllib.unquote(r.group(1))
+
+        return stream_url
+
+    except Exception, e:
+        logerror('**** Vidspot Error occured: %s' % e)
+        xbmc.executebuiltin('[B][COLOR white]Vidspot[/COLOR][/B]','[COLOR red]%s[/COLOR]' % e, 5000, elogo)
+
+    
+def resolve_novamov(url):
+        try:
+            import unwise
+            dialog = xbmcgui.DialogProgress()
+            dialog.create('Resolving', 'Resolving MashUp Novamov Link...')       
+            dialog.update(0)
+            print 'MashUp Novamov - Requesting GET URL: %s' % url
+            html = net().http_GET(url).content
+            html = unwise.unwise_process(html)
+            
+            filekey = unwise.resolve_var(html, "flashvars.filekey")
+            media_id=re.findall('.+?/video/([^<]+)',url)
+            #get stream url from api
+            api = 'http://www.novamov.com/api/player.api.php?key=%s&file=%s' % (filekey, media_id)
+            html = net().http_GET(api).content
+            r = re.search('url=(.+?)&title', html)
+            if r:
+                stream_url = urllib.unquote(r.group(1))
+            else:
+                r = re.search('file no longer exists',html)
+                if r:
+                    raise ResolverError('File Not Found or removed',"Novamov")
+                raise ResolverError('Failed to parse url',"Novamov")
+                
+            return stream_url
+        except urllib2.URLError, e:
+            logerror('Novamov: got http error %d fetching %s' %
+                                    (e.code, web_url))
+            return unresolvable(code=3, msg=e)
+        except Exception, e:
+            logerror('**** Novamov Error occured: %s' % e)
+            xbmc.executebuiltin('[B][COLOR white]Novamov[/COLOR][/B]','[COLOR red]%s[/COLOR]' % e, 5000, elogo)
+            return unresolvable(code=0, msg=e)
+
+def resolve_nowvideo(url):
+        try:
+            import unwise
+            dialog = xbmcgui.DialogProgress()
+            dialog.create('Resolving', 'Resolving MashUp Nowvideo Link...')       
+            dialog.update(0)
+            print 'MashUp Nowvideo - Requesting GET URL: %s' % url
+            html = net().http_GET(url).content
+            html = unwise.unwise_process(html)
+            
+            filekey = unwise.resolve_var(html, "flashvars.filekey")
+            try:media_id=re.findall('.+?/video/([^<]+)',url)[0]
+            except:media_id=re.findall('http://embed.nowvideo.+?/embed.php.?v=([^<]+)',url)[0]
+            #get stream url from api
+            api = 'http://www.nowvideo.sx/api/player.api.php?key=%s&file=%s' % (filekey, media_id)
+            html = net().http_GET(api).content
+            r = re.search('url=(.+?)&title', html)
+            if r:
+                stream_url = urllib.unquote(r.group(1))
+            else:
+                r = re.search('file no longer exists',html)
+                if r:
+                    raise ResolverError('File Not Found or removed',"Nowvideo")
+                raise ResolverError('Failed to parse url',"Nowvideo")
+                
+            return stream_url
+        except urllib2.URLError, e:
+            logerror('Nowvideo: got http error %d fetching %s' %
+                                    (e.code, web_url))
+            return unresolvable(code=3, msg=e)
+        except Exception, e:
+            logerror('**** Nowvideo Error occured: %s' % e)
+            xbmc.executebuiltin('[B][COLOR white]Nowvideo[/COLOR][/B]','[COLOR red]%s[/COLOR]' % e, 5000, elogo)
+            return unresolvable(code=0, msg=e)
+
 def resolve_movreel(url):
 
     try:
@@ -140,17 +509,17 @@ def resolve_movreel(url):
 
         #Show dialog box so user knows something is happening
         dialog = xbmcgui.DialogProgress()
-        dialog.create('Resolving', 'Resolving MegaBox Movreel Link...')       
+        dialog.create('Resolving', 'Resolving MashUp Movreel Link...')       
         dialog.update(0)
         
-        print 'MegaBox Movreel - Requesting GET URL: %s' % url
+        print 'MashUp Movreel - Requesting GET URL: %s' % url
         html = net().http_GET(url).content
         
         dialog.update(33)
         
         #Check page for any error msgs
         if re.search('This server is in maintenance mode', html):
-            logerror('***** MegaBox Movreel - Site reported maintenance mode')
+            logerror('***** MashUp Movreel - Site reported maintenance mode')
             xbmc.executebuiltin("XBMC.Notification(File is currently unavailable on the host,Movreel in maintenance,2000)")
 
         #Set POST data values
@@ -163,7 +532,7 @@ def resolve_movreel(url):
         rand = re.search('<input type="hidden" name="rand" value="(.+?)">', html).group(1)
         data = {'op': op, 'id': postid, 'referer': url, 'rand': rand, 'method_premium': method_premium}
         
-        print 'MegaBox Movreel - Requesting POST URL: %s DATA: %s' % (url, data)
+        print 'MashUp Movreel - Requesting POST URL: %s DATA: %s' % (url, data)
         html = net().http_POST(url, data).content
 
         #Only do next post if Free account, skip to last page for download link if Premium
@@ -184,10 +553,10 @@ def resolve_movreel(url):
                 for name, value in r:
                     data[name] = value
             else:
-                logerror('***** MegaBox Movreel - Cannot find data values')
+                logerror('***** MashUp Movreel - Cannot find data values')
                 xbmc.executebuiltin("XBMC.Notification(Unable to resolve Movreel Link,Movreel,2000)") 
 
-            print 'MegaBox Movreel - Requesting POST URL: %s DATA: %s' % (url, data)
+            print 'MashUp Movreel - Requesting POST URL: %s DATA: %s' % (url, data)
             html = net().http_POST(url, data).content
 
         #Get download link
@@ -199,7 +568,7 @@ def resolve_movreel(url):
             xbmc.executebuiltin("XBMC.Notification(Unable to find final link,Movreel,2000)")
 
     except Exception, e:
-        logerror('**** MegaBox Movreel Error occured: %s' % e)
+        logerror('**** Megabox Movreel Error occured: %s' % e)
         raise ResolverError(str(e),"Movreel")
     finally:
         dialog.close()
@@ -208,10 +577,10 @@ def resolve_megarelease(url):
     try:
         #Show dialog box so user knows something is happening
         dialog = xbmcgui.DialogProgress()
-        dialog.create('Resolving', 'Resolving MegaBox MegaRelease Link...')
+        dialog.create('Resolving', 'Resolving MashUp MegaRelease Link...')
         dialog.update(0)
         
-        print 'MegaRelease MegaBox - Requesting GET URL: %s' % url
+        print 'MegaRelease MashUp - Requesting GET URL: %s' % url
         html = net().http_GET(url).content
 
         dialog.update(50)
@@ -222,7 +591,7 @@ def resolve_megarelease(url):
             xbmc.executebuiltin("XBMC.Notification(File is currently unavailable,MegaRelease in maintenance,2000)")                                
             return False
         if re.search('<b>File Not Found</b>', html):
-            logerror('MegaBox: Resolve MegaRelease - File Not Found')
+            logerror('Megabox: Resolve MegaRelease - File Not Found')
             xbmc.executebuiltin("XBMC.Notification(File Not Found,MegaRelease,2000)")
             return False
 
@@ -247,7 +616,7 @@ def resolve_megarelease(url):
         return download_link
         
     except Exception, e:
-        logerror('**** MegaBox MegaRelease Error occured: %s' % e)
+        logerror('**** Megabox MegaRelease Error occured: %s' % e)
         raise ResolverError(str(e),"MegaRelease")
     finally:
         dialog.close()
@@ -257,10 +626,10 @@ def resolve_veehd(url):
     cookie_file = os.path.join(datapath, '%s.cookies' % name)
     user_agent='Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3'
     from random import choice
-    userName = ['MegaBox1', 'MegaBox3', 'MegaBox4', 'MegaBox5', 'MegaBox6', 'MegaBox7']
+    userName = ['mashup1', 'mashup3', 'mashup4', 'mashup5', 'mashup6', 'mashup7']
     try:
         dialog = xbmcgui.DialogProgress()
-        dialog.create('Resolving', 'Resolving MegaBox BillionUploads Link...')       
+        dialog.create('Resolving', 'Resolving Megabox VeeHD Link...')       
         dialog.update(0)
         loginurl = 'http://veehd.com/login'
         ref = 'http://veehd.com/'
@@ -275,7 +644,7 @@ def resolve_veehd(url):
         headers = {}
         headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) AppleWebKit/537.13+ (KHTML, like Gecko) Version/5.1.7 Safari/534.57.2'}
         net().set_cookies(cookie_file)
-        print 'MegaBox VeeHD - Requesting GET URL: %s' % url
+        print 'Megabox VeeHD - Requesting GET URL: %s' % url
         html = net().http_GET(url, headers).content
         if dialog.iscanceled(): return False
         dialog.update(66)
@@ -304,26 +673,25 @@ def resolve_veehd(url):
         dialog.update(100)
         return stream_url
     except Exception, e:
-        logerror('**** MegaBox VeeHD Error occured: %s' % e)
+        logerror('**** Megabox VeeHD Error occured: %s' % e)
         raise ResolverError(str(e),"VeeHD")
 
 def resolve_billionuploads(url, filename):
-    try:
+    try:        
         dialog = xbmcgui.DialogProgress()
-        dialog.create('Resolving', 'Resolving MegaBox BillionUploads Link...')
+        dialog.create('Resolving', 'Resolving Megabox BillionUploads Link...')  
         dialog.update(0)
-                                                                  
-        print 'MegaBox BillionUploads - Requesting GET URL: %s' % url
-        CookiesPath=os.path.join(datapath,'Cookies')
-        try: os.makedirs(CookiesPath)
-        except: pass
-        cookie_file = os.path.join(CookiesPath, 'billionuploads.cookies')
+        url = re.sub('(?i)^(.*?\.com/.+?)/.*','\\1',url)
+        print 'Megabox BillionUploads - Requesting GET URL: %s' % url
+                   
+        cookie_file = os.path.join(os.path.join(datapath,'Cookies'), 'billionuploads.cookies')
+        
         cj = cookielib.LWPCookieJar()
         if os.path.exists(cookie_file):
             try: cj.load(cookie_file,True)
             except: cj.save(cookie_file,True)
         else: cj.save(cookie_file,True)
-#         cj = cookielib.CookieJar()
+
         normal = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
         headers = [
             ('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0'),
@@ -374,7 +742,7 @@ def resolve_billionuploads(url, filename):
                 response = opener.open(recaptcha.group(1)).read()
                 challenge = re.search('''(?i)challenge : '([^']+?)',''', response)
                 if challenge:
-                    challenge = chanllege.group(1)
+                    challenge = challenge.group(1)
                     captchaimg = 'https://www.google.com/recaptcha/api/image?c=' + challenge
 #                     site = re.search('''(?i)site : '([^']+?)',''', response).group(1)
 #                     reloadurl = 'https://www.google.com/recaptcha/api/reload?c=' + challenge + '&' + site + '&reason=[object%20MouseEvent]&type=image&lang=en'
@@ -382,16 +750,18 @@ def resolve_billionuploads(url, filename):
                     wdlg = xbmcgui.WindowDialog()
                     wdlg.addControl(img)
                     wdlg.show()
-                    kb = xbmc.Keyboard('', 'Type the letters in the image', False)
+                    
+                    kb = xbmc.Keyboard('', 'Please enter the text in the image', False)
                     kb.doModal()
                     capcode = kb.getText()
                     if (kb.isConfirmed()):
                         userInput = kb.getText()
                         if userInput != '': capcode = kb.getText()
                         elif userInput == '':
-                            showpopup('BillionUploads','[B]You must enter the text from the image to access video[/B]',5000, elogo)
-                            return False
-                    else: return False
+                            logerror('BillionUploads - Image-Text not entered')
+                            xbmc.executebuiltin("XBMC.Notification(Image-Text not entered.,BillionUploads,2000)")              
+                            return None
+                    else: return None
                     wdlg.close()
                     captchadata = {}
                     captchadata['recaptcha_challenge_field'] = challenge
@@ -401,8 +771,7 @@ def resolve_billionuploads(url, filename):
                     resultcaptcha = opener.open(formurl,urllib.urlencode(captchadata)).info()
                     opener.addheaders = headers
                     response = opener.open(url).read()
-                    dialog.create('Resolving', 'Resolving MegaBox BillionUploads Link...')
-                    dialog.update(50)
+                    
         ga = re.search('(?i)"text/javascript" src="(/ga[^"]+?)"', response)
         if ga:
             jsurl = 'http://billionuploads.com'+ga.group(1)
@@ -426,36 +795,39 @@ def resolve_billionuploads(url, filename):
             final= normal.open(domain_url+'cdn-cgi/l/chk_jschl?jschl_vc=%s&jschl_answer=%s'%(jschl,eval(maths)+len(domain))).read()
             html = normal.open(url).read()
         else: html = response
-
-        #Check page for any error msgs
-        if re.search('This server is in maintenance mode', html, re.I):
+        
+        if dialog.iscanceled(): return None
+        dialog.update(25)
+        
+        #Check page for any error msgs            
+        if re.search('This server is in maintenance mode', html):
             logerror('***** BillionUploads - Site reported maintenance mode')
             xbmc.executebuiltin("XBMC.Notification(File is currently unavailable,BillionUploads in maintenance,2000)")                                
-            return False
-            
-        #Check for File Not Found
+            return None
         if re.search('File Not Found', html, re.I):
             logerror('***** BillionUploads - File Not Found')
             xbmc.executebuiltin("XBMC.Notification(File Not Found,BillionUploads,2000)")
-            return False                                
-        
+            return False
+
         data = {}
         r = re.findall(r'type="hidden" name="(.+?)" value="(.*?)">', html)
         for name, value in r: data[name] = value
         if not data:
-            logerror('MegaBox: Resolve BillionUploads - No Data Found')
-            xbmc.executebuiltin("XBMC.Notification(No Data Found,BillionUploads,2000)")
-            return False
-            
-        captchaimg = re.search('<img src="((?:http://|www\.)?BillionUploads.com/captchas/.+?)"', html)
-        if dialog.iscanceled(): return False
+            logerror('Megabox: Resolve BillionUploads - No Data Found')
+            xbmc.executebuiltin("XBMC.Notification(No Data Found,BillionUploads,2000)")               
+            return None
+        
+        if dialog.iscanceled(): return None
+        
+        captchaimg = re.search('<img src="((?:http://|www\.)?BillionUploads.com/captchas/.+?)"', html)            
         if captchaimg:
-            dialog.close()
+
             img = xbmcgui.ControlImage(550,15,240,100,captchaimg.group(1))
             wdlg = xbmcgui.WindowDialog()
             wdlg.addControl(img)
             wdlg.show()
-            kb = xbmc.Keyboard('', 'Type the letters in the image', False)
+            
+            kb = xbmc.Keyboard('', 'Please enter the text in the image', False)
             kb.doModal()
             capcode = kb.getText()
             if (kb.isConfirmed()):
@@ -463,14 +835,14 @@ def resolve_billionuploads(url, filename):
                 if userInput != '': capcode = kb.getText()
                 elif userInput == '':
                     showpopup('BillionUploads','[B]You must enter the text from the image to access video[/B]',5000, elogo)
-                    return False
-            else: return False
+                    return None
+            else: return None
             wdlg.close()
-            dialog.close() 
-            dialog.create('Resolving', 'Resolving MegaBox BillionUploads Link...')
-            dialog.update(50)
+            
             data.update({'code':capcode})
-        else: dialog.update(50)
+        
+        if dialog.iscanceled(): return None
+        dialog.update(50)
         
         data.update({'submit_btn':''})
         enc_input = re.compile('decodeURIComponent\("(.+?)"\)').findall(html)
@@ -486,14 +858,15 @@ def resolve_billionuploads(url, filename):
                     val = re.compile('<textarea[^>]*?source="self"[^>]*?>([^<]*?)<').findall(html)[0]
                 data[attr] = val.strip("'")
         r = re.findall("""'input\[name="([^"]+?)"\]'\)\.remove\(\)""", html)
+        
         for name in r: del data[name]
-        print 'MegaBox BillionUploads - Requesting POST URL: %s' % url
+        
         normal.addheaders.append(('Referer', url))
-        print data
         html = normal.open(url, urllib.urlencode(data)).read()
         cj.save(cookie_file,True)
-        if dialog.iscanceled(): return False
-        dialog.update(100)
+        
+        if dialog.iscanceled(): return None
+        dialog.update(75)
         
         def custom_range(start, end, step):
             while start <= end:
@@ -533,16 +906,19 @@ def resolve_billionuploads(url, filename):
             if alt:
                 dl = alt[0]
             else:
-                logerror('MegaBox: Resolve BillionUploads - No Video File Found')
+                logerror('Megabox: Resolve BillionUploads - No Video File Found')
                 xbmc.executebuiltin("XBMC.Notification(No Video File Found,BillionUploads,2000)")
-                return False
+                return None
+        
+        if dialog.iscanceled(): return None
+        dialog.update(100)                    
 
-        print 'MegaBox BillionUploads Link Found: %s' % dl
         return dl
-
+        
     except Exception, e:
-        logerror('**** MegaBox BillionUploads Error occured: %s' % e)
+        logerror('BillionUploads - Exception occured: %s' % e)
         raise ResolverError(str(e),"BillionUploads")
+        return None
     finally:
         dialog.close()
 
@@ -551,19 +927,19 @@ def resolve_180upload(url):
 
     try:
         dialog = xbmcgui.DialogProgress()
-        dialog.create('Resolving', 'Resolving MegaBox 180Upload Link...')
+        dialog.create('Resolving', 'Resolving Megabox 180Upload Link...')
         dialog.update(0)
         
         puzzle_img = os.path.join(datapath, "180_puzzle.png")
-        
-        print 'MegaBox 180Upload - Requesting GET URL: %s' % url
+        url=url.replace('180upload.nl','180upload.com')
+        print 'Megabox 180Upload - Requesting GET URL: %s' % url
         html = net().http_GET(url).content
         if ">File Not Found" in html:
-            logerror('MegaBox: Resolve 180Upload - File Not Found')
+            logerror('Megabox: Resolve 180Upload - File Not Found')
             xbmc.executebuiltin("XBMC.Notification(File Not Found,180Upload,2000)")
             return False
         if re.search('\.(rar|zip)</b>', html, re.I):
-            logerror('MegaBox: Resolve 180Upload - No Video File Found')
+            logerror('Megabox: Resolve 180Upload - No Video File Found')
             xbmc.executebuiltin("XBMC.Notification(No Video File Found,180Upload,2000)")
             return False
         if dialog.iscanceled(): return False
@@ -600,31 +976,31 @@ def resolve_180upload(url):
                if userInput != '':
                    solution = kb.getText()
                elif userInput == '':
-                   Notify('big', 'No text entered', 'You must enter text in the image to access video', '')
+                   xbmc.executebuiltin("XBMC.Notification(You must enter text in the image to access video,2000)")
                    return False
            else:
                return False
                
            wdlg.close()
-           dialog.create('Resolving', 'Resolving MegaBox 180Upload Link...') 
+           dialog.create('Resolving', 'Resolving Megabox 180Upload Link...') 
            dialog.update(50)
            if solution:
                data.update({'adcopy_challenge': hugekey,'adcopy_response': solution})
 
-        print 'MegaBox 180Upload - Requesting POST URL: %s' % url
+        print 'Megabox 180Upload - Requesting POST URL: %s' % url
         html = net().http_POST(url, data).content
         if dialog.iscanceled(): return False
         dialog.update(100)
         
         link = re.search('id="lnk_download" href="([^"]+)"', html)
         if link:
-            print 'MegaBox 180Upload Link Found: %s' % link.group(1)
+            print 'Megabox 180Upload Link Found: %s' % link.group(1)
             return link.group(1)
         else:
             raise Exception('Unable to resolve 180Upload Link')
 
     except Exception, e:
-        logerror('**** MegaBox 180Upload Error occured: %s' % e)
+        logerror('**** Megabox 180Upload Error occured: %s' % e)
         raise ResolverError(str(e),"180Upload") 
     finally:
         dialog.close()
@@ -635,15 +1011,15 @@ def resolve_vidto(url):
     import time
     try:
         dialog = xbmcgui.DialogProgress()
-        dialog.create('Resolving', 'Resolving MegaBox Vidto Link...')
+        dialog.create('Resolving', 'Resolving Megabox Vidto Link...')
         dialog.update(0)
         html = net(user_agent).http_GET(url).content
         if dialog.iscanceled(): return False
         dialog.update(11)
-        logerror('MegaBox: Resolve Vidto - Requesting GET URL: '+url)
+        logerror('Megabox: Resolve Vidto - Requesting GET URL: '+url)
         r = re.findall(r'<font class="err">File was removed</font>',html,re.I)
         if r:
-            logerror('MegaBox: Resolve Vidto - File Was Removed')
+            logerror('Megabox: Resolve Vidto - File Was Removed')
             xbmc.executebuiltin("XBMC.Notification(File Not Found,Vidto,2000)")
             return False
         if not r:
@@ -651,12 +1027,15 @@ def resolve_vidto(url):
                            ,html,re.M|re.DOTALL)
             if r:
                 unpacked = jsunpack.unpack(r[0])#this is where it will error, not sure if resources,libs added to os path
-                r = re.findall(r'label:"\d+p",file:"(.+?)"}',unpacked)
+                try:
+                    r = re.findall(r'label:"360p",file:"(.+?)"}',unpacked)[0]
+                except:
+                    r = re.findall(r'label:"240p",file:"(.+?)"}',unpacked)[0]
             if not r:
                 r = re.findall('type="hidden" name="(.+?)" value="(.+?)">',html)
                 post_data = {}
                 for name, value in r:
-                    post_data[name] = value
+                    post_data[name] = value.encode('utf-8')
                 post_data['usr_login'] = ''
                 post_data['referer'] = url
                 for i in range(7):
@@ -668,14 +1047,17 @@ def resolve_vidto(url):
                                ,html,re.M|re.DOTALL)
                 if r:
                     unpacked = jsunpack.unpack(r[0])
-                    r = re.findall(r'label:"\d+p",file:"(.+?)"}',unpacked)
+                    try:
+                        r = re.findall(r'label:"360p",file:"(.+?)"}',unpacked)[0]
+                    except:
+                        r = re.findall(r'label:"240p",file:"(.+?)"}',unpacked)[0]
                 if not r:
-                    r = re.findall(r"var file_link = '(.+?)';",html)
+                    r = re.findall(r"var file_link = '(.+?)';",html)[0]
         if dialog.iscanceled(): return False
         dialog.update(100)
-        return r[0]
+        return r
     except Exception, e:
-        logerror('MegaBox: Resolve Vidto Error - '+str(e))
+        logerror('Megabox: Resolve Vidto Error - '+str(e))
         raise ResolverError(str(e),"Vidto") 
     finally:
         dialog.close()
@@ -685,10 +1067,10 @@ def resolve_epicshare(url):
         puzzle_img = os.path.join(datapath, "epicshare_puzzle.png")
         #Show dialog box so user knows something is happening
         dialog = xbmcgui.DialogProgress()
-        dialog.create('Resolving', 'Resolving MegaBox EpicShare Link...')
+        dialog.create('Resolving', 'Resolving MashUp EpicShare Link...')
         dialog.update(0)
         
-        print 'EpicShare - MegaBox Requesting GET URL: %s' % url
+        print 'EpicShare - MashUp Requesting GET URL: %s' % url
         html = net().http_GET(url).content
         if dialog.iscanceled(): return False
         dialog.update(50)
@@ -741,26 +1123,26 @@ def resolve_epicshare(url):
                return False
                
            wdlg.close()
-           dialog.create('Resolving', 'Resolving MegaBox EpicShare Link...') 
+           dialog.create('Resolving', 'Resolving MashUp EpicShare Link...') 
            dialog.update(50)
            if solution:
                data.update({'adcopy_challenge': hugekey,'adcopy_response': solution})
 
-        print 'EpicShare - MegaBox Requesting POST URL: %s' % url
+        print 'EpicShare - MashUp Requesting POST URL: %s' % url
         html = net().http_POST(url, data).content
         if dialog.iscanceled(): return False
         dialog.update(100)
         
         link = re.search('<a id="lnk_download"  href=".+?product_download_url=(.+?)">', html)
         if link:
-            print 'MegaBox EpicShare Link Found: %s' % link.group(1)
+            print 'MashUp EpicShare Link Found: %s' % link.group(1)
             return link.group(1)
         else:
             logerror('***** EpicShare - Cannot find final link')
             raise Exception('Unable to resolve EpicShare Link')
         
     except Exception, e:
-        logerror('**** EpicShare MegaBox Error occured: %s' % e)
+        logerror('**** EpicShare MashUp Error occured: %s' % e)
         raise ResolverError(str(e),"EpicShare") 
     finally:
         dialog.close()
@@ -769,10 +1151,10 @@ def resolve_lemupload(url):
     try:
         #Show dialog box so user knows something is happening
         dialog = xbmcgui.DialogProgress()
-        dialog.create('Resolving', 'Resolving MegaBox LemUpload Link...')       
+        dialog.create('Resolving', 'Resolving MashUp LemUpload Link...')       
         dialog.update(0)
 #         
-        print 'LemUpload - MegaBox Requesting GET URL: %s' % url
+        print 'LemUpload - MashUp Requesting GET URL: %s' % url
         html = net().http_GET(url).content
         if dialog.iscanceled(): return False
         dialog.update(50)
@@ -803,7 +1185,7 @@ def resolve_lemupload(url):
             redirect_url = re.search('(http://.+?)video', link)
             if redirect_url:
                 link = redirect_url.group(1) + filename
-            print 'MegaBox LemUpload Link Found: %s' % link
+            print 'MashUp LemUpload Link Found: %s' % link
             return  link
         else:
             logerror('***** LemUpload - Cannot find final link')
@@ -824,7 +1206,7 @@ def resolve_mightyupload(url):
         html = net().http_GET(url).content
         if dialog.iscanceled(): return False
         dialog.update(50)
-        logerror('MegaBox: Resolve MightyUpload - Requesting GET URL: '+url)
+        logerror('Megabox: Resolve MightyUpload - Requesting GET URL: '+url)
         r = re.findall(r'name="(.+?)" value="?(.+?)"', html, re.I|re.M)
         if r:
             post_data = {}
@@ -841,19 +1223,21 @@ def resolve_mightyupload(url):
             xbmc.executebuiltin("XBMC.Notification(File Not Found,MightyUpload,2000,"+elogo+")")
             return False
     except Exception, e:
-        logerror('MegaBox: Resolve MightyUpload Error - '+str(e))
+        logerror('Megabox: Resolve MightyUpload Error - '+str(e))
         raise ResolverError(str(e),"MightyUpload") 
 
 def resolve_hugefiles(url):
     from resources.libs import jsunpack
     try:
+        import time
+        puzzle_img = os.path.join(datapath, "hugefiles_puzzle.png")
         dialog = xbmcgui.DialogProgress()
-        dialog.create('Resolving', 'Resolving HugeFiles Link...')       
+        dialog.create('Resolving', 'Resolving MashUp HugeFiles Link...')       
         dialog.update(0)
         html = net().http_GET(url).content
         r = re.findall('File Not Found',html)
         if r:
-            xbmc.log('MegaBox: Resolve HugeFiles - File Not Found or Removed', xbmc.LOGERROR)
+            xbmc.log('Megabox: Resolve HugeFiles - File Not Found or Removed', xbmc.LOGERROR)
             xbmc.executebuiltin("XBMC.Notification(File Not Found or Removed,HugeFiles,2000)")
             return False
         data = {}
@@ -863,33 +1247,102 @@ def resolve_hugefiles(url):
             data.update({'method_free':'Free Download'})
         if data['fname'] and re.search('\.(rar|zip)$', data['fname'], re.I):
             dialog.update(100)
-            logerror('MegaBox: Resolve HugeFiles - No Video File Found')
+            logerror('Megabox: Resolve HugeFiles - No Video File Found')
             xbmc.executebuiltin("XBMC.Notification(No Video File Found,HugeFiles,2000)")
             return False
         if dialog.iscanceled(): return False
         dialog.update(33)
+        #Check for SolveMedia Captcha image
+        solvemedia = re.search('<iframe src="(http://api.solvemedia.com.+?)"', html)
+        recaptcha = re.search('<script type="text/javascript" src="(http://www.google.com.+?)">', html)
+    
+        if solvemedia:
+            html = net().http_GET(solvemedia.group(1)).content
+            hugekey=re.search('id="adcopy_challenge" value="(.+?)">', html).group(1)
+            open(puzzle_img, 'wb').write(net().http_GET("http://api.solvemedia.com%s" % re.search('img src="(.+?)"', html).group(1)).content)
+            img = xbmcgui.ControlImage(450,15,400,130, puzzle_img)
+            wdlg = xbmcgui.WindowDialog()
+            wdlg.addControl(img)
+            wdlg.show()
+            
+            xbmc.sleep(3000)
+    
+            kb = xbmc.Keyboard('', 'Type the letters in the image', False)
+            kb.doModal()
+            capcode = kb.getText()
+       
+            if (kb.isConfirmed()):
+                userInput = kb.getText()
+                if userInput != '':
+                    solution = kb.getText()
+                elif userInput == '':
+                    xbmc.executebuiltin("XBMC.Notification(No text entered, You must enter text in the image to access video,2000)")
+                    return False
+            else:
+                return False
+                   
+            wdlg.close()
+            dialog.update(66)
+            if solution:
+                data.update({'adcopy_challenge': hugekey,'adcopy_response': solution})
+
+        elif recaptcha:
+            html = net().http_GET(recaptcha.group(1)).content
+            part = re.search("challenge \: \\'(.+?)\\'", html)
+            captchaimg = 'http://www.google.com/recaptcha/api/image?c='+part.group(1)
+            img = xbmcgui.ControlImage(450,15,400,130,captchaimg)
+            wdlg = xbmcgui.WindowDialog()
+            wdlg.addControl(img)
+            wdlg.show()
+        
+            time.sleep(3)
+        
+            kb = xbmc.Keyboard('', 'Type the letters in the image', False)
+            kb.doModal()
+            capcode = kb.getText()
+        
+            if (kb.isConfirmed()):
+                userInput = kb.getText()
+                if userInput != '':
+                    solution = kb.getText()
+                elif userInput == '':
+                    raise Exception ('You must enter text in the image to access video')
+            else:
+                raise Exception ('Captcha Error')
+            wdlg.close()
+            dialog.update(66)
+            data.update({'recaptcha_challenge_field':part.group(1),'recaptcha_response_field':solution})
+
+        else:
+            captcha = re.compile("left:(\d+)px;padding-top:\d+px;'>&#(.+?);<").findall(html)
+            result = sorted(captcha, key=lambda ltr: int(ltr[0]))
+            solution = ''.join(str(int(num[1])-48) for num in result)
+            dialog.update(66)
+            data.update({'code':solution})
         html = net().http_POST(url, data).content
         if dialog.iscanceled(): return False
-        dialog.update(66)
         if 'reached the download-limit' in html:
-            logerror('MegaBox: Resolve HugeFiles - Daily Limit Reached, Cannot Get The File\'s Url')
+            logerror('Megabox: Resolve HugeFiles - Daily Limit Reached, Cannot Get The File\'s Url')
             xbmc.executebuiltin("XBMC.Notification(Daily Limit Reached,HugeFiles,2000)")
             return False
-        sPattern = '''<div id="player_code">.*?<script type='text/javascript'>(eval.+?)</script>'''
-        r = re.findall(sPattern, html, re.DOTALL|re.I)
+        r = re.findall("software_download_url : '(.+?)',", html, re.DOTALL + re.IGNORECASE)
         if r:
-            sUnpacked = jsunpack.unpack(r[0])
-            sUnpacked = sUnpacked.replace("\\'","")
-            r = re.findall('file,(.+?)\)\;s1',sUnpacked)
-            if not r:
-               r = re.findall('"src"value="(.+?)"/><embed',sUnpacked)
-            if dialog.iscanceled(): return False
             dialog.update(100)
-            dialog.close()
             return r[0]
         if not r:
-            logerror('***** HugeFiles - Cannot find final link')
-            raise Exception('Unable to resolve HugeFiles Link')
+            sPattern = '''<div id="player_code">.*?<script type='text/javascript'>(eval.+?)</script>'''
+            jpack = re.findall(sPattern, html, re.DOTALL|re.I)
+            if jpack:
+                dialog.update(100)
+                sUnpacked = jsunpack.unpack(jpack[0])
+                sUnpacked = sUnpacked.replace("\\'","")
+                r = re.findall('file,(.+?)\)\;s1',sUnpacked)
+                if not r:
+                  r = re.findall('"src"value="(.+?)"/><embed',sUnpacked)
+                return r[0]
+            else:
+                logerror('***** HugeFiles - Cannot find final link')
+                raise Exception('Unable to resolve HugeFiles Link')
     except Exception, e:
-        logerror('MegaBox: Resolve HugeFiles Error - '+str(e))
-        raise ResolverError(str(e),"HugeFiles") 
+        logerror('Megabox: Resolve HugeFiles Error - '+str(e))
+        raise ResolverError(str(e),"HugeFiles")  
