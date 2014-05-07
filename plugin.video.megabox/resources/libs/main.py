@@ -2,7 +2,8 @@ import urllib,re,string,sys,os
 import xbmc, xbmcgui, xbmcaddon, xbmcplugin
 import time,threading
 
-#Megabox.li - by Kasik 2013.
+
+#Megabox - by Kasik 2013.
 
 addon_id = 'plugin.video.megabox'
 selfAddon = xbmcaddon.Addon(id=addon_id)
@@ -15,7 +16,7 @@ datapath = xbmc.translatePath(selfAddon.getAddonInfo('profile'))
 hosts = 'putlocker,sockshare,billionuploads,hugefiles,mightyupload,movreel,lemuploads,180upload,megarelease,filenuke,flashx,gorillavid,bayfiles,veehd,vidto,mailru,videomega,epicshare,bayfiles,2gbhosting,alldebrid,allmyvideos,vidspot,castamp,cheesestream,clicktoview,crunchyroll,cyberlocker,daclips,dailymotion,divxstage,donevideo,ecostream,entroupload,facebook,filebox,hostingbulk,hostingcup,jumbofiles,limevideo,movdivx,movpod,movshare,movzap,muchshare,nolimitvideo,nosvideo,novamov,nowvideo,ovfile,play44_net,played,playwire,premiumize_me,primeshare,promptfile,purevid,rapidvideo,realdebrid,rpnet,seeon,sharefiles,sharerepo,sharesix,skyload,stagevu,stream2k,streamcloud,thefile,tubeplus,tunepk,ufliq,upbulk,uploadc,uploadcrazynet,veoh,vidbull,vidcrazynet,video44,videobb,videofun,videotanker,videoweed,videozed,videozer,vidhog,vidpe,vidplay,vidstream,vidup,vidx,vidxden,vidzur,vimeo,vureel,watchfreeinhd,xvidstage,yourupload,youtube,youwatch,zalaa,zooupload,zshare'
 
 
-VERSION = "2.1.1"
+VERSION = "2.1.2"
 PATH = "Megabox-"            
 
 try:
@@ -24,8 +25,8 @@ try:
     logfile = open(log, 'r').read()
     match=re.compile('Starting XBMC \((.+?) Git:.+?Platform: (.+?)\. Built').search(logfile)
     if match:
-        PLATFORM = match.group(1)
-        build = match.group(2)
+        build = match.group(1)
+        PLATFORM = match.group(2)
         print 'XBMC '+build+' Platform '+PLATFORM
     else:
         PLATFORM=''
@@ -41,7 +42,7 @@ slogo = xbmc.translatePath('special://home/addons/plugin.video.megabox/resources
 
 def OPENURL(url, mobile = False, q = False, verbose = True, timeout = 10, cookie = None, data = None, cookiejar = False, log = True, headers = [], type = '',ua = False):
     import urllib2 
-    UserAgent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3'
+    UserAgent = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.131 Safari/537.36'
     if ua: UserAgent = ua
     try:
         if log:
@@ -144,12 +145,6 @@ def setGrab():
         from metahandler import metahandlers
         grab = metahandlers.MetaData()
         
-def getFav():
-    global fav
-    if not fav:
-        from resources.universal import favorites
-        fav = favorites.Favorites(addon_id, sys.argv)
-    return fav
 
 def getRDHosts():
     CachePath = os.path.join(datapath,'Cache')
@@ -290,7 +285,7 @@ def updateSearchFile(searchQuery,searchType,defaultValue = '###',searchMsg = '')
         searchHistoryFile = "SearchHistoryTv"
         if not searchMsg: searchMsg = 'Search For TV Shows' 
     else:
-        searchHistoryFile = "SearchHistory25"
+        searchHistoryFile = "SearchHistoryMB"
         if not searchMsg: searchMsg = 'Search For Movies' 
     SearchFile=os.path.join(searchpath,searchHistoryFile)
     searchQuery=urllib.unquote(searchQuery)
@@ -335,7 +330,6 @@ def updateSearchFile(searchQuery,searchType,defaultValue = '###',searchMsg = '')
 def supportedHost(host):
     if 'ul' == host: host = 'uploaded'
     return host.lower() in getHostList()
-
 ################################################################################ AutoView ##########################################################################################################
 
 def VIEWS():
@@ -711,9 +705,9 @@ def resolveDownloadLinks(url):
         name=name.split('[COLOR red]')[0]
         name=name.replace('/','').replace('.','')
         url=GetUrliW(url)
-    elif re.search('Megabox',url):
-        from resources.libs import Megabox
-        url = Megabox.resolveM25URL(url)
+    elif re.search('megabox',url):
+        from resources.libs import megabox
+        url = megabox.resolveMBURL(url)
     elif url.startswith('ice'):
         from resources.libs.movies_tv import icefilms
         url = url.lstrip('ice')
@@ -830,9 +824,17 @@ def _pbhook(numblocks, blocksize, filesize, dp, start_time):
 
 def jDownloader(murl):
     url = resolveDownloadLinks(murl)
-    print "Downloading "+murl+" via jDownlaoder"
-    cmd = 'plugin://plugin.program.jdownloader/?action=addlink&url='+murl
-    xbmc.executebuiltin('XBMC.RunPlugin(%s)' % cmd)
+    if selfAddon.getSetting("jdcb") == "true":
+        print "Downloading "+murl+" via jDownlaoder"
+        cmd = 'plugin://plugin.program.jdownloader/?action=addlink&url='+murl
+        xbmc.executebuiltin('XBMC.RunPlugin(%s)' % cmd)
+    else:
+        if 'Windows' in PLATFORM:
+            command = 'echo ' + url.strip() + '| clip'
+            os.system(command)
+        else:
+            command = 'echo ' + url.strip() + '| pbcopy'
+            os.system(command)
 
 ################################################################################ Message ##########################################################################################################
 
@@ -885,6 +887,9 @@ def TextBoxes(heading,anounce):
 def addDirX(name,url,mode,iconimage,plot='',fanart='',dur=0,genre='',year='',imdb='',tmdb='',isFolder=True,searchMeta=False,addToFavs=True,
             id=None,fav_t='',fav_addon_t='',fav_sub_t='',metaType='Movies',menuItemPos=None,menuItems=None,down=False,replaceItems=True):
     u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)+"&iconimage="+urllib.quote_plus(iconimage)+"&plot="+urllib.quote_plus(plot)+"&fanart="+urllib.quote_plus(fanart)+"&genre="+urllib.quote_plus(genre)
+    if 'http://api.video.mail.ru/videos/embed/' in url or mode==364:
+        name=name.decode('windows-1251')
+        plot=plot.decode('windows-1251')
     if searchMeta:
         if metaType == 'TV':
             infoLabels = GETMETAEpiT(name,iconimage,plot)
@@ -902,7 +907,11 @@ def addDirX(name,url,mode,iconimage,plot='',fanart='',dur=0,genre='',year='',imd
         sysurl = urllib.quote_plus(url)
         sysname= urllib.quote_plus(name)
         Commands.append(('Direct Download', 'XBMC.RunPlugin(%s?mode=150&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
-        Commands.append(('Download with jDownloader', 'XBMC.RunPlugin(%s?mode=776&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
+        if selfAddon.getSetting("jdcb") == "true":
+            Commands.append(('Download with jDownloader', 'XBMC.RunPlugin(%s?mode=776&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
+        else:
+            Commands.append(('Copy to Clipboard', 'XBMC.RunPlugin(%s?mode=776&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
+
   
     if searchMeta:
         if metaType == 'TV' and selfAddon.getSetting("meta-view-tv") == "true":
@@ -913,11 +922,6 @@ def addDirX(name,url,mode,iconimage,plot='',fanart='',dur=0,genre='',year='',imd
             sea = infoLabels['season']
             epi = infoLabels['episode']
             imdb_id = infoLabels['imdb_id']
-            if imdb_id != '':
-                if infoLabels['overlay'] == 6: watched_mark = 'Mark as Watched'
-                else: watched_mark = 'Mark as Unwatched'
-                Commands.append((watched_mark, 'XBMC.RunPlugin(%s?mode=779&name=%s&url=%s&iconimage=%s&season=%s&episode=%s)' % (sys.argv[0], cname, 'episode', imdb_id,sea,epi)))
-            Commands.append(('Refresh Metadata', 'XBMC.RunPlugin(%s?mode=780&name=%s&url=%s&iconimage=%s&season=%s&episode=%s)' % (sys.argv[0], cname, 'episode',imdb_id,sea,epi)))
         elif metaType == 'Movies' and selfAddon.getSetting("meta-view") == "true":
             xbmcplugin.setContent(int(sys.argv[1]), 'Movies')
             if id != None: xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_PLAYLIST_ORDER )
@@ -929,11 +933,7 @@ def addDirX(name,url,mode,iconimage,plot='',fanart='',dur=0,genre='',year='',imd
             xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_MPAA_RATING )
             cname=urllib.quote_plus(infoLabels['metaName'])
             imdb_id = infoLabels['imdb_id']
-            if infoLabels['overlay'] == 6: watched_mark = 'Mark as Watched'
-            else: watched_mark = 'Mark as Unwatched'
-            Commands.append((watched_mark, 'XBMC.RunPlugin(%s?mode=777&name=%s&url=%s&iconimage=%s)' % (sys.argv[0], cname, 'movie',imdb_id)))
-            Commands.append(('Play Trailer','XBMC.RunPlugin(%s?mode=782&name=%s&url=%s&iconimage=%s)'% (sys.argv[0],cname,'_',imdb_id)))
-            Commands.append(('Refresh Metadata', 'XBMC.RunPlugin(%s?mode=778&name=%s&url=%s&iconimage=%s)' % (sys.argv[0], cname, 'movie',imdb_id)))
+            Commands.append(('Play Trailer','XBMC.RunPlugin(%s?mode=500&name=%s&url=%s&iconimage=%s)'% (sys.argv[0],cname,'_',imdb_id)))
     else:
         infoLabels={ "Title": name, "Plot": plot, "Duration": dur, "Year": year ,"Genre": genre,"OriginalTitle" : removeColoredText(name) }
     if id != None: infoLabels["count"] = id
@@ -944,7 +944,8 @@ def addDirX(name,url,mode,iconimage,plot='',fanart='',dur=0,genre='',year='',imd
     
     liz=xbmcgui.ListItem(name, iconImage=art+'/vidicon.png', thumbnailImage=iconimage)
     liz.addContextMenuItems( Commands, replaceItems=False)
-    #liz.setInfo(type="Video", infoLabels=infoLabels)
+    if searchMeta:
+        liz.setInfo( type="Video", infoLabels=infoLabels )
     liz.setProperty('fanart_image', fanart)
     return xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=isFolder)
 
@@ -1074,8 +1075,8 @@ def addDown4(name,url,mode,iconimage,plot,fanart,dur,genre,year):
                        fav_t='Movies',fav_addon_t='Movie',down=not f)
 
 def addInfo(name,url,mode,iconimage,genre,year):
-    mi = [('Search Megabox','XBMC.Container.Update(%s?mode=4&url=%s)'% (sys.argv[0],'###'))]
-    return addDirX(name,url,mode,iconimage,'','','',genre,year,searchMeta=1,fav_t='Movies',fav_addon_t='Megabox',menuItemPos=0,menuItems=mi)
+    mi = [('Search megabox','XBMC.Container.Update(%s?mode=4&url=%s)'% (sys.argv[0],'###'))]
+    return addDirX(name,url,mode,iconimage,'','','',genre,year,searchMeta=1,fav_t='Movies',fav_addon_t='megabox',menuItemPos=0,menuItems=mi)
 
 def addDirIWO(name,url,mode,iconimage,plot,fanart,dur,genre,year):
     return addDirX(name,url,mode,iconimage,plot,fanart,dur,genre,year,searchMeta=1,fav_t='Movies',fav_addon_t='iWatchOnline')

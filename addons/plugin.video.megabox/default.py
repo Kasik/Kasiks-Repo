@@ -269,7 +269,6 @@ print "Thumb: "+str(iconimage)
 
 
 
-
 if mode==None or url==None or len(url)<1:
         MAIN()
         main.VIEWSB()        
@@ -398,7 +397,6 @@ elif mode == 779:
         main.ChangeWatched(iconimage, url, name, season, episode)        
 elif mode == 780:
         main.episode_refresh(name, iconimage, season, episode)        
-
 
 
 elif mode == 1999:

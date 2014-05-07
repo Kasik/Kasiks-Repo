@@ -32,7 +32,6 @@ def MOVIES(url):
         remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
         dialogWait.update(0, '[B]Will load instantly from now on[/B]',remaining_display)
         for url,thumb,name,genre in match:
-                name=name.replace('-','').replace('&','').replace('acute;','').strip()
                 main.addInfo(name+'[COLOR blue] Genre: '+genre+'[/COLOR]',base_url+url,8,thumb,genre,'')
                 loadedLinks = loadedLinks + 1
                 percent = (loadedLinks * 100)/totalLinks
@@ -64,7 +63,6 @@ def YOUTUBE(url):
         remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
         dialogWait.update(0, '[B]Will load instantly from now on[/B]',remaining_display)
         for url,thumb,name,genre in match:
-                name=name.replace('-','').replace('&','').replace('acute;','').strip()
                 main.addDir(name+'[COLOR blue] Genre: '+genre+'[/COLOR]',base_url+url,8,thumb,'')
                 loadedLinks = loadedLinks + 1
                 percent = (loadedLinks * 100)/totalLinks
@@ -96,7 +94,6 @@ def TV(url):
         remaining_display = 'Shows loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
         dialogWait.update(0, '[B]Will load instantly from now on[/B]',remaining_display)
         for url,thumb,name,genre in match:
-                name=name.replace('-','').replace('&','').replace('acute;','').strip()
                 main.addDir('[COLOR green]'+name+'[/COLOR]'+'[COLOR blue] Genre: '+genre+'[/COLOR]',base_url+url,12,thumb,'')
                 loadedLinks = loadedLinks + 1
                 percent = (loadedLinks * 100)/totalLinks
@@ -537,7 +534,7 @@ def GRABLINKS(url):
       
      
         
-
+###############################################################
 def GRABMORE(name,url):
      link=main.OPENURL(url)
      link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','')
@@ -545,7 +542,7 @@ def GRABMORE(name,url):
      for name,host,url in match:
       url = base_url + url
       main.addDown2(name + ' ' +host,url,6,'','')
-         
+################################################################         
     
 
 
@@ -555,6 +552,23 @@ def GRABMORE(name,url):
 
 
 
+def resolveMBurl(url):
+    html=main.OPENURL(url)
+    match = re.search('<p> Source: <a href="([^>]*)" target',html)
+    if match: return match.group(1)
+    return        
+    match2 = re.search('location.href = \'([^>]*)\';',html)
+    if match2: return match.group(2)
+    return    
+    match3 = re.search('action=\'([^>]*)\'>',html)
+    if match3: return match.group(3)
+    return        
+    match4 = re.search('src="([^>]*)" frameborder="0" allowfullscreen=""></iframe></textarea></p>',html)
+    if match4: return match.group(4)
+    return        
+    match5 = re.search('src=\'([^>]*)\' scrolling=\'no\'></iframe></textarea>',html)
+    if match5: return match.group(5)
+    return        
         
 
 

@@ -46,3 +46,6 @@ Fixed videolinks (bug remains/shows duplicate links)
 
 Version 2.1.1
 Fixed a few bugs, updated code a bit. (may still get error once in a while)
+
+Version 2.1.2
+Fixed MetaData, Fixed Downloads (as always a few bugs may still remain)
