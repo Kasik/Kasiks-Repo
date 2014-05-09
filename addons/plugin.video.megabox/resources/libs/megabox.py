@@ -94,7 +94,7 @@ def TV(url):
         remaining_display = 'Shows loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
         dialogWait.update(0, '[B]Will load instantly from now on[/B]',remaining_display)
         for url,thumb,name,genre in match:
-                main.addDir('[COLOR green]'+name+'[/COLOR]'+'[COLOR blue] Genre: '+genre+'[/COLOR]',base_url+url,12,thumb,'')
+                main.addDirTE('[COLOR green]'+name+'[/COLOR]'+'[COLOR blue] Genre: '+genre+'[/COLOR]',base_url+url,12,thumb,'','','','','')
                 loadedLinks = loadedLinks + 1
                 percent = (loadedLinks * 100)/totalLinks
                 remaining_display = 'Shows loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'

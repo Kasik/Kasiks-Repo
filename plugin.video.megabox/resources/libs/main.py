@@ -16,7 +16,7 @@ datapath = xbmc.translatePath(selfAddon.getAddonInfo('profile'))
 hosts = 'putlocker,sockshare,billionuploads,hugefiles,mightyupload,movreel,lemuploads,180upload,megarelease,filenuke,flashx,gorillavid,bayfiles,veehd,vidto,mailru,videomega,epicshare,bayfiles,2gbhosting,alldebrid,allmyvideos,vidspot,castamp,cheesestream,clicktoview,crunchyroll,cyberlocker,daclips,dailymotion,divxstage,donevideo,ecostream,entroupload,facebook,filebox,hostingbulk,hostingcup,jumbofiles,limevideo,movdivx,movpod,movshare,movzap,muchshare,nolimitvideo,nosvideo,novamov,nowvideo,ovfile,play44_net,played,playwire,premiumize_me,primeshare,promptfile,purevid,rapidvideo,realdebrid,rpnet,seeon,sharefiles,sharerepo,sharesix,skyload,stagevu,stream2k,streamcloud,thefile,tubeplus,tunepk,ufliq,upbulk,uploadc,uploadcrazynet,veoh,vidbull,vidcrazynet,video44,videobb,videofun,videotanker,videoweed,videozed,videozer,vidhog,vidpe,vidplay,vidstream,vidup,vidx,vidxden,vidzur,vimeo,vureel,watchfreeinhd,xvidstage,yourupload,youtube,youwatch,zalaa,zooupload,zshare'
 
 
-VERSION = "2.1.2"
+VERSION = "2.1.3"
 PATH = "Megabox-"            
 
 try:
@@ -36,8 +36,8 @@ except:
 sys.path.append( os.path.join( selfAddon.getAddonInfo('path'), 'resources', 'libs' ))
 ################################################################################ Common Calls ##########################################################################################################
 art = xbmc.translatePath('special://home/addons/plugin.video.megabox/resources/art/')
-fanartimage=Dir+'fanart.png'
-elogo = xbmc.translatePath('special://home/addons/plugin.video.megabox/resources/art/bigx.png')
+fanartimage=Dir+'fanart.jpg'
+elogo = xbmc.translatePath('special://home/addons/plugin.video.megabox/resources/art/error.jpg')
 slogo = xbmc.translatePath('special://home/addons/plugin.video.megabox/resources/art/smallicon.png')
 
 def OPENURL(url, mobile = False, q = False, verbose = True, timeout = 10, cookie = None, data = None, cookiejar = False, log = True, headers = [], type = '',ua = False):
