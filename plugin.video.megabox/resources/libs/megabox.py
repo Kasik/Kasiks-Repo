@@ -111,6 +111,39 @@ def TV(url):
         xbmcplugin.setContent(int(sys.argv[1]), 'TV')
         main.VIEWS()
 
+
+def ADULTGENRE(url):
+        link=main.OPENURL(url)
+        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
+        site_url = 'http://megabox.li/?genre=adult&accept=1'
+        url='http://megabox.li/accept_terms.php'
+        post_url = net.http_GET(url).get_url()
+        html = net.http_GET(post_url).content
+        html = html.encode("utf-8")
+        match=re.findall('<a href="([^"]*)"><img alt="[^"]*" src="([^"]*)" /></a><div class="title"><a title="[^"]*" href="[^"]*">([^"]*)</a>', html)
+        for url,thumb,name in match:
+         main.addDir(name,url,16,thumb,'')
+          
+        
+        nextpage=re.findall('<a href="([^"]*)" class="next">Next &#187;</a>', html)
+        for url in nextpage:
+          url='http://megabox.li/accept_terms.php'
+          post_url = net.http_GET(url).get_url()
+          html = net.http_GET(post_url).content
+          main.addDir('Next Page >>',base_url+url,17,art+'/next.png')
+                
+
+
+
+
+
+
+
+
+
+
+        
+
 ################################################################################################################################################
 def f7(seq):
     seen = set()

@@ -32,7 +32,7 @@ except: pass
 
 
 def MAIN():
-
+        
         main.addDirHome('Search Movies',base_url,100,art+'/searchmovies.jpg')
         main.addDirHome('New Releases',base_url + '?sort=release',1,art+'/newr.jpg')
         main.addDirHome('Latest Added',base_url + '?sort=latest-added',1,art+'/latest.jpg')
@@ -45,12 +45,16 @@ def MAIN():
         main.addDirHome('Coming Soon',base_url + '?sort=coming-soon',1,art+'/soon.jpg')
         main.addDirHome('Movie Genres',base_url,2,art+'/genres.jpg')
         main.addDirHome('TV SHOWS',base_url,9,art+'/tv.jpg')
+        HideXXX = selfAddon.getSetting('Hide-XXX')
+        if HideXXX == 'false':
+                main.addDirHome('XXX',base_url,69,art+'/adult.jpg')
         main.VIEWSB()
                      
       
 
 def MOVIEGENRE(url):
         main.addDir('Action',base_url +'?genre=action',1,art+'/action.jpg')
+        #main.addDir('Adult',base_url,17,art+'/adult.jpg')
         main.addDir('Animation',base_url +'?genre=animation',1,art+'/anim.jpg')
         main.addDir('Comedy',base_url +'?genre=comedy',1,art+'/comedy.jpg')
         main.addDir('Crime',base_url +'?genre=crime',1,art+'/crime.jpg')
@@ -91,6 +95,14 @@ def TVGENRES():
         main.addDir('Sci-Fi',base_url +'index.php?genre=sci-fi&tv',11,art+'/scifi.jpg')
         main.addDir('Thriller',base_url +'index.php?genre=thriller&tv',11,art+'/thriller.jpg')    
         main.VIEWSB()
+
+def ADULT():
+    main.addDir('Latest Added','http://megabox.li/?xxx',70,art+'/latest.jpg')
+    main.addDir('Rating','http://megabox.li/?sort=ratings&xxx',70,art+'/rating.jpg')
+    main.addDir('Popular','http://megabox.li/?sort=views&xxx',70,art+'/popular.jpg')
+    main.addDir('Random','http://megabox.li/?sort=random&xxx',70,art+'/random.jpg')
+    main.addDir('Search','http://megabox.li/index.php?search=',75,art+'/searchxxx.jpg')
+    main.addDir('A-Z','http://megabox.li/?xxx',76,art+'/az.jpg')
 
 #############################################################################################################################################        
        
@@ -344,7 +356,12 @@ elif mode==15:
 elif mode==16:
         from resources.libs import megabox
         print ""+url
-        megabox.GRABMORE(name,url)     
+        megabox.GRABMORE(name,url)
+
+elif mode==17:
+        from resources.libs import megabox
+        print ""+url
+        megabox.ADULTGENRE(url)             
         
 
 
@@ -352,6 +369,40 @@ elif mode==50:
         from resources.libs import megabox
         megabox.YOUTUBE(url)
 
+####################### - ADULT - ######################################
+elif mode==69:
+        print ""+url
+        ADULT()
+        
+elif mode==70:
+        from resources.libs import megaxxx
+        megaxxx.XXX(url)
+        
+elif mode==71:
+        from resources.libs import megaxxx
+        megaxxx.GRABXXX(url)
+
+elif mode==72:
+        from resources.libs import megaxxx
+        megaxxx.PLAYXXX(name,url)
+
+elif mode==73:
+        from resources.libs import megaxxx
+        megaxxx.Epornik1(url)
+
+elif mode==74:
+        from resources.libs import megaxxx
+        megaxxx.Epornik2(url,name)
+
+elif mode==75:
+        from resources.libs import megaxxx
+        megaxxx.SEARCHXXX(url)
+
+elif mode==76:
+        from resources.libs import megaxxx
+        megaxxx.AZXXX()          
+
+########################################################################
 
 
         
