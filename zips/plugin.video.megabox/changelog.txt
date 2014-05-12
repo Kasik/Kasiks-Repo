@@ -58,3 +58,7 @@ Added Adult(XXX)
 
 [B]Version 2.1.5[/B]
 Added Adult Genre
+
+[B]Version 2.1.6[/B]
+Fixed Adult Genre Putlocker/Firedrive/Sockshare Links,
+Added Next Button Artwork, Misc. Changes.

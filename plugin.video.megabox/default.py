@@ -279,10 +279,6 @@ print "URL: "+str(url)
 print "Name: "+str(name)
 print "Thumb: "+str(iconimage)
 
-
-
-
-
 if mode==None or url==None or len(url)<1:
         MAIN()
         main.VIEWSB()        

@@ -56,7 +56,7 @@ def MOVIES(url):
         
         nextpage=re.compile('<a href="([^"]*)" class="next">Next &#187;</a>').findall(link)
         for url in nextpage:
-                main.addDir('Next Page >>',base_url+url,1,art+'/next.png')
+                main.addDir('Next Page >>',base_url+url,1,art+'/next.jpg')
                 
         xbmcplugin.setContent(int(sys.argv[1]), 'Movies')
         main.VIEWS()
@@ -87,7 +87,7 @@ def YOUTUBE(url):
         
         nextpage=re.compile('<a href="([^"]*)" class="next">Next &#187;</a>').findall(link)
         for url in nextpage:
-                main.addDir('Next Page >>',base_url+url,50,art+'/next.png')
+                main.addDir('Next Page >>',base_url+url,50,art+'/next.jpg')
                 
         xbmcplugin.setContent(int(sys.argv[1]), 'Movies')
         main.VIEWS()        
@@ -116,24 +116,38 @@ def TV(url):
         
         nextpage=re.compile('<a href="([^"]*)" class="next">Next &#187;</a>').findall(link)
         for url in nextpage:
-                main.addDir('[COLOR aqua]'+'Next Page >>'+'[/COLOR]',base_url+url,11,art+'/next.png')
+                main.addDir('[COLOR aqua]'+'Next Page >>'+'[/COLOR]',base_url+url,11,art+'/next.jpg')
                 
         xbmcplugin.setContent(int(sys.argv[1]), 'TV')
         main.VIEWS()
 
 
 def ADULTGENRE(url):
-    link=main.ADULT_URL(url)
-    link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-    match=re.findall('<a href="([^"]*)"><img alt="[^"]*" src="([^"]*)" /></a><div class="title"><a title="[^"]*" href="[^"]*">([^"]*)</a>',link)
-    for url,thumb,name in match:
-     url = base_url + url
-     main.addDir(name,url,40,thumb,'')
-
-    pagenext=re.compile('<a href="([^"]*)" class="next">Next &#187;</a>').findall(link)
-    if pagenext:
-      url = 'http://megabox.li/index.php' + pagenext[0]
-      main.addDir('[COLOR red]Next Page ->[/COLOR]',url,17,art+'/next.png')     
+        link=main.ADULT_URL(url)
+        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&#x27;',"'")
+        match=re.findall('<a href="([^"]*)"><img alt="[^"]*" src="([^"]*)" /></a><div class="title"><a title="[^"]*" href="[^"]*">([^"]*)</a>',link)
+        dialogWait = xbmcgui.DialogProgress()
+        ret = dialogWait.create('Please wait until Shows list is cached.')
+        totalLinks = len(match)
+        loadedLinks = 0
+        remaining_display = 'Shows loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+        dialogWait.update(0, '[B]Will load instantly from now on[/B]',remaining_display)
+        for url,thumb,name in match:
+                url = base_url + url
+                main.addInfo(name,url,40,thumb,'','')
+                loadedLinks = loadedLinks + 1
+                percent = (loadedLinks * 100)/totalLinks
+                remaining_display = 'Shows loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+                dialogWait.update(percent,'[B]Will load instantly from now on[/B]',remaining_display)
+                if (dialogWait.iscanceled()):
+                        return False   
+        dialogWait.close()
+        del dialogWait
+        
+        pagenext=re.compile('<a href="([^"]*)" class="next">Next &#187;</a>').findall(link)
+        if pagenext:
+          url = 'http://megabox.li/index.php' + pagenext[0]
+          main.addDir('[COLOR red]Next Page ->[/COLOR]',url,17,art+'/next.jpg')     
 
 ################################################################################################################################################
 def f7(seq):
@@ -152,7 +166,6 @@ def Seasons(url,name):
         #match.sort() # sort list so it shows season one first
         #match = f7(match)
         for season in match:
-                print 'SeAsOn:'+season
                 #main.addDir("Season "+season,url,13,'','')
                 main.addDirG('[COLOR blue]'+'SEASON '+season+'[/COLOR]',url,13,'',season=season)
         
@@ -163,7 +176,6 @@ def Episodes(url,season):
         link=response.read().replace('&#039;',"'")
         response.close()
         season = str(season)
-        print 'SeaSon:'+season
         match=re.compile('<a href="info.php[?]id=([^"]*)&season='+season+'&episode=([^"]*)&tv">[^"]*<span class="ep_title">([^"]*)</span> <span class="total">([^"]*)</span>').findall(link)
         #match.sort() # sort list so it shows first episode first
      
@@ -460,7 +472,7 @@ def SEARCH(url = ''):
         
         nextpage=re.compile('<a href="([^"]*)" class="next">Next &#187;</a>').findall(link)
         for url in nextpage:
-                main.addDir('Next Page >>',base_url+url,1,art+'/next.png')
+                main.addDir('Next Page >>',base_url+url,1,art+'/next.jpg')
                 
         xbmcplugin.setContent(int(sys.argv[1]), 'Movies')
         main.VIEWS()
@@ -492,7 +504,7 @@ def SEARCHTV(url = ''):
         
         nextpage=re.compile('<a href="([^"]*)" class="next">Next &#187;</a>').findall(link)
         for url in nextpage:
-                main.addDir('Next Page >>',base_url+url,1,art+'/next.png')
+                main.addDir('Next Page >>',base_url+url,1,art+'/next.jpg')
                 
         xbmcplugin.setContent(int(sys.argv[1]), 'Movies')
         main.VIEWS()        
@@ -636,61 +648,51 @@ def PLAY(name,url):
         match=re.compile('src="http://play.flashx.tv/player/embed.php[?]hash=([^"]*)" scrolling="no" allowfullscreen></iframe></center>').findall(link)
         for url in match:
                 url = 'http://flashx.tv/video/' + url + '/'
-                print url
                 hosted_media = urlresolver.HostedMediaFile(url=url)
                 sources.append(hosted_media)
         match=re.compile('src="http://played.to/embed-([^"]*)-[^"]*.html" scrolling="no" allowfullscreen></iframe></textarea>').findall(link)
         for url in match:
                 url = 'http://played.to/' + url 
-                print url
                 hosted_media = urlresolver.HostedMediaFile(url=url)
                 sources.append(hosted_media)
         match=re.compile('<p> Source: <a href="http://cloudyvideos.com/([^"]*)" target').findall(link)
         for url in match:
                 url = 'http://cloudyvideos.com/' + url 
-                print url
                 hosted_media = urlresolver.HostedMediaFile(url=url)
                 sources.append(hosted_media)
         match=re.compile('location.href = \'http://dropvideo.com/video/([^"]*)\';</script>').findall(link)
         for url in match:
                 url = 'http://dropvideo.com/video/' + url 
-                print url
                 hosted_media = urlresolver.HostedMediaFile(url=url)
                 sources.append(hosted_media)
         match=re.compile('<embed src="http://www.youtube.com/v/([^"]*)=en&fs=1&rel=0" type="application/x-shockwave-flash.+?</textarea>').findall(link)
         for url in match:
                 url = 'https://www.youtube.com/watch?feature=player_embedded&v=' + url 
-                print url
                 hosted_media = urlresolver.HostedMediaFile(url=url)
                 sources.append(hosted_media)
         match=re.compile('src=\'http://embed.divxstage.eu/embed.php[?]v=([^"]*)&width=[^"]*&height=[^"]*\' scrolling=\'no\'></iframe></textarea>').findall(link)
         for url in match:
                 url = 'http://www.divxstage.eu/video/' + url 
-                print url
                 hosted_media = urlresolver.HostedMediaFile(url=url)
                 sources.append(hosted_media)         
         match=re.compile('src=\'http://embed.movshare.net/embed.php[?]v=([^"]*)&width=[^"]*&height=[^"]*&color=[^"]*\' scrolling=\'no\'></iframe></textarea>').findall(link)
         for url in match:
                 url = 'http://www.movshare.net/video/' + url 
-                print url
                 hosted_media = urlresolver.HostedMediaFile(url=url)
                 sources.append(hosted_media)
         match=re.compile('src="http://embed.videoweed.es/embed.php[?]v=([^"]*)&width=[^"]*&height=[^"]*" scrolling="no"></iframe></textarea>').findall(link)
         for url in match:
                 url = 'http://www.videoweed.es/file/' + url 
-                print url
                 hosted_media = urlresolver.HostedMediaFile(url=url)
                 sources.append(hosted_media)
         match=re.compile('src=\'http://embed.novamov.com/embed.php[?]width=[^"]*&height=[^"]*&v=([^"]*)&px=1\' scrolling=\'no\'></iframe></textarea>').findall(link)
         for url in match:
                 url = 'http://www.novamov.com/video/' + url 
-                print url
                 hosted_media = urlresolver.HostedMediaFile(url=url)
                 sources.append(hosted_media)         
         match=re.compile('src=\'http://embed.nowvideo.sx/embed.php[?]width=[^"]*&height=[^"]*&v=([^"]*)\' scrolling=\'no\'></iframe></textarea>').findall(link)
         for url in match:
                 url = 'http://www.nowvideo.sx/video/' + url 
-                print url
                 hosted_media = urlresolver.HostedMediaFile(url=url)
                 sources.append(hosted_media)         
         if (len(sources)==0):
@@ -721,65 +723,64 @@ def PLAYB(name,url):
         match=re.compile('src="http://play.flashx.tv/player/embed.php[?]hash=([^"]*)" scrolling="no" allowfullscreen></iframe></center>').findall(link)
         for url in match:
                 url = 'http://flashx.tv/video/' + url + '/'
-                print url
                 hosted_media = urlresolver.HostedMediaFile(url=url)
                 sources.append(hosted_media)
         match=re.compile('src="http://played.to/embed-([^"]*)-[^"]*.html" scrolling="no" allowfullscreen></iframe></textarea>').findall(link)
         for url in match:
                 url = 'http://played.to/' + url 
-                print url
                 hosted_media = urlresolver.HostedMediaFile(url=url)
                 sources.append(hosted_media)
         match=re.compile('<p> Source: <a href="http://cloudyvideos.com/([^"]*)" target').findall(link)
         for url in match:
                 url = 'http://cloudyvideos.com/' + url 
-                print url
                 hosted_media = urlresolver.HostedMediaFile(url=url)
                 sources.append(hosted_media)
         match=re.compile('location.href = \'http://dropvideo.com/video/([^"]*)\';</script>').findall(link)
         for url in match:
                 url = 'http://dropvideo.com/video/' + url 
-                print url
                 hosted_media = urlresolver.HostedMediaFile(url=url)
                 sources.append(hosted_media)
         match=re.compile('<embed src="http://www.youtube.com/v/([^"]*)=en&fs=1&rel=0" type="application/x-shockwave-flash.+?</textarea>').findall(link)
         for url in match:
                 url = 'https://www.youtube.com/watch?feature=player_embedded&v=' + url 
-                print url
                 hosted_media = urlresolver.HostedMediaFile(url=url)
                 sources.append(hosted_media)
         match=re.compile('src=\'http://embed.divxstage.eu/embed.php[?]v=([^"]*)&width=[^"]*&height=[^"]*\' scrolling=\'no\'></iframe></textarea>').findall(link)
         for url in match:
                 url = 'http://www.divxstage.eu/video/' + url 
-                print url
                 hosted_media = urlresolver.HostedMediaFile(url=url)
                 sources.append(hosted_media)         
         match=re.compile('src=\'http://embed.movshare.net/embed.php[?]v=([^"]*)&width=[^"]*&height=[^"]*&color=[^"]*\' scrolling=\'no\'></iframe></textarea>').findall(link)
         for url in match:
                 url = 'http://www.movshare.net/video/' + url 
-                print url
                 hosted_media = urlresolver.HostedMediaFile(url=url)
                 sources.append(hosted_media)
         match=re.compile('src="http://embed.videoweed.es/embed.php[?]v=([^"]*)&width=[^"]*&height=[^"]*" scrolling="no"></iframe></textarea>').findall(link)
         for url in match:
                 url = 'http://www.videoweed.es/file/' + url 
-                print url
                 hosted_media = urlresolver.HostedMediaFile(url=url)
                 sources.append(hosted_media)
         match=re.compile('src=\'http://embed.novamov.com/embed.php[?]width=[^"]*&height=[^"]*&v=([^"]*)&px=1\' scrolling=\'no\'></iframe></textarea>').findall(link)
         for url in match:
                 url = 'http://www.novamov.com/video/' + url 
-                print url
                 hosted_media = urlresolver.HostedMediaFile(url=url)
                 sources.append(hosted_media)         
         match=re.compile('src=\'http://embed.nowvideo.sx/embed.php[?]width=[^"]*&height=[^"]*&v=([^"]*)\' scrolling=\'no\'></iframe></textarea>').findall(link)
         for url in match:
                 url = 'http://www.nowvideo.sx/video/' + url 
-                print url
                 hosted_media = urlresolver.HostedMediaFile(url=url)
                 sources.append(hosted_media)         
-
-
+        
+        match=re.compile('src="http://www.putlocker.com/embed/([^"]*)" width="[^"]*" height="[^"]*" frameborder="0" scrolling="no"></iframe></textarea>').findall(link)
+        for url in match:
+                url = 'http://www.firedrive.com/file/' + url 
+                hosted_media = urlresolver.HostedMediaFile(url=url)
+                sources.append(hosted_media)
+        match=re.compile('src="http://www.sockshare.com/embed/([^"]*)" width="[^"]*" height="[^"]*" frameborder="0" scrolling="no"></iframe></textarea>').findall(link)
+        for url in match:
+                url = 'http://www.sockshare.com/file/' + url 
+                hosted_media = urlresolver.HostedMediaFile(url=url)
+                sources.append(hosted_media)        
 
                 
         if (len(sources)==0):
