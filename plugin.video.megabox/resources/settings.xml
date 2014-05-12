@@ -2,6 +2,7 @@
 <settings>
 
    <category label="General">
+		<setting id="Hide-Adult" type="bool" label="Hide Adult Genre" default="true"/>
 		<setting id="Hide-XXX" type="bool" label="Hide-XXX" default="true"/>
 		<setting id="meta-view" type="bool" label="[B]Metadata (Movies)[/B]" default="true"/>
 		<setting id="meta-view-tv" type="bool" label="[B]Metadata (TV Shows)[/B]" default="true"/>

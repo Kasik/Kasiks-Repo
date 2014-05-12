@@ -55,3 +55,6 @@ Added New Artwork
 
 [B]Version 2.1.4[/B]
 Added Adult(XXX)
+
+[B]Version 2.1.5[/B]
+Added Adult Genre

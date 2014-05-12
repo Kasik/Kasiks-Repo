@@ -54,7 +54,9 @@ def MAIN():
 
 def MOVIEGENRE(url):
         main.addDir('Action',base_url +'?genre=action',1,art+'/action.jpg')
-        #main.addDir('Adult',base_url,17,art+'/adult.jpg')
+        HideAdult = selfAddon.getSetting('Hide-Adult')
+        if HideAdult == 'false':
+                main.addDir('Adult','http://megabox.li/accept_terms.php?genre=adult&accept=1',17,art+'/adultgenre.jpg')
         main.addDir('Animation',base_url +'?genre=animation',1,art+'/anim.jpg')
         main.addDir('Comedy',base_url +'?genre=comedy',1,art+'/comedy.jpg')
         main.addDir('Crime',base_url +'?genre=crime',1,art+'/crime.jpg')
@@ -360,10 +362,12 @@ elif mode==16:
 
 elif mode==17:
         from resources.libs import megabox
-        print ""+url
         megabox.ADULTGENRE(url)             
-        
 
+
+elif mode==40:
+        from resources.libs import megabox
+        megabox.GRABADULT(url)        
 
 elif mode==50:
         from resources.libs import megabox

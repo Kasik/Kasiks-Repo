@@ -1,4 +1,4 @@
-import urllib,re,string,sys,os
+import urllib,re,string,sys,os,urllib2
 import xbmc, xbmcgui, xbmcaddon, xbmcplugin
 import time,threading
 
@@ -16,7 +16,7 @@ datapath = xbmc.translatePath(selfAddon.getAddonInfo('profile'))
 hosts = 'putlocker,sockshare,billionuploads,hugefiles,mightyupload,movreel,lemuploads,180upload,megarelease,filenuke,flashx,gorillavid,bayfiles,veehd,vidto,mailru,videomega,epicshare,bayfiles,2gbhosting,alldebrid,allmyvideos,vidspot,castamp,cheesestream,clicktoview,crunchyroll,cyberlocker,daclips,dailymotion,divxstage,donevideo,ecostream,entroupload,facebook,filebox,hostingbulk,hostingcup,jumbofiles,limevideo,movdivx,movpod,movshare,movzap,muchshare,nolimitvideo,nosvideo,novamov,nowvideo,ovfile,play44_net,played,playwire,premiumize_me,primeshare,promptfile,purevid,rapidvideo,realdebrid,rpnet,seeon,sharefiles,sharerepo,sharesix,skyload,stagevu,stream2k,streamcloud,thefile,tubeplus,tunepk,ufliq,upbulk,uploadc,uploadcrazynet,veoh,vidbull,vidcrazynet,video44,videobb,videofun,videotanker,videoweed,videozed,videozer,vidhog,vidpe,vidplay,vidstream,vidup,vidx,vidxden,vidzur,vimeo,vureel,watchfreeinhd,xvidstage,yourupload,youtube,youwatch,zalaa,zooupload,zshare'
 
 
-VERSION = "2.1.4"
+VERSION = "2.1.5"
 PATH = "Megabox-"            
 
 try:
@@ -1181,5 +1181,13 @@ def addDirG(name, url, mode, iconimage, metainfo=False, total=False, season=None
              ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=True, totalItems=int(total))
          return ok
 ######################################################################################################################
-
+def ADULT_URL(url):
+    req = urllib2.Request(url)
+    #req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+    #response = urllib2.urlopen(req)
+    req.add_header('Cookie', 'PHPSESSID=9188c0e302514530e8ed98e7ac777412; noadvtday=0; nopopatall=1399868698')
+    response = urllib2.urlopen(req)
+    link=response.read()
+    return link      
+######################################################################################################################################
     
