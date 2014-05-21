@@ -6,3 +6,9 @@
 
 - Code Reworked
 
+[B]Version 0.1.1[/B]
+
+- Code Updated/Reworked
+(Some items may result in error, this is normal and hopefully will
+be worked out in the next version)
+

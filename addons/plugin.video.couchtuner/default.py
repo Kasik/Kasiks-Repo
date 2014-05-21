@@ -1,21 +1,22 @@
-import xbmc,xbmcgui, xbmcaddon, xbmcplugin,urllib2
-import urllib,re,string,os,time,threading
-from BeautifulSoup import MinimalSoup as BeautifulSoup
+#-*- coding: utf-8 -*-
+import xbmc,xbmcgui, xbmcaddon, xbmcplugin
+import urllib,urllib2,re,string,os,time,threading
+
 try:
     from resources.libs import main,settings    
 except Exception, e:
     elogo = xbmc.translatePath('special://home/addons/plugin.video.couchtuner/resources/art/bigx.png')
     dialog = xbmcgui.Dialog()
-    ok=dialog.ok('[B][COLOR=FF67cc33]couchtuner Import Error[/COLOR][/B]','Failed To Import Needed Modules',str(e),'Report missing Module to Fix')
-    xbmc.log('couchtuner ERROR - Importing Modules: '+str(e), xbmc.LOGERROR)
-
+    ok=dialog.ok('[B][COLOR=FF67cc33]Channel_Cut Import Error[/COLOR][/B]','Failed To Import Needed Modules',str(e),'Report missing Module at [COLOR=FF67cc33]mashupxbmc.com[/COLOR] to Fix')
+    xbmc.log('channel_cut ERROR - Importing Modules: '+str(e), xbmc.LOGERROR)
     
-#CouchTuner - by Kasik 2014.
+#CouchTuner by Kasik04a
 
-base_url ='http://www.couchtuner.eu/'
+
 addon_id = 'plugin.video.couchtuner'
 selfAddon = xbmcaddon.Addon(id=addon_id)
 art = main.art
+base_url = 'http://www.couchtuner.me/'
 
 ################################################################################ Directories ##########################################################################################################
 UpdatePath=os.path.join(main.datapath,'Update')
@@ -27,48 +28,31 @@ except: pass
 CookiesPath=os.path.join(main.datapath,'Cookies')
 try: os.makedirs(CookiesPath)
 except: pass
-    
-
+TempPath=os.path.join(main.datapath,'Temp')
+try: os.makedirs(TempPath)
+except: pass
 
 def MAIN():
+    
+    main.addDir('New Release','http://www.couchtuner.me/',1,art+'/new.png')
+    main.addDir('TV A-Z Index ','http://www.couchtuner.me/tv-streaming/',7,art+'/showlist.png')
+    main.addDir('Search','http://www.couchtuner.me/?s=',110,art+'/search.png')
 
-        main.addDirHome('New Releases',base_url,1,art+'/New.png')
-        main.addDirHome('Tv Show List',base_url + 'tv-streaming/',2,art+'/showlist.png')
-        main.VIEWSB()
+########################################################################################################################################################################
+def AtoZ():
+    main.addDir('0-9','http://www.couchtuner.ch/tv-list/#',8,art+'/09.png')
+    for i in string.ascii_uppercase:
+            main.addDir(i,'http://www.couchtuner.ch/tv-list/#'+i.upper()+'/',8,art+'/'+i.lower()+'.png')
 
-########################################################        
 
-
-def TVLIST(url):
-        for i in string.ascii_uppercase:
-                main.addDir(i,base_url +'tv-streaming/#'+i.upper(),3,art+'/'+i.lower()+'.png')
-
-def TVLISTB(url):
-        req = urllib2.Request(url)
-        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-        response = urllib2.urlopen(req)
-        link=response.read().replace('&#8230;','-...').replace('&#8217;',"'").replace('\n','').replace('\t','').replace('\r','')
-        response.close()
-        match=re.compile('<li><a href="([^"]*)" title="[^"]*">[%s]([^"]*)</a>'% name).findall(link)
-        for url,title in match:
-            title=name+title
-            url = base_url + url
-            print url
-            main.addDir(title,url,5,'')  
-        xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_TITLE)
-
-        xbmcplugin.endOfDirectory(int(sys.argv[1]))
-
-def Seasons(url):
-        req = urllib2.Request(url)
-        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-        response = urllib2.urlopen(req)
-        link=response.read().replace('&#8230;','-...').replace('&#8217;',"'").replace('\n','').replace('\t','').replace('\r','')
-        response.close()
-		
-        match=re.compile('<span style="color: #339966;"><strong>([^"]*)</strong></span></p><ul><li>').findall(link)
-        for season in match:
-                main.addDir(season,url,5,'')
+def AZLIST(url):
+    link=main.OPENURL(url)
+    link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
+    match=re.compile('<li><a href="([^"]*)" title="[^"]*">[%s]([^"]*)</a>'% name).findall(link)
+    for url,title in match:
+        title=name+title
+        url = 'http://www.couchtuner.ch/' + url
+        main.addInfo(title,url,9,'','','')
 
 def Episodes(url):
         req = urllib2.Request(url)
@@ -77,41 +61,150 @@ def Episodes(url):
         link=response.read().replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&#8211;','-').replace('&#8217;',"'").replace('season-','s').replace('episode-','e').replace('#038;','')
         response.close()
 		
-        match=re.compile('<a href="http://www.couchtuner.eu/([^"]*)/">([^"]*)</a>([^"]*)</strong></li>').findall(link)
+        match=re.compile('<a href="http://www.couchtuner.ch/([^"]*)/">([^"]*)</a>([^"]*)</strong>').findall(link)
         for url,episode,title in match:
                 title='[COLOR blue]'+episode+'[/COLOR]'+ ' - ' +'[COLOR red]'+title+'[/COLOR]'
                 url = 'http://www.zzstream.li/'+url+'.html'
                 print ""+url
-                main.addPlayTE(title,url,75,'','','','','','')
-        match=re.compile('<a href="http://www.zzstream.li/([^"]*)">([^"]*)</a>([^"]*)</strong>').findall(link)
+                main.addDir(title,url,5,'')
+        match=re.compile('<a href="http://www.zzstream.li/([^"]*)" rel="nofollow">([^"]*)</a>([^"]*)</strong>').findall(link)
         for url,episode,title in match:
                 title='[COLOR blue]'+episode+'[/COLOR]'+ ' - ' +'[COLOR red]'+title+'[/COLOR]'
                 url='http://www.zzstream.li/'+url
                 print ""+url
-                main.addPlayTE(title,url,75,'','','','','','')     
+                main.addDir(title,url,5,'')             
+
+
+####################################################################################################################################################
+def getListFile(url, path, excepturl = None ):
+    link = ''
+    t = threading.Thread(target=setListFile,args=(url,path,excepturl))
+    t.start()
+    if not os.path.exists(path): t.join()
+    if os.path.exists(path):
+        try: link = open(path).read()
+        except: pass
+    return link
+
+def setListFile(url, path, excepturl = None):
+    content = None
+    try: content=main.OPENURL(url, verbose=False)
+    except:
+        if excepturl: content=main.OPENURL(excepturl, verbose=False)
+    if content:
+        try: open(path,'w+').write(content)
+        except: pass
+    return
+
+
+################################################################################ XBMCHUB Repo & Hub Maintenance Installer ##########################################################################################################
+hubpath = xbmc.translatePath(os.path.join('special://home/addons', ''))
+maintenance=os.path.join(hubpath, 'plugin.video.hubmaintenance')
+
+def downloadFileWithDialog(url,dest):
+    try:
+        dp = xbmcgui.DialogProgress()
+        dp.create("channel_cut","Downloading & Copying File",'')
+        urllib.urlretrieve(url,dest,lambda nb, bs, fs, url=url: main._pbhook(nb,bs,fs,dp,time.time()))
+    except Exception, e:
+        dialog = xbmcgui.Dialog()
+        main.ErrorReport(e)
+        dialog.ok("channel_cut", "Report the error below at " + main.supportsite, str(e), "We will try our best to help you")
+
+def UploadLog():
+    from resources.fixes import addon
+    addon.LogUploader()
+
+################################################################################ XBMCHUB POPUP ##########################################################################################################
+class HUB( xbmcgui.WindowXMLDialog ):
+    def __init__( self, *args, **kwargs ):
+        self.shut = kwargs['close_time'] 
+        xbmc.executebuiltin( "Skin.Reset(AnimeWindowXMLDialogClose)" )
+        xbmc.executebuiltin( "Skin.SetBool(AnimeWindowXMLDialogClose)" )
+                                       
+    def onInit( self ):
+        xbmc.Player().play('%s/resources/skins/DefaultSkin/media/theme.ogg'%selfAddon.getAddonInfo('path'))# Music.
+        while self.shut > 0:
+            xbmc.sleep(1000)
+            self.shut -= 1
+        xbmc.Player().stop()
+        self._close_dialog()
                 
+    def onFocus( self, controlID ): pass
+    
+    def onClick( self, controlID ): 
+        if controlID == 12:
+            xbmc.Player().stop()
+            self._close_dialog()
+        if controlID == 7:
+            xbmc.Player().stop()
+            self._close_dialog()
+
+    def onAction( self, action ):
+        if action in [ 5, 6, 7, 9, 10, 92, 117 ] or action.getButtonCode() in [ 275, 257, 261 ]:
+            xbmc.Player().stop()
+            self._close_dialog()
+
+    def _close_dialog( self ):
+        xbmc.executebuiltin( "Skin.Reset(AnimeWindowXMLDialogClose)" )
+        time.sleep( .4 )
+        self.close()
         
+def pop():
+    if xbmc.getCondVisibility('system.platform.ios'):
+        if not xbmc.getCondVisibility('system.platform.atv'):
+            popup = HUB('hub1.xml',selfAddon.getAddonInfo('path'),'DefaultSkin',close_time=34,logo_path='%s/resources/skins/DefaultSkin/media/Logo/'%selfAddon.getAddonInfo('path'))
+    if xbmc.getCondVisibility('system.platform.android'):
+        popup = HUB('hub1.xml',selfAddon.getAddonInfo('path'),'DefaultSkin',close_time=34,logo_path='%s/resources/skins/DefaultSkin/media/Logo/'%selfAddon.getAddonInfo('path'))
+    else:
+        popup = HUB('hub.xml',selfAddon.getAddonInfo('path'),'DefaultSkin',close_time=34,logo_path='%s/resources/skins/DefaultSkin/media/Logo/'%selfAddon.getAddonInfo('path'))
+    popup.doModal()
+    del popup
 
-################################################################################
-                
-def get_params():
-        param=[]
-        paramstring=sys.argv[2]
-        if len(paramstring)>=2:
-                params=sys.argv[2]
-                cleanedparams=params.replace('?','')
-                if (params[len(params)-1]=='/'):
-                        params=params[0:len(params)-2]
-                pairsofparams=cleanedparams.split('&')
-                param={}
-                for i in range(len(pairsofparams)):
-                        splitparams={}
-                        splitparams=pairsofparams[i].split('=')
-                        if (len(splitparams))==2:
-                                param[splitparams[0]]=splitparams[1]
-                                
-        return param
+################################################################################ Message ##########################################################################################################
 
+def Message():
+    help = SHOWMessage()
+    help.doModal()
+    del help
+
+
+class SHOWMessage(xbmcgui.Window):
+    def __init__(self):
+        self.addControl(xbmcgui.ControlImage(0,0,1280,720,art+'/infoposter.png'))
+    def onAction(self, action):
+        if action == 92 or action == 10:
+            xbmc.Player().stop()
+            self.close()
+
+def TextBoxes(heading,anounce):
+    class TextBox():
+        """Thanks to BSTRDMKR for this code:)"""
+            # constants
+        WINDOW = 10147
+        CONTROL_LABEL = 1
+        CONTROL_TEXTBOX = 5
+
+        def __init__( self, *args, **kwargs):
+            # activate the text viewer window
+            xbmc.executebuiltin( "ActivateWindow(%d)" % ( self.WINDOW, ) )
+            # get window
+            self.win = xbmcgui.Window( self.WINDOW )
+            # give window time to initialize
+            xbmc.sleep( 500 )
+            self.setControls()
+
+        def setControls( self ):
+            # set heading
+            self.win.getControl( self.CONTROL_LABEL ).setLabel(heading)
+            try:
+                f = open(anounce)
+                text = f.read()
+            except: text=anounce
+            self.win.getControl( self.CONTROL_TEXTBOX ).setText(text)
+            return
+    TextBox()
+############################################################################################################################################
 ###################################################################################
 
 def addDirB(name,url,mode,iconimage,types):
@@ -160,90 +253,164 @@ def addDir(name,url,mode,iconimage):
         ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=True)
         return ok
         
+################################################################################ Modes ##########################################################################################################
+
+
+def get_params():
+    param=[]
+    paramstring=sys.argv[2]
+    if len(paramstring)>=2:
+        params=sys.argv[2]
+        cleanedparams=params.replace('?','')
+        if (params[len(params)-1]=='/'):
+            params=params[0:len(params)-2]
+        pairsofparams=cleanedparams.split('&')
+        param={}
+        for i in range(len(pairsofparams)):
+            splitparams={}
+            splitparams=pairsofparams[i].split('=')
+            if (len(splitparams))==2:
+                param[splitparams[0]]=splitparams[1]
+    return param
               
 params=get_params()
+
 url=None
 name=None
-thumb=None
 mode=None
+iconimage=None
+fanart=None
+plot=None
+genre=None
+title=None
+season=None
+episode=None
+location=None
+path=None
 
+try: name=urllib.unquote_plus(params["name"])
+except: pass
+try: url=urllib.unquote_plus(params["url"])
+except: pass
+try: mode=int(params["mode"])
+except: pass
 try:
-        url=urllib.unquote_plus(params["url"])
-except:
-        pass
+    iconimage=urllib.unquote_plus(params["iconimage"])
+    iconimage = iconimage.replace(' ','%20')
+except: pass
+try: plot=urllib.unquote_plus(params["plot"])
+except: pass
 try:
-        name=urllib.unquote_plus(params["name"])
-except:
-        pass
-try:
-        thumb=urllib.unquote_plus(params["thumb"])
-except:
-        pass
-try:
-        mode=int(params["mode"])
-except:
-        pass
-
-base_url='http://www.couchtuner.eu/'
-
-
+    fanart=urllib.unquote_plus(params["fanart"])
+    fanart = fanart.replace(' ','%20')
+except: pass
+try: genre=urllib.unquote_plus(params["genre"])
+except: pass
+try: title=urllib.unquote_plus(params["title"])
+except: pass
+try: episode=int(params["episode"])
+except: pass
+try: season=int(params["season"])
+except: pass
+try: location=urllib.unquote_plus(params["location"])
+except: pass
+try: path=urllib.unquote_plus(params["path"])
+except: pass
 
 print "Mode: "+str(mode)
 print "URL: "+str(url)
 print "Name: "+str(name)
-
+print "Thumb: "+str(iconimage)
 
 if mode==None or url==None or len(url)<1:
-        print base_url 
-        MAIN()
+    MAIN()
+    main.VIEWSB()
 
 elif mode==1:
-        from resources.libs import couchtuner
-        print " "+url
-        couchtuner.NEWRELEASE(url)
-       
+    from resources.libs import couchtuner
+    print " " + url
+    couchtuner.NewRelease(url)
+
 elif mode==2:
-        print " "+url
-        TVLIST(url)
+    from resources.libs import couchtuner
+    print " " + url
+    couchtuner.PLAY(name,url)
 
 elif mode==3:
-        print " "+url
-        TVLISTB(url)
-
+    from resources.libs import couchtuner
+    print " " + url
+    couchtuner.SEARCH(url)
+    
 elif mode==4:
-        print " "+url
-        Seasons(url)
+    from resources.libs import couchtuner
+    print " " + url
+    couchtuner.Searchhistory()
 
 elif mode==5:
-        print " "+url
-        Episodes(url)
+    from resources.libs import couchtuner
+    print " " + url
+    couchtuner.LINK(name,url)
 
-elif mode==6:
+
+elif mode==7:
+    AtoZ()
+
+elif mode==8:
+    AZLIST(url)
+
+elif mode==9:
+    Episodes(url)
+    
+    
+
+elif mode==45:
+    from resources.libs import couchtuner
+    print " " + url
+    couchtuner.TVLINK(name,url)
+
+
+
+
+
+
+
+    
+
+elif mode==100:
+    from resources.libs import couchtuner
+    print " " + url
+    couchtuner.VIDEOLINKS(name,url) 
+
+elif mode==110:
         from resources.libs import couchtuner
-        print " "+url
-        couchtuner.VIDEOLINKS(url,name)
-
-      
+        print ""+url
+        couchtuner.Searchhistory()
+        
+elif mode==120:
+        from resources.libs import couchtuner
+        print ""+url
+        couchtuner.SEARCH(url)
+        
+elif mode==128:
+        main.Clearhistory(url)
+        
+elif mode==130:
+        from resources.libs import couchtuner
+        print ""+url
+        couchtuner.Searchhistorytv()
 
         
-
-elif mode==50:
-        from resources.libs import couchtuner
-        print " "+url
-        couchtuner.Resolve()
-
-
-elif mode==75:
-        from resources.libs import couchtuner
-        print " "+url
-        couchtuner.Play(url,name)         
-
-       
-
-
         
-   
+    
+elif mode==190:
+    print ""+url
+    main.Download_Source(name,url)
 
-        
+
+  
+
+elif mode == 776:
+    main.jDownloader(url) 
+
 
 xbmcplugin.endOfDirectory(int(sys.argv[1]))

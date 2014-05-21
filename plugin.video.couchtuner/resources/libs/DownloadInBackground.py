@@ -1,5 +1,6 @@
 '''
 Created on 09 Jan 2011
+
 @author: nteg
 '''
 import sys, os, time
@@ -7,9 +8,9 @@ import urllib
 import xbmc, xbmcgui, xbmcaddon
 from traceback import print_exc
 from t0mm0.common.addon import Addon
-selfAddon = xbmcaddon.Addon(id='plugin.video.megabox')
+selfAddon = xbmcaddon.Addon(id='plugin.video.couchtuner')
 addon_path = selfAddon.getAddonInfo('path')
-addon_id = 'plugin.video.megabox'
+addon_id = 'plugin.video.couchtuner'
 addon = Addon(addon_id)
 class StopDownloading(Exception): 
     def __init__(self, value): 
@@ -31,7 +32,7 @@ DeleteIncomplete = 'true'
 #DeleteIncomplete=selfAddon.getSetting('delete-incomplete-downloads')
 playFile = True
 
-art = xbmc.translatePath('special://home/addons/plugin.video.megabox/resources/art/')
+art = xbmc.translatePath('special://home/addons/plugin.video.couchtuner/resources/art/')
 NotifyPercents = range(0, 100 + NotifyPercent, NotifyPercent)
 start_time = time.time()
 datapath = addon.get_profile()

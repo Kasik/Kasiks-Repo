@@ -1,128 +1,158 @@
-#-*- coding: utf-8 -*-
-import urllib,re,sys,os,urllib2
+import urllib,urllib2,re,cookielib, urlresolver,sys,os
 import xbmc, xbmcgui, xbmcaddon, xbmcplugin
-import main
+from resources.libs import main
 import string
-import urlresolver
-from BeautifulSoup import MinimalSoup as BeautifulSoup
+
+#CouchTuner - by Kasik04a 2013.
+
 from t0mm0.common.addon import Addon
-from t0mm0.common.net import Net
-net = Net()
-
-
-#CouchTuner - by Kasik 2014.
-
+from resources.universal import playbackengine, watchhistory
 addon_id = 'plugin.video.couchtuner'
 selfAddon = xbmcaddon.Addon(id=addon_id)
+addon = Addon('plugin.video.couchtuner', sys.argv)
 art = main.art
-base_url='http://www.couchtuner.eu/'
-USER_AGENT = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3'
+base_url = 'http://www.couchtuner.me/'    
+wh = watchhistory.WatchHistory('plugin.video.couchtuner')
 
-######################################################################################################################
-
-
-def NEWRELEASE(url):
-        req = urllib2.Request(url)
-        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-        response = urllib2.urlopen(req)
-        link=response.read().replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&#8211;','-').replace('&#8217;',"'").replace('season-','s').replace('episode-','e').replace('#038;','')
-        response.close()
-		
-        match=re.compile('<a href="http://www.couchtuner.eu/([^"]*)/" title="Watch ([^"]*) Online" ><span style="background-image: url[(]([^"]*)[)]" class="episode"></span>[^"]*<br />[^"]*</a>').findall(link)
-        for url, name, thumb in match:
-                thumb = base_url + thumb
-                url = 'http://www.zzstream.li/'+url+'.html'
-                print "Starting Here"+url
-                main.addInfo(name,url,75,thumb,'','')
-                
-                                           
-               
-                       
-
-        matchpage=re.compile('<div class="prev-page"><strong>Previous <a href="([^"]*)">[^"]*</a></strong>').findall(link)
-        for nexturl in matchpage: 
-                main.addDir('Next Page >>',base_url + nexturl, 1,art+'/next.png')
-
-
-     
-
-def VIDEOLINKS(url,name):
-        req = urllib2.Request(url)
-        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-        response = urllib2.urlopen(req)
-        link=response.read().replace('\t','').replace('\r','').replace('\n','').replace('&#8211;','-').replace('&#8217;',"'").replace('IFRAME SRC','iframe src')
-        response.close()
-        putlocker=re.compile('<b>Putlo</b></span><br /><iframe src="([^"]*)" width').findall(link)
-        if len(putlocker) > 0:
-                addDownLink("[COLOR blue]Play[/COLOR]",url,75,'')
-        
-
-
-
-def Play(url,name):
-        sources = []
+def NewRelease(url):
         link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('IFRAME SRC','iframe src')
-        xbmc.executebuiltin("XBMC.Notification(Please Wait!,Opening Link,2000)")
-        match=re.compile('[^"]*</b></span><br /><iframe src="([^"]*)"').findall(link)
-        for url in match:
-                url=url
-                print url
-                hosted_media = urlresolver.HostedMediaFile(url=url)
-                sources.append(hosted_media)
-        if (len(sources)==0):
-                xbmc.executebuiltin("XBMC.Notification(Sorry!,Show doesn't have playable links,5000)")
-      
-        else:
-                source = urlresolver.choose_source(sources)
-                if source:
-                        stream_url = source.resolve()
-                        if source.resolve()==False:
-                                xbmc.executebuiltin("XBMC.Notification(Sorry!,Link Cannot Be Resolved,5000)")
-                                return
-                else:
-                      stream_url = False
-                      return
-                listitem = xbmcgui.ListItem(name, iconImage="DefaultVideo.png")
-                listitem.setInfo('video', {'Title': name, 'Year': ''} )       
-                xbmc.Player().play(str(stream_url), listitem)
-                main.addDir('','','','')      
+        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&player=2','').replace("",'').replace('\xe2\x80\x99',"'").replace('\xe2\x80\x93','-')
+        match=re.compile('<span class="tvbox"><a href="http://www.couchtuner.me/[^"]+/[^"]+/([^"]+)"><img width="[^"]*" height="[^"]*" src="([^"]*)".+?<span class="tvpost">([^"]*)<br/>').findall(link)
+        dialogWait = xbmcgui.DialogProgress()
+        ret = dialogWait.create('Please wait until Show list is cached.')
+        totalLinks = len(match)
+        loadedLinks = 0
+        remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+        dialogWait.update(0,'[B]Will load instantly from now on[/B]',remaining_display)
+        for url,thumb,name in match:
+            url = 'http://streamonline.me/' + url
+            main.addDirTE(name,url,5,thumb,'','','','','')
+            loadedLinks = loadedLinks + 1
+            percent = (loadedLinks * 100)/totalLinks
+            remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+            dialogWait.update(percent,'[B]Will load instantly from now on[/B]',remaining_display)
+            if (dialogWait.iscanceled()):
+                return False   
+        dialogWait.close()
+        del dialogWait
 
-       
-       
-                      
+        nextpage=re.compile('<div class="prev-page"><strong>Previous <a href="([^"]*)">[^"]*</a></strong>').findall(link)
+        if nextpage:
+         xurl=base_url+nextpage[0]
+         main.addDir('Next Page',xurl,1,'')
 
-                
-def Resolve():
-    addLink('Play',urlresolver.resolve(url),art+'/play.png')
+        
+def LINK(name,url):      
+        html = main.OPENURL(url)
+        html=html.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('IFRAME SRC','iframe src').replace("",'').replace('\xe2\x80\x99',"'").replace('\xe2\x80\x93','-')
+        main.addLink("[COLOR red]For Download Options, Bring up Context Menu Over Selected Link.[/COLOR]",'','')
+        r = re.compile(r'<b>([^"]*)</b></span><br /><iframe src="([^"]*)"',re.M|re.DOTALL).findall(html)
+        for host,url in r:
+            from urlparse import urlparse    
+            host = urlparse(url).hostname.replace('www.','').partition('.')[0]
+            if main.supportedHost(host):
+             main.addDown2(name.strip()+" [COLOR blue]"+host.upper()+"[/COLOR]",url,2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
+            
+def LINK2(name,url):      
+        html = main.OPENURL(url)
+        html=html.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('IFRAME SRC','iframe src').replace("",'').replace('\xe2\x80\x99',"'").replace('\xe2\x80\x93','-')
+        main.addLink("[COLOR red]For Download Options, Bring up Context Menu Over Selected Link.[/COLOR]",'','')
+        r = re.compile(r'<b>([^"]*)</b></span><br /><iframe src="([^"]*)"',re.M|re.DOTALL).findall(html)
+        for host,url in r:
+            from urlparse import urlparse    
+            host = urlparse(url).hostname.replace('www.','').partition('.')[0]
+            if main.supportedHost(host):
+             main.addDown2(name.strip()+" [COLOR blue]"+host.upper()+"[/COLOR]",url,2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
+            
 
 
-###########################################################################################################################################################################
-def addDir(name,url,mode,iconimage):
-        u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)+"&thumb="+urllib.quote_plus(iconimage)
-        ok=True
-        liz=xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
-        liz.setInfo( type="Video", infoLabels={ "Title": name } )
-        ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=True)
+
+
+def PLAY(name,url):
+    ok=True
+    hname=name
+    name  = name.split('[COLOR blue]')[0]
+    name  = name.split('[COLOR red]')[0]
+    infoLabels = main.GETMETAT(name,'','','')
+    video_type='movie'
+    season=''
+    episode=''
+    img=infoLabels['cover_url']
+    fanart =infoLabels['backdrop_url']
+    imdb_id=infoLabels['imdb_id']
+    infolabels = { 'supports_meta' : 'true', 'video_type':video_type, 'name':str(infoLabels['title']), 'imdb_id':str(infoLabels['imdb_id']), 'season':str(season), 'episode':str(episode), 'year':str(infoLabels['year']) }
+
+    try:
+        xbmc.executebuiltin("XBMC.Notification(Please Wait!,Resolving Link,3000)")
+        stream_url = urlresolver.resolve(url)
+
+        infoL={'Title': infoLabels['metaName'], 'Plot': infoLabels['plot'], 'Genre': infoLabels['genre']}
+        # play with bookmark
+        from resources.universal import playbackengine
+        player = playbackengine.PlayWithoutQueueSupport(resolved_url=stream_url, addon_id=addon_id, video_type=video_type, title=str(infoLabels['title']),season=str(season), episode=str(episode), year=str(infoLabels['year']),img=img,infolabels=infoL, watchedCallbackwithParams=main.WatchedCallbackwithParams,imdb_id=imdb_id)
+        #WatchHistory
+        #if selfAddon.getSetting("whistory") == "true":
+        #    from resources.universal import watchhistory
+        #    wh = watchhistory.WatchHistory('plugin.video.movie25')
+        #    wh.add_item(hname+' '+'[COLOR green]Movie25[/COLOR]', sys.argv[0]+sys.argv[2], infolabels=infolabels, img=img, fanart=fanart, is_folder=False)
+        player.KeepAlive()
         return ok
-    
-def addLink(name,url,iconimage):
-        ok=True
-        liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
-        liz.setInfo( type="Video", infoLabels={ "Title": name } )
-        ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=str(url),listitem=liz)
+    except Exception, e:
+        if stream_url != False:
+                main.ErrorReport(e)
         return ok
 
-def addDownLink(name,url,mode,iconimage):
-        u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)+"&thumb="+urllib.quote_plus(iconimage)
-        ok=True
-	name=BeautifulSoup(name, convertEntities=BeautifulSoup.HTML_ENTITIES).contents[0]
-        liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
-        liz.setInfo( type="Video", infoLabels={ "Title": name } )
-        ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=False)
-        return ok
-###########################################################################################################################################################################
-    
-    
-                
-                
+
+def Searchhistory():
+    seapath=os.path.join(main.datapath,'Search')
+    SeaFile=os.path.join(seapath,'SearchHistoryTV')
+    if not os.path.exists(SeaFile):
+        SEARCH()
+    else:
+        main.addDir('Search Shows','###',120,art+'/search.png')
+        main.addDir('Clear History',SeaFile,128,art+'/cleahis.png')
+        thumb=art+'/link.png'
+        searchis=re.compile('search="(.+?)",').findall(open(SeaFile,'r').read())
+        for seahis in reversed(searchis):
+            url=seahis
+            seahis=seahis.replace('%20',' ')
+            main.addDir(seahis,url,120,thumb)
+
+            
+
+def SEARCH(url = ''):
+        encode = main.updateSearchFile(url,'TV')
+        if not encode: return False   
+        surl='http://www.couchtuner.me/?s=' + encode 
+        link=main.OPENURL(surl)
+        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
+        match=re.compile('<span class="tvbox"><a href="http://www.couchtuner.me/[^"]+/[^"]+/([^"]+)"><img width="[^"]*" height="[^"]*" src="([^"]*)".+?<span class="tvpost">([^"]*)<br/>').findall(link)
+        dialogWait = xbmcgui.DialogProgress()
+        ret = dialogWait.create('Please wait until Show list is cached.')
+        totalLinks = len(match)
+        loadedLinks = 0
+        remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+        dialogWait.update(0,'[B]Will load instantly from now on[/B]',remaining_display)
+        for url,thumb,name in match:
+            url = 'http://streamonline.me/' + url
+            main.addDirTE(name,url,5,thumb,'','','','','')
+            loadedLinks = loadedLinks + 1
+            percent = (loadedLinks * 100)/totalLinks
+            remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+            dialogWait.update(percent,'[B]Will load instantly from now on[/B]',remaining_display)
+            if (dialogWait.iscanceled()):
+                return False   
+        dialogWait.close()
+        del dialogWait
+
+        nextpage=re.compile('<div class="prev-page"><strong>Previous <a href="([^"]*)">[^"]*</a></strong>').findall(link)
+        if nextpage:
+         xurl=base_url+nextpage[0]
+         main.addDir('Next Page',xurl,120,'')            
+
+
+
+
+
+
+
