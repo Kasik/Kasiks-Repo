@@ -1,8 +1,8 @@
-import urllib,urllib2,re,string,sys,os
+import urllib,re,string,sys,os
 import xbmc, xbmcgui, xbmcaddon, xbmcplugin
 import time,threading
 
-#CouchTuner by Kasik04a 2013.
+#CouchTuner - by Kasik04a 2013.
 
 addon_id = 'plugin.video.couchtuner'
 selfAddon = xbmcaddon.Addon(id=addon_id)
@@ -12,11 +12,13 @@ fav = False
 hostlist = None
 Dir = xbmc.translatePath(os.path.join('special://home/addons/plugin.video.couchtuner', ''))
 datapath = xbmc.translatePath(selfAddon.getAddonInfo('profile'))
-hosts = 'putlocker,firedrive,sockshare,billionuploads,hugefiles,mightyupload,movreel,lemuploads,180upload,megarelease,filenuke,flashx,gorillavid,bayfiles,veehd,vidto,mailru,videomega,epicshare,bayfiles,2gbhosting,alldebrid,allmyvideos,vidspot,castamp,cheesestream,clicktoview,crunchyroll,cyberlocker,daclips,dailymotion,divxstage,donevideo,ecostream,entroupload,facebook,filebox,hostingbulk,hostingcup,jumbofiles,limevideo,movdivx,movpod,movshare,movzap,muchshare,nolimitvideo,nosvideo,novamov,nowvideo,ovfile,play44_net,played,playwire,premiumize_me,primeshare,promptfile,purevid,rapidvideo,realdebrid,rpnet,seeon,sharefiles,sharerepo,sharesix,skyload,stagevu,stream2k,streamcloud,thefile,tubeplus,tunepk,ufliq,upbulk,uploadc,uploadcrazynet,veoh,vidbull,vidcrazynet,video44,videobb,videofun,videotanker,videoweed,videozed,videozer,vidhog,vidpe,vidplay,vidstream,vidup,vidx,vidxden,vidzur,vimeo,vureel,watchfreeinhd,xvidstage,yourupload,youtube,youwatch,zalaa,zooupload,zshare'
+hosts = 'putlocker,sockshare,billionuploads,hugefiles,mightyupload,movreel,lemuploads,180upload,megarelease,filenuke,flashx,gorillavid,bayfiles,veehd,vidto,mailru,videomega,epicshare,bayfiles,2gbhosting,alldebrid,allmyvideos,vidspot,castamp,cheesestream,clicktoview,crunchyroll,cyberlocker,daclips,dailymotion,divxstage,donevideo,ecostream,entroupload,facebook,filebox,hostingbulk,hostingcup,jumbofiles,limevideo,movdivx,movpod,movshare,movzap,muchshare,nolimitvideo,nosvideo,novamov,nowvideo,ovfile,play44_net,played,playwire,premiumize_me,primeshare,promptfile,purevid,rapidvideo,realdebrid,rpnet,seeon,sharefiles,sharerepo,sharesix,skyload,stagevu,stream2k,streamcloud,thefile,tubeplus,tunepk,ufliq,upbulk,uploadc,uploadcrazynet,veoh,vidbull,vidcrazynet,video44,videobb,videofun,videotanker,videoweed,videozed,videozer,vidhog,vidpe,vidplay,vidstream,vidup,vidx,vidxden,vidzur,vimeo,vureel,watchfreeinhd,xvidstage,yourupload,youtube,youwatch,zalaa,zooupload,zshare'
+if selfAddon.getSetting('visitor_ga')=='':
+    from random import randint
+    selfAddon.setSetting('visitor_ga',str(randint(0, 0x7fffffff)))
 
-VERSION = "0.1.1"
-PATH = "couchtuner"  
-
+VERSION = "0.1.1A"
+PATH = "CouchTuner-"            
 
 try:
     log_path = xbmc.translatePath('special://logpath')
@@ -24,8 +26,8 @@ try:
     logfile = open(log, 'r').read()
     match=re.compile('Starting XBMC \((.+?) Git:.+?Platform: (.+?)\. Built').search(logfile)
     if match:
-        PLATFORM = match.group(1)
-        build = match.group(2)
+        build = match.group(1)
+        PLATFORM = match.group(2)
         print 'XBMC '+build+' Platform '+PLATFORM
     else:
         PLATFORM=''
@@ -39,20 +41,10 @@ fanartimage=Dir+'fanart2.jpg'
 elogo = xbmc.translatePath('special://home/addons/plugin.video.couchtuner/resources/art/bigx.png')
 slogo = xbmc.translatePath('special://home/addons/plugin.video.couchtuner/resources/art/smallicon.png')
 
-def OPEN_URL(url):
-    req = urllib2.Request(url)
-    req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-    #req.add_header('Referer', '')
-
-    response = urllib2.urlopen(req)
-    link=response.read().replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&player=2','').replace("",'').replace('\xe2\x80\x99',"'").replace('\xe2\x80\x93','-')
-    response.close()
-    return link
-
-
-def OPENURL(url, mobile = False, q = False, verbose = True, timeout = 10, cookie = None, data = None, cookiejar = False, log = True, headers = [], type = ''):
+def OPENURL(url, mobile = False, q = False, verbose = True, timeout = 10, cookie = None, data = None, cookiejar = False, log = True, headers = [], type = '',ua = False):
     import urllib2 
-    UserAgent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3'
+    UserAgent = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.131 Safari/537.36'
+    if ua: UserAgent = ua
     try:
         if log:
             print "Openurl = " + url
@@ -74,7 +66,7 @@ def OPENURL(url, mobile = False, q = False, verbose = True, timeout = 10, cookie
         if mobile:
             opener.addheaders = [('User-Agent', 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7')]
         else:
-            opener.addheaders = [('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')]
+            opener.addheaders = [('User-Agent', UserAgent)]
         for header in headers:
             opener.addheaders.append(header)
         if data:
@@ -206,8 +198,8 @@ def SwitchUp():
 
 def ErrorReport(e):
     elogo = xbmc.translatePath('special://home/addons/plugin.video.couchtuner/resources/art/bigx.png')
-    xbmc.executebuiltin("XBMC.Notification([COLOR=FF67cc33]couchtuner Error[/COLOR],"+str(e)+",10000,"+elogo+")")
-    xbmc.log('***********couchtuner Error: '+str(e)+'**************', xbmc.LOGERROR)
+    xbmc.executebuiltin("XBMC.Notification([COLOR=FF67cc33]CouchTuner Error[/COLOR],"+str(e)+",10000,"+elogo+")")
+    xbmc.log('***********CouchTuner Error: '+str(e)+'**************', xbmc.LOGERROR)
         
 def CloseAllDialogs():
     xbmc.executebuiltin("XBMC.Dialog.Close(all,true)")
@@ -287,10 +279,10 @@ def downloadFile(url,dest,silent = False,cookie = None):
         return True
     except Exception, e:
         print 'Error downloading file ' + url.split('/')[-1]
-        main.ErrorReport(e)
+        ErrorReport(e)
         if not silent:
             dialog = xbmcgui.Dialog()
-            dialog.ok("Channel Cut", "Report the error below at " + supportsite, str(e), "We will try our best to help you")
+            dialog.ok("CouchTuner", "Report the error below at " + supportsite, str(e), "We will try our best to help you")
         return False
             
 def updateSearchFile(searchQuery,searchType,defaultValue = '###',searchMsg = ''):
@@ -345,30 +337,8 @@ def updateSearchFile(searchQuery,searchType,defaultValue = '###',searchMsg = '')
 def supportedHost(host):
     if 'ul' == host: host = 'uploaded'
     return host.lower() in getHostList()
-######################################################################## Live Stream do Regex ############################################################
-def doRegex(murl):
-    #rname=rname.replace('><','').replace('>','').replace('<','')
-    import urllib2
-    url=re.compile('([^<]+)<regex>',re.DOTALL).findall(murl)[0]
-    doRegexs = re.compile('\$doregex\[([^\]]*)\]').findall(url)
-    for k in doRegexs:
-        if k in murl:
-            regex=re.compile('<name>'+k+'</name><expres>(.+?)</expres><page>(.+?)</page><referer>(.+?)</referer></regex>',re.DOTALL).search(murl)
-            referer=regex.group(3)
-            if referer=='':
-                referer=regex.group(2)
-            req = urllib2.Request(regex.group(2))
-            req.add_header('User-Agent','Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:10.0a1) Gecko/20111029 Firefox/10.0a1')
-            req.add_header('Referer',referer)
-            response = urllib2.urlopen(req)
-            link=response.read()
-            response.close()
-            link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\/','/')
-            r=re.compile(regex.group(1),re.DOTALL).findall(link)[0]
-            url = url.replace("$doregex[" + k + "]", r)
-   
-    return url
-    
+
+#    
 ################################################################################ AutoView ##########################################################################################################
 
 def VIEWS():
@@ -744,9 +714,9 @@ def resolveDownloadLinks(url):
         name=name.split('[COLOR red]')[0]
         name=name.replace('/','').replace('.','')
         url=GetUrliW(url)
-    elif re.search('couchtuner',url):
-        from resources.libs import couchtuner
-        url = couchtuner.resolveM25URL(url)
+    elif re.search('CouchTuner',url):
+        from resources.libs import CouchTuner
+        url = CouchTuner.resolveM25URL(url)
     elif url.startswith('ice'):
         from resources.libs.movies_tv import icefilms
         url = url.lstrip('ice')
@@ -863,9 +833,17 @@ def _pbhook(numblocks, blocksize, filesize, dp, start_time):
 
 def jDownloader(murl):
     url = resolveDownloadLinks(murl)
-    print "Downloading "+murl+" via jDownlaoder"
-    cmd = 'plugin://plugin.program.jdownloader/?action=addlink&url='+murl
-    xbmc.executebuiltin('XBMC.RunPlugin(%s)' % cmd)
+    if selfAddon.getSetting("jdcb") == "true":
+        print "Downloading "+murl+" via jDownlaoder"
+        cmd = 'plugin://plugin.program.jdownloader/?action=addlink&url='+murl
+        xbmc.executebuiltin('XBMC.RunPlugin(%s)' % cmd)
+    else:
+        if 'Windows' in PLATFORM:
+            command = 'echo ' + url.strip() + '| clip'
+            os.system(command)
+        else:
+            command = 'echo ' + url.strip() + '| pbcopy'
+            os.system(command)
 
 ################################################################################ Message ##########################################################################################################
 
@@ -919,9 +897,6 @@ def TextBoxes(heading,anounce):
 def addDirX(name,url,mode,iconimage,plot='',fanart='',dur=0,genre='',year='',imdb='',tmdb='',isFolder=True,searchMeta=False,addToFavs=True,
             id=None,fav_t='',fav_addon_t='',fav_sub_t='',metaType='Movies',menuItemPos=None,menuItems=None,down=False,replaceItems=True):
     u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)+"&iconimage="+urllib.quote_plus(iconimage)+"&plot="+urllib.quote_plus(plot)+"&fanart="+urllib.quote_plus(fanart)+"&genre="+urllib.quote_plus(genre)
-    if 'http://api.video.mail.ru/videos/embed/' in url or mode==364:
-        name=name.decode('windows-1251')
-        plot=plot.decode('windows-1251')
     if searchMeta:
         if metaType == 'TV':
             infoLabels = GETMETAEpiT(name,iconimage,plot)
@@ -939,10 +914,13 @@ def addDirX(name,url,mode,iconimage,plot='',fanart='',dur=0,genre='',year='',imd
         sysurl = urllib.quote_plus(url)
         sysname= urllib.quote_plus(name)
         Commands.append(('Direct Download', 'XBMC.RunPlugin(%s?mode=190&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
-        Commands.append(('Download with jDownloader', 'XBMC.RunPlugin(%s?mode=776&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
+        if selfAddon.getSetting("jdcb") == "true":
+            Commands.append(('Download with jDownloader', 'XBMC.RunPlugin(%s?mode=776&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
+        else:
+            Commands.append(('Copy to Clipboard', 'XBMC.RunPlugin(%s?mode=776&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
+
   
-    if searchMeta:
-        if metaType == 'TV' and selfAddon.getSetting("meta-view-tv") == "true":
+    if metaType == 'TV' and selfAddon.getSetting("meta-view-tv") == "true":
             xbmcplugin.setContent(int(sys.argv[1]), 'episodes')
             cname = infoLabels['title']
             cname = cname.decode('ascii', 'ignore')
@@ -955,7 +933,7 @@ def addDirX(name,url,mode,iconimage,plot='',fanart='',dur=0,genre='',year='',imd
                 else: watched_mark = 'Mark as Unwatched'
                 Commands.append((watched_mark, 'XBMC.RunPlugin(%s?mode=779&name=%s&url=%s&iconimage=%s&season=%s&episode=%s)' % (sys.argv[0], cname, 'episode', imdb_id,sea,epi)))
             Commands.append(('Refresh Metadata', 'XBMC.RunPlugin(%s?mode=780&name=%s&url=%s&iconimage=%s&season=%s&episode=%s)' % (sys.argv[0], cname, 'episode',imdb_id,sea,epi)))
-        elif metaType == 'Movies' and selfAddon.getSetting("meta-view") == "true":
+    elif metaType == 'Movies' and selfAddon.getSetting("meta-view") == "true":
             xbmcplugin.setContent(int(sys.argv[1]), 'Movies')
             if id != None: xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_PLAYLIST_ORDER )
             else: xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_UNSORTED )
@@ -981,7 +959,8 @@ def addDirX(name,url,mode,iconimage,plot='',fanart='',dur=0,genre='',year='',imd
     
     liz=xbmcgui.ListItem(name, iconImage=art+'/vidicon.png', thumbnailImage=iconimage)
     liz.addContextMenuItems( Commands, replaceItems=False)
-    liz.setInfo( type="Video", infoLabels=infoLabels )
+    if searchMeta:
+        liz.setInfo( type="Video", infoLabels=infoLabels )
     liz.setProperty('fanart_image', fanart)
     return xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=isFolder)
 
@@ -1015,7 +994,7 @@ def addDirL(name,url,mode,iconimage,plot,fanart,dur,genre,year):
 def addPlayL(name,url,mode,iconimage,plot,fanart,dur,genre,year,secName='',secIcon=''):
     u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)+"&iconimage="+urllib.quote_plus(iconimage)+"&plot="+urllib.quote_plus(plot)+"&fanart="+urllib.quote_plus(fanart)+"&genre="+urllib.quote_plus(genre)
     surl=urllib.quote_plus(u)
-    dname=removeColorTags(name)
+    dname=removeColoredText(name)
     mi=[('Add to [COLOR=FFb151ef]Dixie[/COLOR]', 'XBMC.RunPlugin(%s?mode=1501&plot=%s&name=%s&url=%s&iconimage=%s)' % (sys.argv[0] ,secName,dname,surl, secIcon))]
     return addDirX(name,url,mode,iconimage,plot,fanart,dur,genre,year,isFolder=0,fav_t='Live',fav_addon_t='Live',menuItemPos=2,menuItems=mi)
 
@@ -1077,8 +1056,8 @@ def addLink(name,url,iconimage):
     liz.setProperty('fanart_image', fanartimage)
     return xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=url,listitem=liz)
 
-def addDir(name,url,mode,iconimage,plot='',fanart=''):
-    return addDirX(name,url,mode,iconimage,plot,fanart,addToFavs=0,replaceItems=False)
+def addDir(name,url,mode,iconimage,plot=''):
+    return addDirX(name,url,mode,iconimage,plot,addToFavs=0,replaceItems=False)
 
 def addDirHome(name,url,mode,iconimage):
     return addDirX(name,url,mode,iconimage,addToFavs=0)
@@ -1095,7 +1074,7 @@ def addDirFIX(name,url,mode,iconimage,location,path):
     ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=False)
     return ok
 
-def addDown2(name,url,mode,iconimage,fanart,id=None):
+def addDown2(name,url,mode,iconimage,fanart):
     return addDirX(name,url,mode,iconimage,'',fanart,isFolder=0,addToFavs=0,id=id,down=1)
 
 def addDown3(name,url,mode,iconimage,fanart,id=None):
@@ -1111,9 +1090,8 @@ def addDown4(name,url,mode,iconimage,plot,fanart,dur,genre,year):
                        fav_t='Movies',fav_addon_t='Movie',down=not f)
 
 def addInfo(name,url,mode,iconimage,genre,year):
-#     mi = [('Search couchtuner','XBMC.Container.Update(%s?mode=4&url=%s)'% (sys.argv[0],'###'))]
-#     return addDirX(name,url,mode,iconimage,'','','',genre,year,searchMeta=1,fav_t='Movies',fav_addon_t='couchtuner',menuItemPos=0,menuItems=mi)
-    return addDirX(name,url,mode,iconimage,'','','',genre,year,searchMeta=1,fav_t='Movies',fav_addon_t='couchtuner')
+    mi = [('Search CouchTuner','XBMC.Container.Update(%s?mode=4&url=%s)'% (sys.argv[0],'###'))]
+    return addDirX(name,url,mode,iconimage,'','','',genre,year,searchMeta=1,fav_t='Movies',fav_addon_t='CouchTuner',menuItemPos=0,menuItems=mi)
 
 def addDirIWO(name,url,mode,iconimage,plot,fanart,dur,genre,year):
     return addDirX(name,url,mode,iconimage,plot,fanart,dur,genre,year,searchMeta=1,fav_t='Movies',fav_addon_t='iWatchOnline')

@@ -12,3 +12,8 @@
 (Some items may result in error, this is normal and hopefully will
 be worked out in the next version)
 
+[B]Version 0.1.1A[/B]
+
+- Turned Metadata Off, Corrected New Releases image.
+
+

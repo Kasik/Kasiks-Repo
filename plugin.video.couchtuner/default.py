@@ -34,7 +34,7 @@ except: pass
 
 def MAIN():
     
-    main.addDir('New Release','http://www.couchtuner.me/',1,art+'/new.png')
+    main.addDir('New Release','http://www.couchtuner.me/',1,art+'/New.png')
     main.addDir('TV A-Z Index ','http://www.couchtuner.me/tv-streaming/',7,art+'/showlist.png')
     main.addDir('Search','http://www.couchtuner.me/?s=',110,art+'/search.png')
 
