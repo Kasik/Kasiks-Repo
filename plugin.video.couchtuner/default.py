@@ -7,8 +7,8 @@ try:
 except Exception, e:
     elogo = xbmc.translatePath('special://home/addons/plugin.video.couchtuner/resources/art/bigx.png')
     dialog = xbmcgui.Dialog()
-    ok=dialog.ok('[B][COLOR=FF67cc33]Channel_Cut Import Error[/COLOR][/B]','Failed To Import Needed Modules',str(e),'Report missing Module at [COLOR=FF67cc33]mashupxbmc.com[/COLOR] to Fix')
-    xbmc.log('channel_cut ERROR - Importing Modules: '+str(e), xbmc.LOGERROR)
+    ok=dialog.ok('[B][COLOR=FF67cc33]CouchTuner Import Error[/COLOR][/B]','Failed To Import Needed Modules',str(e),'Report missing Module at [COLOR=FF67cc33]Twitter @ Kasik04a[/COLOR] to Fix')
+    xbmc.log('CouchTuner ERROR - Importing Modules: '+str(e), xbmc.LOGERROR)
     
 #CouchTuner by Kasik04a
 
@@ -48,13 +48,55 @@ def AtoZ():
 def AZLIST(url):
     link=main.OPENURL(url)
     link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-    match=re.compile('<li><a href="([^"]*)" title="[^"]*">[%s]([^"]*)</a>'% name).findall(link)
+    #match=re.compile('<li><a href="([^"]*)" title="[^"]*">[%s]([^"]*)</a>'% name).findall(link)
+    match=re.compile('<li><strong><a href="([^<]+)">[%s]([^<]+)</a></strong></li>'% name).findall(link)
     for url,title in match:
         title=name+title
-        url = 'http://www.couchtuner.ch/' + url
+        #url = url.replace('watch-','watch/')+'/'
         main.addInfo(title,url,9,'','','')
 
+
+
+
 def Episodes(url):
+    link=main.OPENURL(url)
+    link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
+    match=re.compile('<li><strong><a href="([^<]+)">([^<]+)</a>([^<]+)</strong>').findall(link)
+    for url,title,title1 in match:
+        title=title+' ' + title1
+        #url = url.replace('watch-','watch/')+'/'
+        main.addInfo(title,url,10,'','','')
+        
+
+def FirstLinks(name,url):
+    link=main.OPENURL(url)
+    link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
+    match=re.compile('>Watch it here :.+?</span><a href="([^"]*)">').findall(link)
+    if match:
+     for url in match:
+       Linkz(name,url)
+    else:
+      match2=re.compile('>Watch it here.+?:</span><a href="([^<]*)">').findall(link)
+      for url in match2:
+       Linkz(name,url)   
+        
+
+def Linkz(name,url):
+    link=main.OPENURL(url)
+    link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
+    match=re.compile('<b>([^"]*)</b></span><br /><IFRAME SRC="([^"]*)"').findall(link)
+    for host,url in match:
+       host=host.replace('AllMyV','AllMyVideos').replace('TheVid','TheVideo').replace('YouWa','YouWatch').replace('Vidbul','Vidbull').replace('Vodlo','Vodlocker').replace('Playe','Played').replace('ExaSh','Exashare').replace('IShar','Ishare')
+       main.addDown2(name.strip()+" [COLOR blue]"+host.upper()+"[/COLOR]",url,2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
+
+
+
+
+
+
+
+
+def Episodes2(url):
         req = urllib2.Request(url)
         req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
         response = urllib2.urlopen(req)
@@ -360,8 +402,11 @@ elif mode==8:
 
 elif mode==9:
     Episodes(url)
+
+elif mode==10:
+    FirstLinks(name,url)    
     
-    
+
 
 elif mode==45:
     from resources.libs import couchtuner

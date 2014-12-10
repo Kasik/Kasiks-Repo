@@ -16,4 +16,8 @@ be worked out in the next version)
 
 - Turned Metadata Off, Corrected New Releases image.
 
+[B]Version 0.1.2[/B]
+
+Misc Updates.
+
 

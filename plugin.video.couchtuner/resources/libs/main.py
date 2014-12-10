@@ -1,4 +1,4 @@
-import urllib,re,string,sys,os
+import urllib,re,string,sys,os,urllib2
 import xbmc, xbmcgui, xbmcaddon, xbmcplugin
 import time,threading
 
@@ -17,7 +17,7 @@ if selfAddon.getSetting('visitor_ga')=='':
     from random import randint
     selfAddon.setSetting('visitor_ga',str(randint(0, 0x7fffffff)))
 
-VERSION = "0.1.1A"
+VERSION = "0.1.2"
 PATH = "CouchTuner-"            
 
 try:
@@ -40,6 +40,23 @@ art = xbmc.translatePath('special://home/addons/plugin.video.couchtuner/resource
 fanartimage=Dir+'fanart2.jpg'
 elogo = xbmc.translatePath('special://home/addons/plugin.video.couchtuner/resources/art/bigx.png')
 slogo = xbmc.translatePath('special://home/addons/plugin.video.couchtuner/resources/art/smallicon.png')
+
+#########################
+
+def OPEN_URL(url):
+    req = urllib2.Request(url)
+    import time
+    #time.sleep(5)
+    req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+    response = urllib2.urlopen(req)
+    #link=response.read().replace('&amp;','&').replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('%3A',':').replace('%2F','/').replace('%3F','?').replace('%3D','=').replace('%26','&').replace('%3B',';').replace('crawler','')#.replace(';v=1','')
+    link=response.read().replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('+++','<a href="').replace('---','"></a>')#.replace('[','<').replace(']','>')
+    response.close()
+    return link
+################################################
+
+
+
 
 def OPENURL(url, mobile = False, q = False, verbose = True, timeout = 10, cookie = None, data = None, cookiejar = False, log = True, headers = [], type = '',ua = False):
     import urllib2 

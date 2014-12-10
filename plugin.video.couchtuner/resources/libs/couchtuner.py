@@ -17,7 +17,7 @@ wh = watchhistory.WatchHistory('plugin.video.couchtuner')
 def NewRelease(url):
         link=main.OPENURL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&player=2','').replace("",'').replace('\xe2\x80\x99',"'").replace('\xe2\x80\x93','-')
-        match=re.compile('<span class="tvbox"><a href="http://www.couchtuner.me/[^"]+/[^"]+/([^"]+)"><img width="[^"]*" height="[^"]*" src="([^"]*)".+?<span class="tvpost">([^"]*)<br/>').findall(link)
+        match=re.compile('<span class="tvbox"><a href="([^<]*)">.+?src="([^<]*)".+?class="tvpost">([^<]*)<br/>').findall(link)
         dialogWait = xbmcgui.DialogProgress()
         ret = dialogWait.create('Please wait until Show list is cached.')
         totalLinks = len(match)
@@ -25,7 +25,7 @@ def NewRelease(url):
         remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
         dialogWait.update(0,'[B]Will load instantly from now on[/B]',remaining_display)
         for url,thumb,name in match:
-            url = 'http://streamonline.me/' + url
+            #url = 'http://streamonline.me/' + url
             main.addDirTE(name,url,5,thumb,'','','','','')
             loadedLinks = loadedLinks + 1
             percent = (loadedLinks * 100)/totalLinks
@@ -42,28 +42,34 @@ def NewRelease(url):
          main.addDir('Next Page',xurl,1,'')
 
         
-def LINK(name,url):      
-        html = main.OPENURL(url)
-        html=html.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('IFRAME SRC','iframe src').replace("",'').replace('\xe2\x80\x99',"'").replace('\xe2\x80\x93','-')
-        main.addLink("[COLOR red]For Download Options, Bring up Context Menu Over Selected Link.[/COLOR]",'','')
-        r = re.compile(r'<b>([^"]*)</b></span><br /><iframe src="([^"]*)"',re.M|re.DOTALL).findall(html)
-        for host,url in r:
-            from urlparse import urlparse    
-            host = urlparse(url).hostname.replace('www.','').partition('.')[0]
-            if main.supportedHost(host):
-             main.addDown2(name.strip()+" [COLOR blue]"+host.upper()+"[/COLOR]",url,2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
-            
-def LINK2(name,url):      
-        html = main.OPENURL(url)
-        html=html.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('IFRAME SRC','iframe src').replace("",'').replace('\xe2\x80\x99',"'").replace('\xe2\x80\x93','-')
-        main.addLink("[COLOR red]For Download Options, Bring up Context Menu Over Selected Link.[/COLOR]",'','')
-        r = re.compile(r'<b>([^"]*)</b></span><br /><iframe src="([^"]*)"',re.M|re.DOTALL).findall(html)
-        for host,url in r:
-            from urlparse import urlparse    
-            host = urlparse(url).hostname.replace('www.','').partition('.')[0]
-            if main.supportedHost(host):
-             main.addDown2(name.strip()+" [COLOR blue]"+host.upper()+"[/COLOR]",url,2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
-            
+def LINK(name,url):
+    link=main.OPEN_URL(url)
+    link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
+    match=re.compile('<strong>Watch It Here :</strong> <strong></strong></span><a href="([^"]*)"').findall(link)
+    if match:
+     for url in match:
+       LINKZ(name,url)
+    else:
+      match2=re.compile('>Watch it here.+?:</span><a href="([^<]*)">').findall(link)
+      for url in match2:
+       LINKZ(name,url)   
+        
+
+def LINKZ(name,url):
+    link=main.OPENURL(url)
+    link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
+    match=re.compile('<b>([^"]*)</b></span><br /><IFRAME SRC="([^"]*)"').findall(link)
+    for host,url in match:
+       host=host.replace('AllMyV','AllMyVideos').replace('TheVid','TheVideo').replace('YouWa','YouWatch').replace('Vidbul','Vidbull').replace('Vodlo','Vodlocker').replace('Playe','Played').replace('ExaSh','Exashare').replace('IShar','Ishare').replace('Playedd','Played').replace('VodLR','Vodlocker')
+       main.addDown2(name.strip()+" [COLOR blue]"+host.upper()+"[/COLOR]",url,2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
+    match2=re.compile('<b>([^"]*)</b></span><br /><iframe width="540" height="330" src="([^"]*)"').findall(link)
+    for host,url in match2:
+       host=host.replace('AllMyV','AllMyVideos').replace('TheVid','TheVideo').replace('YouWa','YouWatch').replace('Vidbul','Vidbull').replace('Vodlo','Vodlocker').replace('Playe','Played').replace('ExaSh','Exashare').replace('IShar','Ishare').replace('Playedd','Played').replace('VodLR','Vodlocker')
+       main.addDown2(name.strip()+" [COLOR blue]"+host.upper()+"[/COLOR]",url,2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
+
+    
+
+
 
 
 
@@ -126,7 +132,7 @@ def SEARCH(url = ''):
         surl='http://www.couchtuner.me/?s=' + encode 
         link=main.OPENURL(surl)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match=re.compile('<span class="tvbox"><a href="http://www.couchtuner.me/[^"]+/[^"]+/([^"]+)"><img width="[^"]*" height="[^"]*" src="([^"]*)".+?<span class="tvpost">([^"]*)<br/>').findall(link)
+        match=re.compile('<span class="tvbox"><a href="([^<]*)">.+?src="([^<]*)".+?class="tvpost">([^<]*)<br/>').findall(link)
         dialogWait = xbmcgui.DialogProgress()
         ret = dialogWait.create('Please wait until Show list is cached.')
         totalLinks = len(match)
@@ -134,7 +140,7 @@ def SEARCH(url = ''):
         remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
         dialogWait.update(0,'[B]Will load instantly from now on[/B]',remaining_display)
         for url,thumb,name in match:
-            url = 'http://streamonline.me/' + url
+            #url = 'http://streamonline.me/' + url
             main.addDirTE(name,url,5,thumb,'','','','','')
             loadedLinks = loadedLinks + 1
             percent = (loadedLinks * 100)/totalLinks
