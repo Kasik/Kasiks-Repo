@@ -18,6 +18,11 @@ be worked out in the next version)
 
 [B]Version 0.1.2[/B]
 
-Misc Updates.
+Misc updates
+
+[B]Version 0.1.2a[/B]
+
+small code change
+
 
 

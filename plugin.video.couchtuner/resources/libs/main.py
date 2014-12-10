@@ -17,7 +17,7 @@ if selfAddon.getSetting('visitor_ga')=='':
     from random import randint
     selfAddon.setSetting('visitor_ga',str(randint(0, 0x7fffffff)))
 
-VERSION = "0.1.2"
+VERSION = "0.1.2a"
 PATH = "CouchTuner-"            
 
 try:

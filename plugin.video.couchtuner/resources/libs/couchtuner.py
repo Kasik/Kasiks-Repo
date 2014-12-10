@@ -51,8 +51,14 @@ def LINK(name,url):
        LINKZ(name,url)
     else:
       match2=re.compile('>Watch it here.+?:</span><a href="([^<]*)">').findall(link)
-      for url in match2:
-       LINKZ(name,url)   
+      if match2:
+       for url in match2:
+        LINKZ(name,url)
+      else:
+       match3=re.compile('<strong>Watch It Here : </strong></span><a href="([^"]*)"').findall(link)
+       for url in match3:
+        LINKZ(name,url)
+       
         
 
 def LINKZ(name,url):
