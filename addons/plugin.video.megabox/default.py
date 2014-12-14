@@ -34,8 +34,8 @@ except: pass
 def MAIN():
         
         main.addDirHome('Search Movies',base_url,100,art+'/searchmovies.jpg')
-        main.addDirHome('New Releases',base_url + '?sort=release',1,art+'/newr.jpg')
         main.addDirHome('Latest Added',base_url + '?sort=latest-added',1,art+'/latest.jpg')
+        main.addDirHome('New Releases',base_url + '?sort=release',1,art+'/newr.jpg')
         main.addDirHome('Featured',base_url + '?sort=featured',1,art+'/featured.jpg')
         main.addDirHome('Ratings',base_url + '?sort=ratings',1,art+'/rating.jpg')
         main.addDirHome('Popular',base_url + '?sort=views',1,art+'/popular.jpg')
@@ -77,7 +77,7 @@ def TV():
         main.addDir('Rating',base_url+'?sort=ratings&tv',11,art+'/rating.jpg')
         main.addDir('Popular',base_url+'?sort=views&tv',11,art+'/popular.jpg')
         main.addDir('New Releases',base_url+'?sort=release&tv',11,art+'/newr.jpg')
-        main.addDir('Latest Added',base_url+'?sort=latest-added&tv',11,art+'/latest.jpg')
+        main.addDir('Latest Added','http://megashare.li/?sort=latest-added&tv',11,art+'/latest.jpg')
         main.addDir('2013 TV Shows',base_url+'?year=2013&tv',11,art+'/2013.jpg')
         main.addDir('2012 TV Shows',base_url+'?year=2012&tv',11,art+'/2012.jpg')
         main.addDir('Tv Genres',base_url,10,art+'/genres.jpg')
@@ -244,6 +244,7 @@ season=None
 episode=None
 location=None
 path=None
+index=None
 
 try: name=urllib.unquote_plus(params["name"])
 except: pass
@@ -272,6 +273,8 @@ except: pass
 try: location=urllib.unquote_plus(params["location"])
 except: pass
 try: path=urllib.unquote_plus(params["path"])
+except: pass
+try: index=urllib.unquote_plus(params["index"])
 except: pass
 
 print "Mode: "+str(mode)
