@@ -1,6 +1,8 @@
 import urllib,re,string,sys,os,urllib2
 import xbmc, xbmcgui, xbmcaddon, xbmcplugin
 import time,threading
+
+
 #Megabox - by Kasik 2013.
 
 addon_id = 'plugin.video.megabox'
@@ -11,10 +13,10 @@ fav = False
 hostlist = None
 Dir = xbmc.translatePath(os.path.join('special://home/addons/plugin.video.megabox', ''))
 datapath = xbmc.translatePath(selfAddon.getAddonInfo('profile'))
-supportsite = 'Twitter @ KASIK04A'
-hosts = 'putlocker,sockshare,billionuploads,hugefiles,mightyupload,movreel,lemuploads,180upload,megarelease,filenuke,flashx,gorillavid,bayfiles,veehd,vidto,mailru,videomega,epicshare,bayfiles,2gbhosting,alldebrid,allmyvideos,vidspot,castamp,cheesestream,clicktoview,crunchyroll,cyberlocker,daclips,dailymotion,divxstage,donevideo,ecostream,entroupload,facebook,filebox,hostingbulk,hostingcup,jumbofiles,limevideo,movdivx,movpod,movshare,movzap,muchshare,nolimitvideo,nosvideo,novamov,nowvideo,ovfile,play44_net,played,playwire,premiumize_me,primeshare,promptfile,purevid,rapidvideo,realdebrid,rpnet,seeon,sharefiles,sharerepo,sharesix,skyload,stagevu,stream2k,streamcloud,thefile,tubeplus,tunepk,ufliq,upbulk,uploadc,uploadcrazynet,veoh,vidbull,vidcrazynet,video44,videobb,videofun,videotanker,videoweed,videozed,videozer,vidhog,vidpe,vidplay,vidstream,vidup,vidx,vidxden,vidzur,vimeo,vureel,watchfreeinhd,xvidstage,yourupload,youtube,youwatch,zalaa,zooupload,zshare,beststreams,thevideo'
+hosts = 'putlocker,sockshare,billionuploads,hugefiles,mightyupload,movreel,lemuploads,180upload,megarelease,filenuke,flashx,gorillavid,bayfiles,veehd,vidto,mailru,videomega,epicshare,bayfiles,2gbhosting,alldebrid,allmyvideos,vidspot,castamp,cheesestream,clicktoview,crunchyroll,cyberlocker,daclips,dailymotion,divxstage,donevideo,ecostream,entroupload,facebook,filebox,hostingbulk,hostingcup,jumbofiles,limevideo,movdivx,movpod,movshare,movzap,muchshare,nolimitvideo,nosvideo,novamov,nowvideo,ovfile,play44_net,played,playwire,premiumize_me,primeshare,promptfile,purevid,rapidvideo,realdebrid,rpnet,seeon,sharefiles,sharerepo,sharesix,skyload,stagevu,stream2k,streamcloud,thefile,tubeplus,tunepk,ufliq,upbulk,uploadc,uploadcrazynet,veoh,vidbull,vidcrazynet,video44,videobb,videofun,videotanker,videoweed,videozed,videozer,vidhog,vidpe,vidplay,vidstream,vidup,vidx,vidxden,vidzur,vimeo,vureel,watchfreeinhd,xvidstage,yourupload,youtube,youwatch,zalaa,zooupload,zshare'
 
-VERSION = str(selfAddon.getAddonInfo('version'))
+
+VERSION = "2.1.6"
 PATH = "Megabox-"            
 
 try:
@@ -22,19 +24,16 @@ try:
     log = os.path.join(log_path, 'xbmc.log')
     logfile = open(log, 'r').read()
     match=re.compile('Starting XBMC \((.+?) Git:.+?Platform: (.+?)\. Built').search(logfile)
-    if not match:
-        match=re.compile('Starting XBMC \((.+?) Git:.+?Platform: (.+?bit)').search(logfile)
-        if match:
-            build = match.group(1)
-            PLATFORM = match.group(2)
-            print 'XBMC '+build+' Platform '+PLATFORM
-        else:
-            PLATFORM=''
+    if match:
+        build = match.group(1)
+        PLATFORM = match.group(2)
+        print 'XBMC '+build+' Platform '+PLATFORM
+    else:
+        PLATFORM=''
 except:
     PLATFORM=''
 
 sys.path.append( os.path.join( selfAddon.getAddonInfo('path'), 'resources', 'libs' ))
-################################################################################ Common Calls ##########################################################################################################
 ################################################################################ Common Calls ##########################################################################################################
 art = xbmc.translatePath('special://home/addons/plugin.video.megabox/resources/art/')
 fanartimage=Dir+'fanart.jpg'
@@ -42,15 +41,21 @@ elogo = xbmc.translatePath('special://home/addons/plugin.video.megabox/resources
 slogo = xbmc.translatePath('special://home/addons/plugin.video.megabox/resources/art/smallicon.png')
 
 
+
 def OPEN_URL(url):
     req = urllib2.Request(url)
+    import time
+    #time.sleep(5)
     req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-    #req.add_header('Referer', '')
-
     response = urllib2.urlopen(req)
-    link=response.read().replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&player=2','').replace("",'').replace('\xe2\x80\x99',"'").replace('\xe2\x80\x93','-')
+    #link=response.read().replace('&amp;','&').replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('%3A',':').replace('%2F','/').replace('%3F','?').replace('%3D','=').replace('%26','&').replace('%3B',';').replace('crawler','')#.replace(';v=1','')
+    link=response.read().replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
     response.close()
     return link
+
+
+
+
 
 def OPENURL(url, mobile = False, q = False, verbose = True, timeout = 10, cookie = None, data = None, cookiejar = False, log = True, headers = [], type = '',ua = False):
     import urllib2 
@@ -58,7 +63,7 @@ def OPENURL(url, mobile = False, q = False, verbose = True, timeout = 10, cookie
     if ua: UserAgent = ua
     try:
         if log:
-            print "MU-Openurl = " + url
+            print "Openurl = " + url
         if cookie and not cookiejar:
             import cookielib
             cookie_file = os.path.join(os.path.join(datapath,'Cookies'), cookie+'.cookies')
@@ -157,12 +162,6 @@ def setGrab():
         from metahandler import metahandlers
         grab = metahandlers.MetaData()
         
-def getFav():
-    global fav
-    if not fav:
-        from resources.universal import favorites
-        fav = favorites.Favorites(addon_id, sys.argv)
-    return fav
 
 def getRDHosts():
     CachePath = os.path.join(datapath,'Cache')
@@ -225,30 +224,6 @@ def ClearDir(dir, clearNested = False):
         else:
             try:os.unlink(file_path)
             except Exception, e: print str(e)
-            
-def CleanTitle(mname):
-    title = mname.strip()
-    quality = re.search('(?i)(1080p?)',mname)
-    if not quality: quality = re.search('(?i)(720p?)',mname)
-    if not quality: quality = re.search('(?i)(480p?)',mname)
-    if quality:
-        quality = quality.group(1).lower()
-        if not re.search('p$',quality): quality += 'p'
-    else:
-        tag = re.search('(?i)(dvdrip|pdtv|xvid|bluray|hdtv|\scam(?![a-z])|r6|r5|\sts|webrip|bdrip|brrip)',mname)
-        if tag:
-            quality = tag.group(1).strip()
-        else: quality = ''
-    epi = re.search('(?i)s(\d+)e(\d+?)',mname)
-    if epi:
-        title = re.findall('(?i)(.+?s\d+e\d+)',mname)[0].strip()
-        if quality:
-            title = title + ' [COLOR red]' + quality + '[/COLOR]'
-    else:
-        movie = re.search('(?i)(.+?\s\d{4})',mname.replace('(','').replace(')',''))
-        if movie:
-            title = movie.group(1).strip() + ' [COLOR red]' + quality + '[/COLOR]'
-    return title
 
 def removeFile(file):
     try: 
@@ -317,7 +292,7 @@ def downloadFile(url,dest,silent = False,cookie = None):
         ErrorReport(e)
         if not silent:
             dialog = xbmcgui.Dialog()
-            dialog.ok("Mash Up", "Report the error below at " + supportsite, str(e), "We will try our best to help you")
+            dialog.ok("Megabox", "Report the error below at " + supportsite, str(e), "We will try our best to help you")
         return False
             
 def updateSearchFile(searchQuery,searchType,defaultValue = '###',searchMsg = ''):
@@ -327,7 +302,7 @@ def updateSearchFile(searchQuery,searchType,defaultValue = '###',searchMsg = '')
         searchHistoryFile = "SearchHistoryTv"
         if not searchMsg: searchMsg = 'Search For TV Shows' 
     else:
-        searchHistoryFile = "SearchHistory25"
+        searchHistoryFile = "SearchHistoryMB"
         if not searchMsg: searchMsg = 'Search For Movies' 
     SearchFile=os.path.join(searchpath,searchHistoryFile)
     searchQuery=urllib.unquote(searchQuery)
@@ -372,31 +347,6 @@ def updateSearchFile(searchQuery,searchType,defaultValue = '###',searchMsg = '')
 def supportedHost(host):
     if 'ul' == host: host = 'uploaded'
     return host.lower() in getHostList()
-
-######################################################################## Live Stream do Regex ############################################################
-def doRegex(murl):
-    #rname=rname.replace('><','').replace('>','').replace('<','')
-    import urllib2
-    url=re.compile('([^<]+)<regex>',re.DOTALL).findall(murl)[0]
-    doRegexs = re.compile('\$doregex\[([^\]]*)\]').findall(url)
-    for k in doRegexs:
-        if k in murl:
-            regex=re.compile('<name>'+k+'</name><expres>(.+?)</expres><page>(.+?)</page><referer>(.+?)</referer></regex>',re.DOTALL).search(murl)
-            referer=regex.group(3)
-            if referer=='':
-                referer=regex.group(2)
-            req = urllib2.Request(regex.group(2))
-            req.add_header('User-Agent','Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:10.0a1) Gecko/20111029 Firefox/10.0a1')
-            req.add_header('Referer',referer)
-            response = urllib2.urlopen(req)
-            link=response.read()
-            response.close()
-            link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\/','/')
-            r=re.compile(regex.group(1),re.DOTALL).findall(link)[0]
-            url = url.replace("$doregex[" + k + "]", r)
-   
-    return url
-    
 ################################################################################ AutoView ##########################################################################################################
 
 def VIEWS():
@@ -775,8 +725,10 @@ def resolveDownloadLinks(url):
     elif re.search('megabox',url):
         from resources.libs import megabox
         url = megabox.resolveMBURL(url)
-    elif '</t><sec>' in url:
+    elif url.startswith('ice'):
         from resources.libs.movies_tv import icefilms
+        url = url.lstrip('ice')
+        url = eval(urllib.unquote(url))
         url = icefilms.resolveIceLink(url)
     elif 'mobapps.cc' in url or 'vk.com' in url:
         from resources.libs.plugins import mbox
@@ -851,9 +803,21 @@ def Download(url, dest,originalName, displayname=False):
     return True
 
 def QuietDownload(url, dest,originalName, videoname):
-    import download
-    download.download(url, dest,title=originalName)
+    #quote parameters passed to download script     
+    q_url = urllib.quote_plus(url)
+    q_dest = urllib.quote_plus(dest)
+    q_vidname = urllib.quote_plus(videoname)
+    q_vidOname = urllib.quote_plus(originalName)
+    
+    #Create possible values for notification
+    notifyValues = [2, 5, 10, 20, 25, 50, 100]
 
+    # get notify value from settings
+    NotifyPercent=int(selfAddon.getSetting('notify-percent'))
+    
+    script = os.path.join( megaboxpath, 'resources', 'libs', "DownloadInBackground.py" )
+    xbmc.executebuiltin( "RunScript(%s, %s, %s, %s, %s, %s)" % ( script, q_url, q_dest, q_vidname,q_vidOname, str(notifyValues[NotifyPercent]) ) )
+    return True
  
 def _pbhook(numblocks, blocksize, filesize, dp, start_time):
         try: 
@@ -882,7 +846,7 @@ def jDownloader(murl):
         cmd = 'plugin://plugin.program.jdownloader/?action=addlink&url='+murl
         xbmc.executebuiltin('XBMC.RunPlugin(%s)' % cmd)
     else:
-        if 'Win' in PLATFORM:
+        if 'Windows' in PLATFORM:
             command = 'echo ' + url.strip() + '| clip'
             os.system(command)
         else:
@@ -935,23 +899,21 @@ def TextBoxes(heading,anounce):
                 return
         TextBox()
     
-
 ################################################################################ Types of Directories ##########################################################################################################
 
 def addDirX(name,url,mode,iconimage,plot='',fanart='',dur=0,genre='',year='',imdb='',tmdb='',isFolder=True,searchMeta=False,addToFavs=True,
-            id=None,fav_t='',fav_addon_t='',fav_sub_t='',metaType='Movies',menuItemPos=None,menuItems=None,down=False,replaceItems=True,index=False):
-    u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)+"&iconimage="+urllib.quote_plus(iconimage)+"&plot="+urllib.quote_plus(plot)+"&fanart="+urllib.quote_plus(fanart)+"&genre="+urllib.quote_plus(genre)+"&index="+str(index)
+            id=None,fav_t='',fav_addon_t='',fav_sub_t='',metaType='Movies',menuItemPos=None,menuItems=None,down=False,replaceItems=True):
+    u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)+"&iconimage="+urllib.quote_plus(iconimage)+"&plot="+urllib.quote_plus(plot)+"&fanart="+urllib.quote_plus(fanart)+"&genre="+urllib.quote_plus(genre)
+    if 'http://api.video.mail.ru/videos/embed/' in url or mode==364:
+        name=name.decode('windows-1251')
+        plot=plot.decode('windows-1251')
     if searchMeta:
         if metaType == 'TV':
             infoLabels = GETMETAEpiT(name,iconimage,plot)
         else:
             infoLabels = GETMETAT(name,genre,fanart,iconimage,plot,imdb,tmdb)
         iconimage = infoLabels['cover_url']
-        if iconimage.startswith('w342') or iconimage.startswith('w92') or iconimage.startswith('w500') or iconimage.startswith('original') or iconimage.startswith('w154') or iconimage.startswith('w185'):
-            iconimage = 'http://image.tmdb.org/t/p/' + iconimage
         fanart = infoLabels['backdrop_url']
-        if fanart.startswith('original') or fanart.startswith('w1280') or fanart.startswith('w780') or fanart.startswith('w300'):
-            fanart = 'http://image.tmdb.org/t/p/' + fanart
         plot = infoLabels['plot']
     if not fanart: fanart=fanartimage
     if not iconimage: iconimage=art+'/vidicon.png'
@@ -966,6 +928,7 @@ def addDirX(name,url,mode,iconimage,plot='',fanart='',dur=0,genre='',year='',imd
             Commands.append(('Download with jDownloader', 'XBMC.RunPlugin(%s?mode=776&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
         else:
             Commands.append(('Copy to Clipboard', 'XBMC.RunPlugin(%s?mode=776&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
+
   
     if searchMeta:
         if metaType == 'TV' and selfAddon.getSetting("meta-view-tv") == "true":
@@ -976,11 +939,6 @@ def addDirX(name,url,mode,iconimage,plot='',fanart='',dur=0,genre='',year='',imd
             sea = infoLabels['season']
             epi = infoLabels['episode']
             imdb_id = infoLabels['imdb_id']
-            if imdb_id != '':
-                if infoLabels['overlay'] == 6: watched_mark = 'Mark as Watched'
-                else: watched_mark = 'Mark as Unwatched'
-                Commands.append((watched_mark, 'XBMC.RunPlugin(%s?mode=779&name=%s&url=%s&iconimage=%s&season=%s&episode=%s)' % (sys.argv[0], cname, 'episode', imdb_id,sea,epi)))
-            Commands.append(('Refresh Metadata', 'XBMC.RunPlugin(%s?mode=780&name=%s&url=%s&iconimage=%s&season=%s&episode=%s)' % (sys.argv[0], cname, 'episode',imdb_id,sea,epi)))
         elif metaType == 'Movies' and selfAddon.getSetting("meta-view") == "true":
             xbmcplugin.setContent(int(sys.argv[1]), 'Movies')
             if id != None: xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_PLAYLIST_ORDER )
@@ -992,11 +950,7 @@ def addDirX(name,url,mode,iconimage,plot='',fanart='',dur=0,genre='',year='',imd
             xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_MPAA_RATING )
             cname=urllib.quote_plus(infoLabels['metaName'])
             imdb_id = infoLabels['imdb_id']
-            if infoLabels['overlay'] == 6: watched_mark = 'Mark as Watched'
-            else: watched_mark = 'Mark as Unwatched'
-            Commands.append((watched_mark, 'XBMC.RunPlugin(%s?mode=777&name=%s&url=%s&iconimage=%s)' % (sys.argv[0], cname, 'movie',imdb_id)))
             Commands.append(('Play Trailer','XBMC.RunPlugin(%s?mode=500&name=%s&url=%s&iconimage=%s)'% (sys.argv[0],cname,'_',imdb_id)))
-            Commands.append(('Refresh Metadata', 'XBMC.RunPlugin(%s?mode=778&name=%s&url=%s&iconimage=%s)' % (sys.argv[0], cname, 'movie',imdb_id)))
     else:
         infoLabels={ "Title": name, "Plot": plot, "Duration": dur, "Year": year ,"Genre": genre,"OriginalTitle" : removeColoredText(name) }
     if id != None: infoLabels["count"] = id
@@ -1012,8 +966,8 @@ def addDirX(name,url,mode,iconimage,plot='',fanart='',dur=0,genre='',year='',imd
     liz.setProperty('fanart_image', fanart)
     return xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=isFolder)
 
-def addDirT(name,url,mode,iconimage,plot,fanart,dur,genre,year,index=False):
-    return addDirX(name,url,mode,iconimage,plot,fanart,dur,genre,year,fav_t='TV',fav_addon_t='TV Show',fav_sub_t='Shows',index=index)
+def addDirT(name,url,mode,iconimage,plot,fanart,dur,genre,year):
+    return addDirX(name,url,mode,iconimage,plot,fanart,dur,genre,year,fav_t='TV',fav_addon_t='TV Show',fav_sub_t='Shows')
 
 def addPlayT(name,url,mode,iconimage,plot,fanart,dur,genre,year):
     return addDirX(name,url,mode,iconimage,plot,fanart,dur,genre,year,isFolder=False,fav_t='TV',fav_addon_t='TV Show',fav_sub_t='Shows')
@@ -1043,7 +997,7 @@ def addPlayL(name,url,mode,iconimage,plot,fanart,dur,genre,year,secName='',secIc
     u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)+"&iconimage="+urllib.quote_plus(iconimage)+"&plot="+urllib.quote_plus(plot)+"&fanart="+urllib.quote_plus(fanart)+"&genre="+urllib.quote_plus(genre)
     surl=urllib.quote_plus(u)
     dname=removeColoredText(name)
-    mi=[('Add to [COLOR=FFa11d21][B]ONTapp.tv[/B][/COLOR]', 'XBMC.RunPlugin(%s?mode=1501&plot=%s&name=%s&url=%s&iconimage=%s)' % (sys.argv[0] ,secName,dname,surl, secIcon))]
+    mi=[('Add to [COLOR=FFb151ef]Dixie[/COLOR]', 'XBMC.RunPlugin(%s?mode=1501&plot=%s&name=%s&url=%s&iconimage=%s)' % (sys.argv[0] ,secName,dname,surl, secIcon))]
     return addDirX(name,url,mode,iconimage,plot,fanart,dur,genre,year,isFolder=0,fav_t='Live',fav_addon_t='Live',menuItemPos=2,menuItems=mi)
 
 def addPlayc(name,url,mode,iconimage,plot,fanart,dur,genre,year):
@@ -1104,11 +1058,11 @@ def addLink(name,url,iconimage):
     liz.setProperty('fanart_image', fanartimage)
     return xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=url,listitem=liz)
 
-def addDir(name,url,mode,iconimage,plot='',fanart='',index=False):
-    return addDirX(name,url,mode,iconimage,plot,fanart,addToFavs=0,replaceItems=False,index=index)
+def addDir(name,url,mode,iconimage,plot=''):
+    return addDirX(name,url,mode,iconimage,plot,addToFavs=0,replaceItems=False)
 
-def addDirHome(name,url,mode,iconimage,index=False):
-    return addDirX(name,url,mode,iconimage,addToFavs=0,index=index)
+def addDirHome(name,url,mode,iconimage):
+    return addDirX(name,url,mode,iconimage,addToFavs=0)
 
 def addDirFIX(name,url,mode,iconimage,location,path):
     contextMenuItems = []
@@ -1138,11 +1092,11 @@ def addDown4(name,url,mode,iconimage,plot,fanart,dur,genre,year):
                        fav_t='Movies',fav_addon_t='Movie',down=not f)
 
 def addInfo(name,url,mode,iconimage,genre,year):
-    mi = [('Search Megabox','XBMC.Container.Update(%s?mode=4&url=%s)'% (sys.argv[0],'###'))]
-    return addDirX(name,url,mode,iconimage,'','','',genre,year,searchMeta=1,fav_t='Movies',fav_addon_t='Movie',menuItemPos=0,menuItems=mi)
+    mi = [('Search megabox','XBMC.Container.Update(%s?mode=4&url=%s)'% (sys.argv[0],'###'))]
+    return addDirX(name,url,mode,iconimage,'','','',genre,year,searchMeta=1,fav_t='Movies',fav_addon_t='megabox',menuItemPos=0,menuItems=mi)
 
 def addDirIWO(name,url,mode,iconimage,plot,fanart,dur,genre,year):
-    return addDirX(name,url,mode,iconimage,plot,fanart,dur,genre,year,searchMeta=1,fav_t='Movies',fav_addon_t='Movie')
+    return addDirX(name,url,mode,iconimage,plot,fanart,dur,genre,year,searchMeta=1,fav_t='Movies',fav_addon_t='iWatchOnline')
     
 def addDLog(name,url,mode,iconimage,plot,fanart,dur,genre,year):
     mi=[("[B][COLOR red]Remove[/COLOR][/B]",'XBMC.RunPlugin(%s?mode=243&name=%s&url=%s)'% (sys.argv[0],name,url))]
@@ -1162,7 +1116,6 @@ def addSearchDir(name,url, mode,iconimage):
     liz       = xbmcgui.ListItem(name, iconImage=iconimage, thumbnailImage=iconimage)
     liz.setProperty('fanart_image', fanartimage)
     xbmcplugin.addDirectoryItem(handle = int(sys.argv[1]), url = u, listitem = liz, isFolder = False)
-
 
 ######################################################################################################################
 def addDirG(name, url, mode, iconimage, metainfo=False, total=False, season=None):
@@ -1255,7 +1208,3 @@ def ADULT_URL(url):
     return link      
 ######################################################################################################################################
     
-
-
-
-

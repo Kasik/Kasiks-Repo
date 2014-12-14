@@ -34,15 +34,15 @@ if os.path.exists(cookie_path) == False:
 def MOVIES(url):
         link=main.OPENURL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match = re.findall('<a href="([^"]*)"><img alt="[^"]*" src="([^"]*)" /></a><div class="title"><a title="[^"]*" href="[^"]*">([^"]*)</a></div><ul class=\'star-rating\'><li class="current-rating" style="[^"]*"></li></ul><div class="item-genres"><a href="[^"]*">([^"]*)</a>',link)
+        match = re.findall('<div class="item"><a href="([^"]*)"><img alt=".+?" src="([^"]*)" /></a><div class="title"><a title="watch movie([^"]*)".+?<div class="year"> ([^"]*)</div>',link)
         dialogWait = xbmcgui.DialogProgress()
         ret = dialogWait.create('Please wait until Movie list is cached.')
         totalLinks = len(match)
         loadedLinks = 0
         remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
         dialogWait.update(0, '[B]Will load instantly from now on[/B]',remaining_display)
-        for url,thumb,name,genre in match:
-                main.addInfo(name+'[COLOR blue] Genre: '+genre+'[/COLOR]',base_url+url,8,thumb,genre,'')
+        for url,thumb,name,date in match:
+                main.addInfo(name+'[COLOR blue] '+date+'[/COLOR]',base_url+url,8,thumb,'','')
                 loadedLinks = loadedLinks + 1
                 percent = (loadedLinks * 100)/totalLinks
                 remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
@@ -94,17 +94,17 @@ def YOUTUBE(url):
 
 
 def TV(url):
-        link=main.OPENURL(url)
+        link=main.OPEN_URL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match = re.findall('<a href="([^"]*)"><img alt="[^"]*" src="([^"]*)" /></a><div class="title"><a title="[^"]*" href="[^"]*">([^"]*)</a></div><ul class=\'star-rating\'><li class="current-rating" style="[^"]*"></li></ul><div class="item-genres"><a href="[^"]*">([^"]*)</a>',link)
+        match = re.findall('<div class="item"><a href="([^"]*)"><img alt=".+?" src="([^"]*)" /></a><div class="title"><a title="watch tv([^"]*)" href.+?class="year"> ([^"]*)</div>',link)
         dialogWait = xbmcgui.DialogProgress()
         ret = dialogWait.create('Please wait until Shows list is cached.')
         totalLinks = len(match)
         loadedLinks = 0
         remaining_display = 'Shows loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
         dialogWait.update(0, '[B]Will load instantly from now on[/B]',remaining_display)
-        for url,thumb,name,genre in match:
-                main.addDirTE('[COLOR green]'+name+'[/COLOR]'+'[COLOR blue] Genre: '+genre+'[/COLOR]',base_url+url,12,thumb,'','','','','')
+        for url,iconimage,name,date in match:
+                main.addDirTE(name+' '+date,base_url+url,12,iconimage,'','','','','')
                 loadedLinks = loadedLinks + 1
                 percent = (loadedLinks * 100)/totalLinks
                 remaining_display = 'Shows loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
@@ -694,7 +694,12 @@ def PLAY(name,url):
         for url in match:
                 url = 'http://www.nowvideo.sx/video/' + url 
                 hosted_media = urlresolver.HostedMediaFile(url=url)
-                sources.append(hosted_media)         
+                sources.append(hosted_media)
+        match=re.compile('href="http://mightyupload.com/embed-([^"]*)-.+?"><img src').findall(link)
+        for url in match:
+                url = 'http://mightyupload.com/' + url 
+                hosted_media = urlresolver.HostedMediaFile(url=url)
+                sources.append(hosted_media)               
         if (len(sources)==0):
                 xbmc.executebuiltin("XBMC.Notification(Sorry!,Show doesn't have playable links,5000)")
       
