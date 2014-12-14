@@ -5,6 +5,7 @@ import base64
 from t0mm0.common.addon import Addon
 from BeautifulSoup import BeautifulSoup
 
+
 ### VideoBull.com  by Kasik. (2013) ###
 
 
@@ -33,7 +34,7 @@ def AtoZ(url,name):
 def Index(url):
         link=main.OPENURL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xe2\x80\x99',"'").replace('\xe2\x80\x93','-').replace('\xe2\x80\x94','').replace('&-','-')
-        match = re.findall('<a href="([^"]*)" rel="bookmark" title="[^"]*"><img src="([^"]*)" width="120px" height="178px" alt="([^"]*)" /></a></div>.+?<p class="postmetadata">Updated: ([^"]*)</p>',link)
+        match = re.findall('<a href="([^"]*)" rel="bookmark" title="[^"]*"><img src="([^"]*)" width="120px" height="178px" alt="([^"]*)" /></a></div>.+?<p class="postmetadata">([^"]*)</p>',link)
         dialogWait = xbmcgui.DialogProgress()
         ret = dialogWait.create('Please wait until Show list is cached.')
         totalLinks = len(match)
@@ -42,7 +43,7 @@ def Index(url):
         dialogWait.update(0, '[B]Will load instantly from now on[/B]',remaining_display)
         for url,thumb,name,date in match:
                 name=name.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xe2\x80\x99',"'").replace('\xe2\x80\x93','-').replace('\xe2\x80\x94','').replace('&-','-')
-                main.addInfo(name+'[COLOR green]  Updated: '+date+'[/COLOR]',url,75,thumb,'','')
+                main.addInfo('[COLOR blue]'+name+'[/COLOR]'+'[COLOR green]  Date: '+date+'[/COLOR]',url,75,thumb,'','')
                 loadedLinks = loadedLinks + 1
                 percent = (loadedLinks * 100)/totalLinks
                 remaining_display = 'Tv Shows loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
@@ -85,7 +86,7 @@ def Popular(url):
 def Popular2(url):
         link=main.OPENURL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xe2\x80\xa6','...').replace('&#8211;','-').replace('#038;','')
-        match = re.findall('<div id="contentarchivetime">([^"]*)>></div><div id="contentarchivetitle"><a href="([^"]*)" title="[^"]*">([^"]*)</a>',link)
+        match = re.findall('class="contentarchivetime">([^"]*)</div><div class="contentarchivetitle"><a href="([^"]*)" title="[^"]*">([^"]*)</a>',link)
         dialogWait = xbmcgui.DialogProgress()
         ret = dialogWait.create('Please wait until Episode List is cached.')
         totalLinks = len(match)
@@ -108,8 +109,8 @@ def Popular2(url):
 def ALPHA(url,name):
         link=main.OPENURL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xe2\x80\x99',"'").replace('\xe2\x80\x93','-').replace('\xe2\x80\x94','').replace('&-','-')
-        match=re.compile('<li><a title="[%s]([^"]*)" href="([^"]*)">[^"]*</a> <span class="mctagmap_count">[^"]*</span></li>' % name).findall(link)
-        for title,url in match:
+        match=re.compile('<div class="tag_list"><a href=\'([^"]*)\' title=\'Watch [%s]([^"]*)  Online Free\' class=\'[^"]*\'>[^"]*<span>[^"]*</span>' % name).findall(link)
+        for url,title in match:
             title=name+title
             main.addDir(title,url,7,'')  
         xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_TITLE)
@@ -174,28 +175,125 @@ def search():
 ###############################  Build Video Links  #############################################################################
 
 def VIDEOLINKS(name,url):
-        link=main.OPENURL(url)
+        link=main.OPEN_URL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','')
-        match=re.compile('''<a id='.+?' href='.*?title=(.+?)' target='_blank' rel='nofollow'>(.+?)</a>''', re.DOTALL).findall(link)
-        for url,host in match:    
-                main.addDownLink('[COLOR green][B]'+host+'[/B][/COLOR]',url,100,'','')  
-                #addDownLink(name,url,mode,iconimage,fan):
+        match=re.compile('<a href="http://adf.ly/369307/([^"]*)" target="_blank">Play on ([^"]*)</a>', re.DOTALL).findall(link)
+        #match=re.compile('<div class="contentlink">   <a href="http://adf.ly/369307/http://videobull.com/wp-content/themes/videozoom/external.php[?]title=([^"]*)&linkfrom=([^"]*)" target="_blank">[^"]*</a>', re.DOTALL).findall(link)
+        for url,name in match:
+         main.addDownLink('[COLOR green][B]'+name+'[/B][/COLOR]',url,100,'','')
+          #main.addDir('[COLOR green][B]'+name+'[/B][/COLOR]',url,100,'')  
 
+
+#######################################################################################################################################################################################
+#def Play(url,name):
+        #url = url.decode('base-64').replace('file','embed')
+        #print "PLAYING  " + url
+        #sources = []
+        #hosted_media = urlresolver.HostedMediaFile(url=url)
+        #sources.append(hosted_media)
+        #source = urlresolver.choose_source(sources)
+        #if source:
+        #   stream_url = source.resolve()
+        #else:
+        #   stream_url = ''
+        #xbmc.Player().play(stream_url)       
 
 
 def Play(url,name):
-        codelink = url
-        url = base64.b64decode(codelink)
+        sources = []
+        link=main.OPEN_URL(url)
+        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','')
+        xbmc.executebuiltin("XBMC.Notification(Please Wait!,Opening Link,2000)")
+        match=re.compile('align="center"  width="30%"> <a href="([^"]*)">').findall(link)
+        for url in match:
+                url=url
+                print url
+                hosted_media = urlresolver.HostedMediaFile(url=url)
+                sources.append(hosted_media)
+        if (len(sources)==0):
+                xbmc.executebuiltin("XBMC.Notification(Sorry!,Show doesn't have playable links,5000)")
+      
+        else:
+                source = urlresolver.choose_source(sources)
+                if source:
+                        stream_url = source.resolve()
+                        if source.resolve()==False:
+                                xbmc.executebuiltin("XBMC.Notification(Sorry!,Link Cannot Be Resolved,5000)")
+                                return
+                else:
+                      stream_url = False
+                      return
+                listitem = xbmcgui.ListItem(name, iconImage="DefaultVideo.png")
+                listitem.setInfo('video', {'Title': name, 'Year': ''} )       
+                xbmc.Player().play(str(stream_url), listitem)
+                main.addDir('','','','')
+
+
+def Play3(url,name):
+        link=main.OPEN_URL(url)
+        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','')
+        match=re.findall('src="./vidiframe.php[?]linkurl=([^"]*)"', link)
+        for url in match:
+         url = url + '=='
+         urlz = base64.b64decode(url)
+         main.addDownLink('[COLOR green][B]This Link is Un-Playable[/B][/COLOR]',urlz.replace('===','==').replace('====','=='),134,'','')  
+
+        sources = []
+        link=main.OPEN_URL(url)
+        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','')
+        xbmc.executebuiltin("XBMC.Notification(Please Wait!,Opening Link,2000)")
+        match=re.compile('align="center"  width="30%"> <a href="([^"]*)">').findall(link)
+        for url in match:
+                url=url
+                print url
+                hosted_media = urlresolver.HostedMediaFile(url=url)
+                sources.append(hosted_media)
+        if (len(sources)==0):
+                xbmc.executebuiltin("XBMC.Notification(Sorry!,Show doesn't have playable links,5000)")
+      
+        else:
+                source = urlresolver.choose_source(sources)
+                if source:
+                        stream_url = source.resolve()
+                        if source.resolve()==False:
+                                xbmc.executebuiltin("XBMC.Notification(Sorry!,Link Cannot Be Resolved,5000)")
+                                return
+                else:
+                      stream_url = False
+                      return
+                listitem = xbmcgui.ListItem(name, iconImage="DefaultVideo.png")
+                listitem.setInfo('video', {'Title': name, 'Year': ''} )       
+                xbmc.Player().play(str(stream_url), listitem)
+                main.addDir('','','','')       
+
+
+
+
+
+
+
+
+
+
+
+def Play64(url,name):
+        regexlink = url
+        url = base64.b64decode(regexlink)
         hostUrl = url
+        print "We're Playing " + url
+        videoLink = urlresolver.resolve(hostUrl)      
         infoLabels = main.GETMETAT(name,'','','')
         videoLink = urlresolver.resolve(hostUrl)      
         player = xbmc.Player(xbmc.PLAYER_CORE_AUTO)
         listitem = xbmcgui.ListItem(name)
         listitem.setInfo('video', infoLabels=infoLabels)
         listitem.setThumbnailImage(infoLabels['cover_url'])
-        player.play(videoLink,listitem)
+        player.play(str(videoLink),str(listitem))
         main.addLink('Restart Video '+ name,str(videoLink),'')
         xbmcplugin.endOfDirectory(int(sys.argv[1]))
+
+        
+##################
 
 
 

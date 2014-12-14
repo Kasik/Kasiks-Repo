@@ -1,23 +1,334 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
-   <category label="General">
-   <setting id="meta-view" type="bool" label="[B]Metadata[/B]" default="true"/>
-   </category>
-   <category label="Auto View">
-    <setting id="auto-view" type="bool" label="[B]Auto View[/B]" default="true"/>
-		<setting id="home-view"	type="enum" label="Main Menu View" values="List|Thumbnail" default="1" enable="!eq(-1,false)"/>
-		<setting id="sub-view"	type="enum" label="Sub Menu View" values="List|Thumbnail" default="0" enable="!eq(-1,false)"/>
-		<setting id="seasons-view" type="number" label="Season View" default="504" enable="!eq(-2,false)"/>	
-		<setting id="episodes-view" type="number" label="Episode View" default="504" enable="!eq(-3,false)"/>
-		<setting id="choose-skin" type="bool"  label="[B]Xperience 1080 OFF  | Confluence ON[/B]" default="true"enable="!eq(-4,false)"/>
-
-      	<setting id="con-view"	type="enum" label="Confluence View" values="List|Big List|Thumbnail|Posters Wrap|Fanart|Media Info 1|Media Info 2|Media Info 3" default="3" enable="!eq(-1,false)+!eq(-5,false)"/>
-		<setting id="xpr-view"	type="enum" label="Xperience 1080 View" values="List|Info List|Thumbnail|Posters|Landscape|Banner|Panel" default="3" enable="!eq(-2,true)+!eq(-6,false)"/>
-   </category>
-   <category label="Downloads">
-    <setting id="download-folder" type="folder" label="[B]Download Folder[/B]" default=""/>
-	<setting id="delete-incomplete-downloads" type="bool" label="[B]Delete Incomplete Downloads[/B]" default="true"/>
-	<setting id="download-in-background" type="bool" label="[B]Download in Background[/B]" default="true" />
-    <setting id="notify-percent" enable="eq(-1,true)" label="[B]Notify Per[/B]" type="enum" values="2[B] %[/B]|5[B] %[/B]|10[B] %[/B]|20[B] %[/B]|25[B] %[/B]|50[B] %[/B]|100[B] %[/B]" default="2" />
-   </category>
+<category label="realdebrid">
+<setting id="RealDebridResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="RealDebridResolver_enabled" type="bool" label="Enabled" default="true"/>
+<setting id="RealDebridResolver_login" type="bool" label="login" default="false"/>
+<setting id="RealDebridResolver_username" enable="eq(-1,true)" type="text" label="username" default=""/>
+<setting id="RealDebridResolver_password" enable="eq(-2,true)" type="text" label="password" option="hidden" default=""/>
+</category>
+<category label="zshare">
+<setting id="ZshareResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="ZshareResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="zooupload">
+<setting id="ZoouploadResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="ZoouploadResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="xvidstage">
+<setting id="XvidstageResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="XvidstageResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="watchfreeinhd">
+<setting id="watchfreeResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="watchfreeResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="vureel">
+<setting id="vureelResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="vureelResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="override_me">
+<setting id="vidpeResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="vidpeResolver_enabled" type="bool" label="Enabled" default="true"/>
+<setting label="This plugin calls the vidpe addon - change settings there." type="lsep" />
+</category>
+<category label="videozer">
+<setting id="VideozerResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="VideozerResolver_enabled" type="bool" label="Enabled" default="true"/>
+<setting label="Highest Quality" id="VideozerResolver_q" type="enum" values="240p|480p|Maximum" default="2" />
+</category>
+<category label="videoweed.es">
+<setting id="VideoweedResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="VideoweedResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="videobb">
+<setting id="VideobbResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="VideobbResolver_enabled" type="bool" label="Enabled" default="true"/>
+<setting label="Highest Quality" id="VideobbResolver_q" type="enum" values="240p|480p|Maximum" default="2" />
+</category>
+<category label="vidbull">
+<setting id="VidbullResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="VidbullResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="veeHD">
+<setting id="veeHDResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="veeHDResolver_enabled" type="bool" label="Enabled" default="true"/>
+<setting id="veeHDResolver_login" type="bool" label="login" default="false"/>
+<setting id="veeHDResolver_username" enable="eq(-1,true)" type="text" label="username" default=""/>
+<setting id="veeHDResolver_password" enable="eq(-2,true)" type="text" label="password" option="hidden" default=""/>
+</category>
+<category label="ufliq">
+<setting id="UfliqResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="UfliqResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="streamcloud">
+<setting id="StreamcloudResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="StreamcloudResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="RPnet">
+<setting id="RPnetResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="RPnetResolver_enabled" type="bool" label="Enabled" default="true"/>
+<setting id="RPnetResolver_enabled" type="bool" label="Enabled" default="false"/>
+<setting id="RPnetResolver_username" enable="eq(-1,true)" type="text" label="username" default=""/>
+<setting id="RPnetResolver_password" enable="eq(-2,true)" type="text" label="password" option="hidden" default=""/>
+</category>
+<category label="rapidvideo">
+<setting id="RapidvideoResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="RapidvideoResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="played">
+<setting id="playedResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="playedResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="ovile">
+<setting id="OvfileResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="OvfileResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="movreel">
+<setting id="MovreelResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="MovreelResolver_enabled" type="bool" label="Enabled" default="true"/>
+<setting id="MovreelResolver_login" type="bool" label="login" default="false"/>
+<setting id="MovreelResolver_username" enable="eq(-1,true)" type="text" label="username" default=""/>
+<setting id="MovreelResolver_password" enable="eq(-2,true)" type="text" label="password" option="hidden" default=""/>
+</category>
+<category label="movpod">
+<setting id="MovpodResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="MovpodResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="movdivx">
+<setting id="MovDivxResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="MovDivxResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="jumbofiles">
+<setting id="JumbofilesResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="JumbofilesResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="flashx">
+<setting id="FlashxResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="FlashxResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="ecostream">
+<setting id="EcostreamResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="EcostreamResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="cyberlocker">
+<setting id="CyberlockerResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="CyberlockerResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="billionuploads">
+<setting id="billionuploads_priority" type="number" label="Priority" default="100"/>
+<setting id="billionuploads_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="bayfiles">
+<setting id="bayfilesResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="bayfilesResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="AllDebrid">
+<setting id="AllDebridResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="AllDebridResolver_enabled" type="bool" label="Enabled" default="true"/>
+<setting id="AllDebridResolver_login" type="bool" label="login" default="false"/>
+<setting id="AllDebridResolver_username" enable="eq(-1,true)" type="text" label="username" default=""/>
+<setting id="AllDebridResolver_password" enable="eq(-2,true)" type="text" label="password" option="hidden" default=""/>
+</category>
+<category label="zalaa">
+<setting id="ZalaaResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="ZalaaResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="vidstream">
+<setting id="VidstreamResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="VidstreamResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="vidhog">
+<setting id="VidhogResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="VidhogResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="seeon.tv">
+<setting id="SeeonResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="SeeonResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="novamov">
+<setting id="NovamovResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="NovamovResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="movshare">
+<setting id="MovshareResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="MovshareResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="hugefiles">
+<setting id="HugefilesResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="HugefilesResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="hostingcup">
+<setting id="HostingcupResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="HostingcupResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="vimeo">
+<setting id="VimeoResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="VimeoResolver_enabled" type="bool" label="Enabled" default="true"/>
+<setting label="This plugin calls the vimeo addon - change settings there." type="lsep" />
+</category>
+<category label="skyload">
+<setting id="SkyloadResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="SkyloadResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="nolimitvideo">
+<setting id="nolimitvideoResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="nolimitvideoResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="thefile">
+<setting id="TheFileResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="TheFileResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="stream2k">
+<setting id="Stream2kResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="Stream2kResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="stagevu">
+<setting id="StagevuResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="StagevuResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="override_me">
+<setting id="hostingbulkResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="hostingbulkResolver_enabled" type="bool" label="Enabled" default="true"/>
+<setting label="This plugin calls the hostingbulk addon - change settings there." type="lsep" />
+</category>
+<category label="2gbhosting">
+<setting id="TwogbhostingResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="TwogbhostingResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="180upload">
+<setting id="OneeightyuploadResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="OneeightyuploadResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="sharefiles">
+<setting id="SharefilesResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="SharefilesResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="vidxden">
+<setting id="VidxdenResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="VidxdenResolver_enabled" type="bool" label="Enabled" default="true"/>
+<setting id="vidxden_captchax" type="slider" label="Captcha Image X Position" range="0,500" default="335" option="int" />
+<setting id="vidxden_captchay" type="slider" label="Captcha Image Y Position" range="0,500" default="30" option="int" />
+<setting id="vidxden_captchah" type="slider" label="Captcha Image Height" range="0,500" default="180" option="int" />
+<setting id="vidxden_captchaw" type="slider" label="Captcha Image Width" range="0,1000" default="624" option="int" />
+</category>
+<category label="divxstage">
+<setting id="DivxstageResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="DivxstageResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="crunchyroll">
+<setting id="crunchyrollResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="crunchyrollResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="uploadc">
+<setting id="UploadcResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="UploadcResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="sharerepo">
+<setting id="SharerepoResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="SharerepoResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="filebox">
+<setting id="FileboxResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="FileboxResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="vidto">
+<setting id="vidto_priority" type="number" label="Priority" default="100"/>
+<setting id="vidto_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="videozed">
+<setting id="VideozedResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="VideozedResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="tune.pk">
+<setting id="TunePkResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="TunePkResolver_enabled" type="bool" label="Enabled" default="true"/>
+<setting label="Video Quality" id="TunePkResolver_quality" type="enum" values="High|Medium|Low" default="0" />
+</category>
+<category label="purevid">
+<setting id="purevid_priority" type="number" label="Priority" default="100"/>
+<setting id="purevid_enabled" type="bool" label="Enabled" default="true"/>
+<setting id="purevid_login" type="bool" label="login" default="false"/>
+<setting id="purevid_username" enable="eq(-1,true)" type="text" label="username" default=""/>
+<setting id="purevid_password" enable="eq(-2,true)" type="text" label="password" option="hidden" default=""/>
+</category>
+<category label="Premiumize.me">
+<setting id="PremiumizeMeResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="PremiumizeMeResolver_enabled" type="bool" label="Enabled" default="true"/>
+<setting id="PremiumizeMeResolver_username" enable="eq(-1,true)" type="text" label="username" default=""/>
+<setting id="PremiumizeMeResolver_password" enable="eq(-2,true)" type="text" label="password" option="hidden" default=""/>
+</category>
+<category label="playwire">
+<setting id="PlaywireResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="PlaywireResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="movzap|zuzvideo">
+<setting id="MovzapZuzVideoResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="MovzapZuzVideoResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="limevideo">
+<setting id="LimevideoResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="LimevideoResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="facebook">
+<setting id="FacebookResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="FacebookResolver_enabled" type="bool" label="Enabled" default="true"/>
+<setting label="Video Quality" id="FacebookResolver_quality" type="enum" values="High|Standard" default="0" />
+</category>
+<category label="entroupload">
+<setting id="EntrouploadResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="EntrouploadResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="donevideo">
+<setting id="DonevideoResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="DonevideoResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="youtube">
+<setting id="YoutubeResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="YoutubeResolver_enabled" type="bool" label="Enabled" default="true"/>
+<setting label="This plugin calls the youtube addon - change settings there." type="lsep" />
+</category>
+<category label="veoh">
+<setting id="VeohResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="VeohResolver_enabled" type="bool" label="Enabled" default="true"/>
+<setting label="This plugin calls the veoh addon - change settings there." type="lsep" />
+</category>
+<category label="gorillavid">
+<setting id="GorillavidResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="GorillavidResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="daclips">
+<setting id="DaclipsResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="DaclipsResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="sharesix">
+<setting id="SharesixResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="SharesixResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="putlocker/sockshare">
+<setting id="PutlockerResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="PutlockerResolver_enabled" type="bool" label="Enabled" default="true"/>
+<setting label="Highest Quality" id="PutlockerResolver_quality" type="enum" values="FLV|Maximum" default="0" />
+<setting id="PutlockerResolver_login" type="bool" label="login" default="false"/>
+<setting id="PutlockerResolver_username" enable="eq(-1,true)" type="text" label="username" default=""/>
+<setting id="PutlockerResolver_password" enable="eq(-2,true)" type="text" label="password" option="hidden" default=""/>
+<setting id="PutlockerResolver_notify" type="bool" label="Notify on login" default="false"/>
+</category>
+<category label="ishared.eu">
+<setting id="FilenukeResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="FilenukeResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="filenuke">
+<setting id="FilenukeResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="FilenukeResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
+<category label="dailymotion">
+<setting id="DailymotionResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="DailymotionResolver_enabled" type="bool" label="Enabled" default="true"/>
+<setting label="Video Quality" id="DailymotionResolver_quality" type="enum" values="High|Medium|Low" default="0" />
+</category>
+<category label="allmyvideos.net">
+<setting id="FilenukeResolver_priority" type="number" label="Priority" default="100"/>
+<setting id="FilenukeResolver_enabled" type="bool" label="Enabled" default="true"/>
+</category>
 </settings>

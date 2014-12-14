@@ -2,3 +2,7 @@
 
 - Intial release
 
+[B]Version 1.0.1[/B]
+
+- Fixed Play Links.
+

@@ -21,7 +21,7 @@ from resources.src.scripts import settings
 
 #VideoBull.com - by Kasik 2013.
 
-
+MainUrl='http://videobull.to/'
 base_url ='http://videobull.com/'
 addon_id = 'plugin.video.vdeobull'
 selfAddon = xbmcaddon.Addon(id=addon_id)
@@ -45,8 +45,20 @@ try:
 except: pass
 
 ############################# Main ###########################################################################################
-      
-def MAIN():
+     
+def MAIN(index=False):
+        main.addDir('Latest Tv Shows',MainUrl,860,art+'/latest.png',index=index)
+        main.addDir('A-Z Tv Shows',MainUrl+'tv-shows/',861,art+'/AZ.png',index=index)
+        #main.addDirHome('Popular Shows',base_url,2,art+'popular.png')
+        main.addDir('Search for Tv Shows',MainUrl,866,art+'/search.png',index=index)
+        main.VIEWSB()
+
+
+
+
+
+
+def MAINB():
         main.addDirHome('Search TV Shows',base_url,10,art+'/search.png')
         main.addDirHome('Latest TV Shows',base_url,1,art+'latest.png')
         main.addDirHome('Popular Shows',base_url,2,art+'popular.png')
@@ -288,12 +300,218 @@ elif mode==100:
        print ""+url
        vdeobull.Play(url,name)
 
+elif mode==134:
+       from resources.src import vdeobull
+       print ""+url
+       vdeobull.Play64(url,name)
+
 elif mode==150:
        from resources.src import vdeobull
        print ""+url
        vdeobull.PlayB(name,url)
        
     
+###################################################################################################################################################################################################
+
+elif mode==859:
+    from resources.src import videobull
+    print " " + url
+    videobull.VIDBULLMAIN()
+
+elif mode==860:
+    from resources.src import videobull
+    print " " + url
+    videobull.List(url)
+
+elif mode==861:
+    from resources.src import videobull
+    print " " + url
+    videobull.VBAtoZ()
+
+elif mode==862:
+    from resources.src import videobull
+    print " " + url
+    videobull.SEASON()
+
+elif mode==863:
+    from resources.src import videobull
+    print " " + url
+    videobull.EPISODES()    
+
+elif mode==864:
+    from resources.src import videobull
+    print " " + url
+    videobull.List2(url)
+
+   
+elif mode==865:
+    from resources.src import videobull
+    print " " + url
+    videobull.GRABFEED(name,url)
+
+elif mode==866:
+    from resources.src import videobull
+    print ""+url
+    videobull.Searchhistory()
+        
+elif mode==867:
+    from resources.src import videobull
+    print ""+url
+    videobull.SEARCH(url)
+
+elif mode==868:
+    from resources.src import videobull
+    print ""+url
+    videobull.PLAYB(name,url)
+
+elif mode==869:
+    from resources.src import videobull
+    print " " + url
+    videobull.A(url)
+elif mode==870:
+    from resources.src import videobull
+    print " " + url
+    videobull.B(url)
+elif mode==871:
+    from resources.src import videobull
+    print " " + url
+    videobull.C(url)
+elif mode==872:
+    from resources.src import videobull
+    print " " + url
+    videobull.D(url)
+elif mode==873:
+    from resources.src import videobull
+    print " " + url
+    videobull.E(url)
+elif mode==874:
+    from resources.src import videobull
+    print " " + url
+    videobull.F(url)
+elif mode==875:
+    from resources.src import videobull
+    print " " + url
+    videobull.G(url)
+elif mode==876:
+    from resources.src import videobull
+    print " " + url
+    videobull.H(url)
+elif mode==877:
+    from resources.src import videobull
+    print " " + url
+    videobull.I(url)
+elif mode==878:
+    from resources.src import videobull
+    print " " + url
+    videobull.J(url)
+elif mode==879:
+    from resources.src import videobull
+    print " " + url
+    videobull.K(url)
+elif mode==880:
+    from resources.src import videobull
+    print " " + url
+    videobull.L(url)
+elif mode==881:
+    from resources.src import videobull
+    print " " + url
+    videobull.M(url)
+elif mode==882:
+    from resources.src import videobull
+    print " " + url
+    videobull.N(url)
+elif mode==883:
+    from resources.src import videobull
+    print " " + url
+    videobull.O(url)
+elif mode==884:
+    from resources.src import videobull
+    print " " + url
+    videobull.P(url)
+elif mode==885:
+    from resources.src import videobull
+    print " " + url
+    videobull.Q(url)
+elif mode==886:
+    from resources.src import videobull
+    print " " + url
+    videobull.R(url)
+elif mode==887:
+    from resources.src import videobull
+    print " " + url
+    videobull.S(url)
+elif mode==888:
+    from resources.src import videobull
+    print " " + url
+    videobull.T(url)
+elif mode==889:
+    from resources.src import videobull
+    print " " + url
+    videobull.U(url)
+elif mode==890:
+    from resources.src import videobull
+    print " " + url
+    videobull.V(url)
+elif mode==891:
+    from resources.src import videobull
+    print " " + url
+    videobull.W(url)
+elif mode==892:
+    from resources.src import videobull
+    print " " + url
+    videobull.X(url)
+elif mode==893:
+    from resources.src import videobull
+    print " " + url
+    videobull.Y(url)
+elif mode==894:
+    from resources.src import videobull
+    print " " + url
+    videobull.Z(url)
+
+elif mode==895:
+    from resources.src import videobull
+    print " " + url
+    videobull.ONE(url)
+elif mode==896:
+    from resources.src import videobull
+    print " " + url
+    videobull.TWO(url)
+elif mode==897:
+    from resources.src import videobull
+    print " " + url
+    videobull.THREE(url)
+elif mode==898:
+    from resources.src import videobull
+    print " " + url
+    videobull.FOUR(url)
+elif mode==899:
+    from resources.src import videobull
+    print " " + url
+    videobull.FIVE(url)
+elif mode==900:
+    from resources.src import videobull
+    print " " + url
+    videobull.SIX(url)
+elif mode==901:
+    from resources.src import videobull
+    print " " + url
+    videobull.SEVEN(url)
+elif mode==902:
+    from resources.src import videobull
+    print " " + url
+    videobull.EIGHT(url)
+elif mode==903:
+    from resources.src import videobull
+    print " " + url
+    videobull.NINE(url)    
+    
+elif mode==904:
+    from resources.src import videobull
+    print " " + url
+    videobull.SEARCH2(url)
+
+
 
 
 
