@@ -93,12 +93,12 @@
 
 <addon id="plugin.video.megabox"
        name="Megabox"
-       version="2.1.7"
-       provider-name="Kasik">
+       version="2.2.0"
+       provider-name="Kasik04a">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
 		<import addon="script.module.urlresolver"  version="0.0.1"/>
-        <import addon="script.module.t0mm0.common" version="1.1.0"/>
+		<import addon="script.module.t0mm0.common" version="1.1.0"/>
 		<import addon="script.module.metahandler"  version="1.0.2"/>
 		<import addon="script.module.beautifulsoup"/>
     </requires>
@@ -107,8 +107,8 @@
         <provides>video</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
-    <summary lang="en">Stream the latest movies from Megabox.Li</summary>
-    <description lang="en">View featured movies or Search for any movies that you want to watch online without downloading. Stream your favorite movie just instantly just like megashare all from Megabox.Li</description>
+    <summary lang="en">Megashare Movies - Watch Free Movies Online Stream - Megashare</summary>
+    <description lang="en">List of Megashare movies online: Search for any movies that you want to watch online without downloading. Stream your favorite movie just instantly without downloading anything.[COLOR red]I do not host any links, all links are found via website.[BR][/COLOR][/BR]</description>
     <platform>all</platform>
   </extension>
 </addon>

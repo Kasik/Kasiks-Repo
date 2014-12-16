@@ -1,549 +1,118 @@
 #-*- coding: utf-8 -*-
-import urllib,re,sys,os,urllib2,cookielib
+import urllib,re,sys,os
 import xbmc, xbmcgui, xbmcaddon, xbmcplugin
 import main
 import urlresolver
-from BeautifulSoup import MinimalSoup as BeautifulSoup
-from t0mm0.common.addon import Addon
-from t0mm0.common.net import Net
-net = Net()
-reload(sys)
-sys.setdefaultencoding( "UTF-8" )
 
-#Megabox - by Kasik 2013.
-
-
+#Megabox - by Kasik04a 2014.
 
 addon_id = 'plugin.video.megabox'
 selfAddon = xbmcaddon.Addon(id=addon_id)
-ADDON = Addon('plugin.video.megabox', sys.argv)
 art = main.art
-base_url='http://megabox.li/'
-USER_AGENT = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3'
-addon = Addon('plugin.video.megabox', sys.argv)
-datapath = addon.get_profile()
-cookie_path = os.path.join(datapath, 'cookies')
-cookie_jar = os.path.join(cookie_path, "cookiejar.lwp")
-if os.path.exists(cookie_path) == False:
-    os.makedirs(cookie_path)
+MainUrl='http://megashare.li/'
+prettyName='Megabox'
 
-
-
-######################################################################################################################
-######################################################################################################################
-def MOVIES(url):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match = re.findall('<div class="item"><a href="([^"]*)"><img alt=".+?" src="([^"]*)" /></a><div class="title"><a title="watch movie([^"]*)".+?<div class="year"> ([^"]*)</div>',link)
-        dialogWait = xbmcgui.DialogProgress()
-        ret = dialogWait.create('Please wait until Movie list is cached.')
-        totalLinks = len(match)
-        loadedLinks = 0
+def LISTMOVIES(murl,index=False):
+    link=main.OPENURL(murl)
+    link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
+    match = re.findall('lass="item"><a href="([^"]*)"><img alt=".+?src="([^"]*)" /></a><div class="title"><a title="watch movie([^"]*)".+?<div class="year"> ([^"]*)</div>',link)
+    dialogWait = xbmcgui.DialogProgress()
+    ret = dialogWait.create('Please wait until Movie list is cached.')
+    totalLinks = len(match)
+    loadedLinks = 0
+    remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+    dialogWait.update(0, '[B]Will load instantly from now on[/B]',remaining_display)
+    xbmc.executebuiltin("XBMC.Dialog.Close(busydialog,true)")
+    for url,thumb,name,date in match:
+        name = name.upper()
+        main.addInfo(name+'[COLOR blue] '+date+'[/COLOR]',MainUrl+url,50,thumb,'','')
+        loadedLinks = loadedLinks + 1
+        percent = (loadedLinks * 100)/totalLinks
         remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
-        dialogWait.update(0, '[B]Will load instantly from now on[/B]',remaining_display)
-        for url,thumb,name,date in match:
-                main.addInfo(name+'[COLOR blue] '+date+'[/COLOR]',base_url+url,8,thumb,'','')
-                loadedLinks = loadedLinks + 1
-                percent = (loadedLinks * 100)/totalLinks
-                remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
-                dialogWait.update(percent,'[B]Will load instantly from now on[/B]',remaining_display)
-                if (dialogWait.iscanceled()):
-                        return False   
-        dialogWait.close()
-        del dialogWait
+        dialogWait.update(percent,'[B]Will load instantly from now on[/B]',remaining_display)
+        if dialogWait.iscanceled(): return False   
+    dialogWait.close()
+    del dialogWait
         
-        
-        
-        nextpage=re.compile('<a href="([^"]*)" class="next">Next &#187;</a>').findall(link)
-        for url in nextpage:
-                main.addDir('Next Page >>',base_url+url,1,art+'/next.jpg')
-                
-        xbmcplugin.setContent(int(sys.argv[1]), 'Movies')
-        main.VIEWS()
-
-     
-def YOUTUBE(url):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match = re.findall('<a href="([^"]*)"><img alt="[^"]*" src="([^"]*)" /></a><div class="title"><a title="[^"]*" href="[^"]*">([^"]*)</a></div><ul class=\'star-rating\'><li class="current-rating" style="[^"]*"></li></ul><div class="item-genres"><a href="[^"]*">([^"]*)</a>',link)
-        dialogWait = xbmcgui.DialogProgress()
-        ret = dialogWait.create('Please wait until Movie list is cached.')
-        totalLinks = len(match)
-        loadedLinks = 0
-        remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
-        dialogWait.update(0, '[B]Will load instantly from now on[/B]',remaining_display)
-        for url,thumb,name,genre in match:
-                main.addDir(name+'[COLOR blue] Genre: '+genre+'[/COLOR]',base_url+url,8,thumb,'')
-                loadedLinks = loadedLinks + 1
-                percent = (loadedLinks * 100)/totalLinks
-                remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
-                dialogWait.update(percent,'[B]Will load instantly from now on[/B]',remaining_display)
-                if (dialogWait.iscanceled()):
-                        return False   
-        dialogWait.close()
-        del dialogWait
-        
-        
-        
-        nextpage=re.compile('<a href="([^"]*)" class="next">Next &#187;</a>').findall(link)
-        for url in nextpage:
-                main.addDir('Next Page >>',base_url+url,50,art+'/next.jpg')
-                
-        xbmcplugin.setContent(int(sys.argv[1]), 'Movies')
-        main.VIEWS()        
+    paginate=re.compile('<a href="([^"]*)" class="next">Next &#187;</a>').findall(link)
+    if paginate:
+       xurl=MainUrl+paginate[0]
+       main.addDir('[COLOR blue]Next Page ->[/COLOR]',xurl,1,art+'/next.jpg',index=index)
+       xbmcplugin.setContent(int(sys.argv[1]), 'Movies')
+       main.VIEWS()
 
 
-def TV(url):
-        link=main.OPEN_URL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match = re.findall('<div class="item"><a href="([^"]*)"><img alt=".+?" src="([^"]*)" /></a><div class="title"><a title="watch tv([^"]*)" href.+?class="year"> ([^"]*)</div>',link)
-        dialogWait = xbmcgui.DialogProgress()
-        ret = dialogWait.create('Please wait until Shows list is cached.')
-        totalLinks = len(match)
-        loadedLinks = 0
-        remaining_display = 'Shows loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
-        dialogWait.update(0, '[B]Will load instantly from now on[/B]',remaining_display)
-        for url,iconimage,name,date in match:
-                main.addDirTE(name+' '+date,base_url+url,12,iconimage,'','','','','')
-                loadedLinks = loadedLinks + 1
-                percent = (loadedLinks * 100)/totalLinks
-                remaining_display = 'Shows loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
-                dialogWait.update(percent,'[B]Will load instantly from now on[/B]',remaining_display)
-                if (dialogWait.iscanceled()):
-                        return False   
-        dialogWait.close()
-        del dialogWait
-        
-        nextpage=re.compile('<a href="([^"]*)" class="next">Next &#187;</a>').findall(link)
-        for url in nextpage:
-                main.addDir('[COLOR aqua]'+'Next Page >>'+'[/COLOR]',base_url+url,11,art+'/next.jpg')
-                
-        xbmcplugin.setContent(int(sys.argv[1]), 'TV')
-        main.VIEWS()
+def GENRES(url,index=False):
+    link=main.OPENURL(url)
+    link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
+    match = re.findall('<a href="[?]genre=([^"]*)">([^"]*)</a></li>',link)
+    for url,name in match:
+     url = MainUrl + '?genre=' + url
+     if 'adult' in url:
+      HideAdult = selfAddon.getSetting('Hide-Adult')
+      if HideAdult == 'false':    
+       name = "[B][COLOR red]" + name + "[/COLOR][/B]"    
+       main.addDir(name,url,17,'','')
+     else:
+      main.addDir(name,url,1,'','')   
 
 
-def ADULTGENRE(url):
-        link=main.ADULT_URL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&#x27;',"'")
-        match=re.findall('<a href="([^"]*)"><img alt="[^"]*" src="([^"]*)" /></a><div class="title"><a title="[^"]*" href="[^"]*">([^"]*)</a>',link)
-        dialogWait = xbmcgui.DialogProgress()
-        ret = dialogWait.create('Please wait until Shows list is cached.')
-        totalLinks = len(match)
-        loadedLinks = 0
-        remaining_display = 'Shows loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
-        dialogWait.update(0, '[B]Will load instantly from now on[/B]',remaining_display)
-        for url,thumb,name in match:
-                url = base_url + url
-                main.addInfo(name,url,40,thumb,'','')
-                loadedLinks = loadedLinks + 1
-                percent = (loadedLinks * 100)/totalLinks
-                remaining_display = 'Shows loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
-                dialogWait.update(percent,'[B]Will load instantly from now on[/B]',remaining_display)
-                if (dialogWait.iscanceled()):
-                        return False   
-        dialogWait.close()
-        del dialogWait
-        
-        pagenext=re.compile('<a href="([^"]*)" class="next">Next &#187;</a>').findall(link)
-        if pagenext:
-          url = 'http://megabox.li/index.php' + pagenext[0]
-          main.addDir('[COLOR red]Next Page ->[/COLOR]',url,17,art+'/next.jpg')     
-
-################################################################################################################################################
-def f7(seq):
-    seen = set()
-    seen_add = seen.add
-    return [ x for x in seq if x not in seen and not seen_add(x)]
-
-
-def Seasons(url,name):
-        req = urllib2.Request(url)
-        req.add_header('User-Agent', USER_AGENT)
-        response = urllib2.urlopen(req)
-        link=response.read()
-        response.close()
-        match=re.compile('<h2>Season ([^"]*)</h2>').findall(link)
-        #match.sort() # sort list so it shows season one first
-        #match = f7(match)
-        for season in match:
-                #main.addDir("Season "+season,url,13,'','')
-                main.addDirG('[COLOR blue]'+'SEASON '+season+'[/COLOR]',url,13,'',season=season)
-        
-def Episodes(url,season):
-        req = urllib2.Request(url)
-        req.add_header('User-Agent', USER_AGENT)
-        response = urllib2.urlopen(req)
-        link=response.read().replace('&#039;',"'")
-        response.close()
-        season = str(season)
-        match=re.compile('<a href="info.php[?]id=([^"]*)&season='+season+'&episode=([^"]*)&tv">[^"]*<span class="ep_title">([^"]*)</span> <span class="total">([^"]*)</span>').findall(link)
-        #match.sort() # sort list so it shows first episode first
-     
-        for linkid,episode,title,links in match:
-                url = base_url + 'info.php?id='+linkid+'&season='+season+'&episode='+episode+'&tv'
-                name = '[COLOR green]'+"Episode "+episode + '[/COLOR] ' + '[COLOR aqua]'+title + '[/COLOR]  ' + '[COLOR red]' +links+'[/COLOR]'
-                main.addDir(name,url,14,'','')
-                
-def Season2(url):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match=re.compile('<div class=".*?"><a href="info.php[?]id=([^"]*)&season=2&episode=([^"]*)&tv">Episode .*?<span class="ep_title">([^"]*)</span> <span').findall(link)
-        for showid,episode,name in match:
-                name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
-                url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                main.addDir(name,url,14,'','')
-def Season3(url):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match=re.compile('<div class=".*?"><a href="info.php[?]id=([^"]*)&season=3&episode=([^"]*)&tv">Episode .*?<span class="ep_title">([^"]*)</span> <span').findall(link)
-        for showid,episode,name in match:
-                name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
-                url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                main.addDir(name,url,14,'','')
-def Season4(url):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match=re.compile('<div class=".*?"><a href="info.php[?]id=([^"]*)&season=4&episode=([^"]*)&tv">Episode .*?<span class="ep_title">([^"]*)</span> <span').findall(link)
-        for showid,episode,name in match:
-                name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
-                url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                main.addDir(name,url,14,'','')
-def Season5(url):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match=re.compile('<div class=".*?"><a href="info.php[?]id=([^"]*)&season=5&episode=([^"]*)&tv">Episode .*?<span class="ep_title">([^"]*)</span> <span').findall(link)
-        for showid,episode,name in match:
-                name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
-                url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                main.addDir(name,url,14,'','')
-def Season6(url):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match=re.compile('<div class=".*?"><a href="info.php[?]id=([^"]*)&season=6&episode=([^"]*)&tv">Episode .*?<span class="ep_title">([^"]*)</span> <span').findall(link)
-        for showid,episode,name in match:
-                name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
-                url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                main.addDir(name,url,14,'','')
-def Season7(url):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match=re.compile('<div class=".*?"><a href="info.php[?]id=([^"]*)&season=7&episode=([^"]*)&tv">Episode .*?<span class="ep_title">([^"]*)</span> <span').findall(link)
-        for showid,episode,name in match:
-                name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
-                url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                main.addDir(name,url,14,'','')
-def Season8(url):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match=re.compile('<div class=".*?"><a href="info.php[?]id=([^"]*)&season=8&episode=([^"]*)&tv">Episode .*?<span class="ep_title">([^"]*)</span> <span').findall(link)
-        for showid,episode,name in match:
-                name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
-                url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                main.addDir(name,url,14,'','')
-def Season9(url):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match=re.compile('<div class=".*?"><a href="info.php[?]id=([^"]*)&season=9&episode=([^"]*)&tv">Episode .*?<span class="ep_title">([^"]*)</span> <span').findall(link)
-        for showid,episode,name in match:
-                name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
-                url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                main.addDir(name,url,14,'','')
-def Season10(url):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match=re.compile('<div class=".*?"><a href="info.php[?]id=([^"]*)&season=10&episode=([^"]*)&tv">Episode .*?<span class="ep_title">([^"]*)</span> <span').findall(link)
-        for showid,episode,name in match:
-                name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
-                url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                main.addDir(name,url,14,'','')
-def Season11(url):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match=re.compile('<div class=".*?"><a href="info.php[?]id=([^"]*)&season=11&episode=([^"]*)&tv">Episode .*?<span class="ep_title">([^"]*)</span> <span').findall(link)
-        for showid,episode,name in match:
-                name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
-                url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                main.addDir(name,url,14,'','')
-def Season12(url):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match=re.compile('<div class=".*?"><a href="info.php[?]id=([^"]*)&season=12&episode=([^"]*)&tv">Episode .*?<span class="ep_title">([^"]*)</span> <span').findall(link)
-        for showid,episode,name in match:
-                name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
-                url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                main.addDir(name,url,14,'','')
-def Season13(url):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match=re.compile('<div class=".*?"><a href="info.php[?]id=([^"]*)&season=13&episode=([^"]*)&tv">Episode .*?<span class="ep_title">([^"]*)</span> <span').findall(link)
-        for showid,episode,name in match:
-                name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
-                url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                main.addDir(name,url,14,'','')
-def Season14(url):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match=re.compile('<div class=".*?"><a href="info.php[?]id=([^"]*)&season=14&episode=([^"]*)&tv">Episode .*?<span class="ep_title">([^"]*)</span> <span').findall(link)
-        for showid,episode,name in match:
-                name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
-                url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                main.addDir(name,url,14,'','')
-def Season15(url):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match=re.compile('<div class=".*?"><a href="info.php[?]id=([^"]*)&season=15&episode=([^"]*)&tv">Episode .*?<span class="ep_title">([^"]*)</span> <span').findall(link)
-        for showid,episode,name in match:
-                name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
-                url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                main.addDir(name,url,14,'','')
-def Season16(url):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match=re.compile('<div class=".*?"><a href="info.php[?]id=([^"]*)&season=16&episode=([^"]*)&tv">Episode .*?<span class="ep_title">([^"]*)</span> <span').findall(link)
-        for showid,episode,name in match:
-                name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
-                url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                main.addDir(name,url,14,'','')
-def Season17(url):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match=re.compile('<div class=".*?"><a href="info.php[?]id=([^"]*)&season=17&episode=([^"]*)&tv">Episode .*?<span class="ep_title">([^"]*)</span> <span').findall(link)
-        for showid,episode,name in match:
-                name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
-                url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                main.addDir(name,url,14,'','')
-def Season18(url):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match=re.compile('<div class=".*?"><a href="info.php[?]id=([^"]*)&season=18&episode=([^"]*)&tv">Episode .*?<span class="ep_title">([^"]*)</span> <span').findall(link)
-        for showid,episode,name in match:
-                name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
-                url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                main.addDir(name,url,14,'','')
-def Season19(url):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match=re.compile('<div class=".*?"><a href="info.php[?]id=([^"]*)&season=19&episode=([^"]*)&tv">Episode .*?<span class="ep_title">([^"]*)</span> <span').findall(link)
-        for showid,episode,name in match:
-                name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
-                url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                main.addDir(name,url,14,'','')
-def Season20(url):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match=re.compile('<div class=".*?"><a href="info.php[?]id=([^"]*)&season=20&episode=([^"]*)&tv">Episode .*?<span class="ep_title">([^"]*)</span> <span').findall(link)
-        for showid,episode,name in match:
-                name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
-                url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                main.addDir(name,url,14,'','')
-def Season21(url):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match=re.compile('<div class=".*?"><a href="info.php[?]id=([^"]*)&season=21&episode=([^"]*)&tv">Episode .*?<span class="ep_title">([^"]*)</span> <span').findall(link)
-        for showid,episode,name in match:
-                name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
-                url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                main.addDir(name,url,14,'','')
-def Season22(url):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match=re.compile('<div class=".*?"><a href="info.php[?]id=([^"]*)&season=22&episode=([^"]*)&tv">Episode .*?<span class="ep_title">([^"]*)</span> <span').findall(link)
-        for showid,episode,name in match:
-                name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
-                url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                main.addDir(name,url,14,'','')
-def Season23(url):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match=re.compile('<div class=".*?"><a href="info.php[?]id=([^"]*)&season=23&episode=([^"]*)&tv">Episode .*?<span class="ep_title">([^"]*)</span> <span').findall(link)
-        for showid,episode,name in match:
-                name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
-                url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                main.addDir(name,url,14,'','')
-def Season24(url):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match=re.compile('<div class=".*?"><a href="info.php[?]id=([^"]*)&season=24&episode=([^"]*)&tv">Episode .*?<span class="ep_title">([^"]*)</span> <span').findall(link)
-        for showid,episode,name in match:
-                name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
-                url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                main.addDir(name,url,14,'','')
-def Season25(url):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match=re.compile('<div class=".*?"><a href="info.php[?]id=([^"]*)&season=25&episode=([^"]*)&tv">Episode .*?<span class="ep_title">([^"]*)</span> <span').findall(link)
-        for showid,episode,name in match:
-                name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
-                url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                main.addDir(name,url,14,'','')
-def Season65(url):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match=re.compile('<div class=".*?"><a href="info.php[?]id=([^"]*)&season=65&episode=([^"]*)&tv">Episode .*?<span class="ep_title">([^"]*)</span> <span').findall(link)
-        for showid,episode,name in match:
-                name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
-                url = base_url+'info.php?id='+showid+'&season=1&episode='+episode+'&tv'
-                main.addDir(name,url,14,'','')
-
-def Season2013(url):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match=re.compile('<div class=".*?"><a href="info.php[?]id=([^"]*)&season=2013&episode=([^"]*)&tv">Episode .*?<span class="ep_title">([^"]*)</span> <span').findall(link)
-        for showid,episode,name in match:
-                name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
-                url = base_url+'info.php?id='+showid+'&season=2013&episode='+episode+'&tv'
-                main.addDir(name,url,14,'','')
-
-def Season2012(url):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match=re.compile('<div class=".*?"><a href="info.php[?]id=([^"]*)&season=2012&episode=([^"]*)&tv">Episode .*?<span class="ep_title">([^"]*)</span> <span').findall(link)
-        for showid,episode,name in match:
-                name = '[COLOR green]'+"Episode "+ episode + "[/COLOR]" + '[COLOR teal]'+name+'[/COLOR]'
-                url = base_url+'info.php?id='+showid+'&season=2012&episode='+episode+'&tv'
-                main.addDir(name,url,14,'','')                
+def YEARS(url,index=False):
+    link=main.OPENURL(url)
+    link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
+    match = re.findall('<li><a href="[?]year=([^"]*)">([^"]*)</a>',link)
+    for url,name in match:
+     url = MainUrl + '?year=' + url   
+     main.addDir(name,url,1,'','')
 
 
 
 
-
-
-
-
-
-
-
-
-#################################################################################################################################################################################################
-def Searchhistory():
+def Searchhistory(index=False):
     seapath=os.path.join(main.datapath,'Search')
     SeaFile=os.path.join(seapath,'SearchHistoryMB')
     if not os.path.exists(SeaFile):
-        SEARCH()
+        SEARCH(index=index)
     else:
-        main.addDir('Search Movies','###',120,art+'/search.png')
+        main.addDir('Search','###',20,art+'/search.png',index=index)
         main.addDir('Clear History',SeaFile,128,art+'/cleahis.png')
         thumb=art+'/link.png'
         searchis=re.compile('search="(.+?)",').findall(open(SeaFile,'r').read())
         for seahis in reversed(searchis):
             url=seahis
             seahis=seahis.replace('%20',' ')
-            main.addDir(seahis,url,120,thumb)
-
-def Searchhistorytv():
-    seapath=os.path.join(main.datapath,'Search')
-    SeaFile=os.path.join(seapath,'SearchHistoryTv')
-    if not os.path.exists(SeaFile):
-        SEARCHTV()
-    else:
-        main.addDir('Search Tv Shows','###',135,art+'/search.png')
-        main.addDir('Clear History',SeaFile,128,art+'/cleahis.png')
-        thumb=art+'/link.png'
-        searchis=re.compile('search="(.+?)",').findall(open(SeaFile,'r').read())
-        for seahis in reversed(searchis):
-            url=seahis
-            seahis=seahis.replace('%20',' ')
-            main.addDir(seahis,url,135,thumb)            
-
-def SEARCH(url = ''):
-        encode = main.updateSearchFile(url,'Movies')
-        if not encode: return False   
-        surl=base_url + 'index.php?search=' + encode + '&movie=&x=0&y=0'
-        link=main.OPENURL(surl)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match = re.findall('<a href="([^"]*)"><img alt="[^"]*" src="([^"]*)" /></a><div class="title"><a title="[^"]*" href="[^"]*">([^"]*)</a></div><ul class=\'star-rating\'><li class="current-rating" style="[^"]*"></li></ul><div class="item-genres"><a href="[^"]*">([^"]*)</a>',link)
-        dialogWait = xbmcgui.DialogProgress()
-        ret = dialogWait.create('Please wait until Movie list is cached.')
-        totalLinks = len(match)
-        loadedLinks = 0
+            main.addDir(seahis,url,20,thumb,index=index)
+            
+def SEARCH(murl = '',index=False):
+    encode = main.updateSearchFile(murl,'Movies')
+    if not encode: return False   
+    surl='http://megashare.li/index.php?search='+encode+'&movie=&x=0&y=0'
+    link=main.OPENURL(surl)
+    link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
+    match=re.compile('class="item"><a href="([^"]*)"><img alt=".+?src="([^"]*)" /></a><div class="title"><a title="watch movie([^"]*)" href=".+?<div class="year"> ([^"]*)</div>').findall(link)
+    dialogWait = xbmcgui.DialogProgress()
+    ret = dialogWait.create('Please wait until Movie list is cached.')
+    totalLinks = len(match)
+    loadedLinks = 0
+    remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+    dialogWait.update(0, '[B]Will load instantly from now on[/B]',remaining_display)
+    xbmc.executebuiltin("XBMC.Dialog.Close(busydialog,true)")
+    for url,thumb,name,date in match:
+        name=name.replace('-','').replace('&','').replace('acute;','')
+        furl= MainUrl+url
+        main.addInfo(name+'[COLOR blue] '+date +'[/COLOR]',furl,50,thumb,'','')
+        loadedLinks = loadedLinks + 1
+        percent = (loadedLinks * 100)/totalLinks
         remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
-        dialogWait.update(0, '[B]Will load instantly from now on[/B]',remaining_display)
-        for url,thumb,name,genre in match:
-                name=name.replace('-','').replace('&','').replace('acute;','').strip()
-                main.addInfo(name+'[COLOR blue] Genre: '+genre+'[/COLOR]',base_url+url,8,thumb,genre,'')
-                loadedLinks = loadedLinks + 1
-                percent = (loadedLinks * 100)/totalLinks
-                remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
-                dialogWait.update(percent,'[B]Will load instantly from now on[/B]',remaining_display)
-                if (dialogWait.iscanceled()):
-                        return False 
-        dialogWait.close()
-        del dialogWait
+        dialogWait.update(percent,'[B]Will load instantly from now on[/B]',remaining_display)
+        if dialogWait.iscanceled(): return False 
+    dialogWait.close()
+    del dialogWait
+    exist = re.findall('<a href="([^"]*)" class="next">Next &#187;</a>',link)
+    if exist:
+        main.addDir('[COLOR blue]Next Page ->[/COLOR]',MainUrl+url,20,art+'/next.jpg',index=index)
         
-        nextpage=re.compile('<a href="([^"]*)" class="next">Next &#187;</a>').findall(link)
-        for url in nextpage:
-                main.addDir('Next Page >>',base_url+url,1,art+'/next.jpg')
-                
-        xbmcplugin.setContent(int(sys.argv[1]), 'Movies')
-        main.VIEWS()
-
-def SEARCHTV(url = ''):
-        encode = main.updateSearchFile(url,'TV')
-        if not encode: return False   
-        surl=base_url + 'index.php?search=' + encode + '&tv=&x=0&y=0'
-        link=main.OPENURL(surl)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match = re.findall('<a href="([^"]*)"><img alt="[^"]*" src="([^"]*)" /></a><div class="title"><a title="[^"]*" href="[^"]*">([^"]*)</a></div><ul class=\'star-rating\'><li class="current-rating" style="[^"]*"></li></ul><div class="item-genres"><a href="[^"]*">([^"]*)</a>',link)
-        dialogWait = xbmcgui.DialogProgress()
-        ret = dialogWait.create('Please wait until Movie list is cached.')
-        totalLinks = len(match)
-        loadedLinks = 0
-        remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
-        dialogWait.update(0, '[B]Will load instantly from now on[/B]',remaining_display)
-        for url,thumb,name,genre in match:
-                name=name.replace('-','').replace('&','').replace('acute;','').strip()
-                main.addDir(name+'[COLOR blue] Genre: '+genre+'[/COLOR]',base_url+url,12,'','')
-                loadedLinks = loadedLinks + 1
-                percent = (loadedLinks * 100)/totalLinks
-                remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
-                dialogWait.update(percent,'[B]Will load instantly from now on[/B]',remaining_display)
-                if (dialogWait.iscanceled()):
-                        return False 
-        dialogWait.close()
-        del dialogWait
-        
-        nextpage=re.compile('<a href="([^"]*)" class="next">Next &#187;</a>').findall(link)
-        for url in nextpage:
-                main.addDir('Next Page >>',base_url+url,1,art+'/next.jpg')
-                
-        xbmcplugin.setContent(int(sys.argv[1]), 'Movies')
-        main.VIEWS()        
-
-
-     
-
-                
-#################################################################################################################################################################################################
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-     
-################################################################################################################################################
-
-
-def GRABTVLINKS(url):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('<img src=images/star.gif>','')
-        matchname=re.compile('div align="left"><strong>Watch ([^"]*) on:</strong>').findall(link)
-        for name in matchname:
-         match = re.findall('<a id="link-[^"]*" href="info.php[?]id=([^"]*)&season=[^"]*&episode=[^"]*&tv&link=([^"]*)&host=([^"]*)">',link)
-         for link1,link2,host in match:
-                url = base_url + 'player.php?authid=&id='+link1+'&link='+link2+'&type=tv2'
-                main.addDown2(name.strip()+" [COLOR blue]"+host.upper()+"[/COLOR]",url,6,'.png','.png')
-                xbmcplugin.setContent(int(sys.argv[1]), 'Shows')
+    xbmcplugin.setContent(int(sys.argv[1]), 'Movies')
 
 
 
@@ -555,41 +124,14 @@ def GRABLINKS(url):
      match=re.compile('<a id="link-[^"]*" href="info.php[?]id=([^"]*)&([^"]*)&link=([^"]*)&host=[^"]*"><div class="[^"]*"><span class="([^"]*)"></span></div><div class="[^"]*">([^"]*)</div>').findall(link)
      for link,age,link1,quality,host in match:
       if 'older' in age:    
-       url = base_url+ 'player.php?authid=&id='+link+'&link='+link1+'&type=older_v2&part=&site=inactive&ref=1'
-       main.addDown2(name.strip()+" [COLOR blue]"+host.upper()+"[/COLOR]",url,6,'.png','.png')
+       url = MainUrl+ 'player.php?authid=&id='+link+'&link='+link1+'&type=older_v2&part=&site=inactive&ref=1'
+       main.addDown2(name.strip()+" [COLOR blue]"+host.upper()+"[/COLOR]",url,90,'.png','.png')
     else:
        match=re.compile('href="info.php[?]id=([^"]*)&link=([^"]*)&host=[^"]*"><div class="[^"]*"><span class="([^"]*)"></span></div><div class="[^"]*">([^"]*)</div>').findall(link)
        for link,link1,quality,host in match:
-        url = base_url + 'player.php?authid=&id='+link+'&link='+link1+'&type=new&part=&site=inactive&ref=1'
-        main.addDown2(name.strip()+" [COLOR blue]"+host.upper()+"[/COLOR]",url,6,'.png','.png')
-      
+        url = MainUrl + 'player.php?authid=&id='+link+'&link='+link1+'&type=new&part=&site=inactive&ref=1'
+        main.addDown2(name.strip()+" [COLOR blue]"+host.upper()+"[/COLOR]",url,90,'.png','.png')
 
-          
-               
-                           
-
-def GRABADULT(url):
-    link=main.ADULT_URL(url)
-    link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('<img src=images/star.gif>','').replace('player=2','').replace('play.','').replace('embed.','')
-    matchname=re.compile('<div align="left"><strong>Watch ([^"]*) on:</strong></div>').findall(link)
-    for name in matchname:
-     match=re.compile('<a id="link-[^"]*" href="info.php[?]id=([^"]*)&([^"]*)&link=([^"]*)&host=[^"]*"><div class="[^"]*"><span class="([^"]*)"></span></div><div class="[^"]*">([^"]*)</div>').findall(link)
-     for link1,age,link2,quality,host in match:
-      url = base_url+ 'player.php?authid=&id='+link1+'&link='+link2+'&type=older_v2&part=&site=inactive&ref=1'
-      main.addDown2(name.strip()+" [COLOR blue]"+host.upper()+"[/COLOR]",url,7,'.png','.png')
-      
-     
-        
-###############################################################
-def GRABMORE(name,url):
-     link=main.OPENURL(url)
-     link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','')
-     match=re.compile('<strong>Watch ([^"]*) on ([^"]*) </strong></span><div class="clear"></div></div><div class="player"><a href="([^"]*)" target').findall(link)
-     for name,host,url in match:
-      url = base_url + url
-      main.addDown2(name + ' ' +host,url,6,'','')
-################################################################         
-    
 
 
 
@@ -614,6 +156,8 @@ def resolveMBurl(url):
     return        
     match5 = re.search('src=\'([^>]*)\' scrolling=\'no\'></iframe></textarea>',html)
     if match5: return match.group(5)
+    match6 = re.search('target="_blank" href="([^"]*)"',html)
+    if match6: return match.group(6)
     return        
         
 
@@ -786,7 +330,11 @@ def PLAYB(name,url):
                 url = 'http://www.sockshare.com/file/' + url 
                 hosted_media = urlresolver.HostedMediaFile(url=url)
                 sources.append(hosted_media)        
-
+        match=re.compile('href="http://mightyupload.com/embed-([^"]*)-.+?"><img src').findall(link)
+        for url in match:
+                url = 'http://mightyupload.com/' + url 
+                hosted_media = urlresolver.HostedMediaFile(url=url)
+                sources.append(hosted_media)
                 
         if (len(sources)==0):
                 xbmc.executebuiltin("XBMC.Notification(Sorry!,Show doesn't have playable links,5000)")
@@ -805,6 +353,63 @@ def PLAYB(name,url):
                 listitem.setInfo('video', {'Title': name, 'Year': ''} )       
                 xbmc.Player().play(str(stream_url), listitem)
                 main.addDir('','','','')      
+
+
+
+
+
+################################################
+
+
+def GRABADULT(url):
+    link=main.ADULT_URL(url)
+    link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('<img src=images/star.gif>','').replace('player=2','').replace('play.','').replace('embed.','')
+    matchname=re.compile('<div align="left"><strong>Watch ([^"]*) on:</strong></div>').findall(link)
+    for name in matchname:
+     match=re.compile('<a id="link-[^"]*" href="info.php[?]id=([^"]*)&([^"]*)&link=([^"]*)&host=[^"]*"><div class="[^"]*"><span class="([^"]*)"></span></div><div class="[^"]*">([^"]*)</div>').findall(link)
+     for link1,age,link2,quality,host in match:
+      url = MainUrl+ 'player.php?authid=&id='+link1+'&link='+link2+'&type=older_v2&part=&site=inactive&ref=1'
+      main.addDown2(name.strip()+" [COLOR blue]"+host.upper()+"[/COLOR]",url,91,'.png','.png')
+
+      
+
+def ADULTGENRE(url):
+        link=main.ADULT_GENRE(url)
+        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&#x27;',"'")
+        match=re.findall('class="item"><a href="([^"]*)"><img alt=".+?src="([^"]*)" /></a><div class="title"><a title="watch movie([^"]*)" href=".+?<div class="year"> ([^"]*)</div>',link)
+        dialogWait = xbmcgui.DialogProgress()
+        ret = dialogWait.create('Please wait until Adult list is cached.')
+        totalLinks = len(match)
+        loadedLinks = 0
+        remaining_display = 'Adult List loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+        dialogWait.update(0, '[B]Will load instantly from now on[/B]',remaining_display)
+        for url,thumb,name,date in match:
+                main.addDir(name+'[COLOR blue] '+date+'[/COLOR]',MainUrl+url,51,thumb,'')
+                loadedLinks = loadedLinks + 1
+                percent = (loadedLinks * 100)/totalLinks
+                remaining_display = 'Adult List loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+                dialogWait.update(percent,'[B]Will load instantly from now on[/B]',remaining_display)
+                if (dialogWait.iscanceled()):
+                        return False   
+        dialogWait.close()
+        del dialogWait
+        
+        pagenext=re.compile('<a href="([^"]*)" class="next">Next &#187;</a>').findall(link)
+        if pagenext:
+          url = 'http://megabox.li/index.php' + pagenext[0]
+          main.addDir('[COLOR red]Next Page ->[/COLOR]',url,17,art+'/next.jpg')        
+      
+
+
+
+
+
+
+
+
+
+
+
 
 
 

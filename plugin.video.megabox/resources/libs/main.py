@@ -1,7 +1,9 @@
+#-*- coding: utf-8 -*-
 import urllib,re,string,sys,os,urllib2
 import xbmc, xbmcgui, xbmcaddon, xbmcplugin
 import time,threading
-#Megabox - by Kasik 2013.
+
+#Megabox - by Kasik04a 2014.
 
 addon_id = 'plugin.video.megabox'
 selfAddon = xbmcaddon.Addon(id=addon_id)
@@ -11,7 +13,7 @@ fav = False
 hostlist = None
 Dir = xbmc.translatePath(os.path.join('special://home/addons/plugin.video.megabox', ''))
 datapath = xbmc.translatePath(selfAddon.getAddonInfo('profile'))
-supportsite = 'Twitter @ KASIK04A'
+supportsite = 'Twitter @ Kasik04a'
 hosts = 'putlocker,sockshare,billionuploads,hugefiles,mightyupload,movreel,lemuploads,180upload,megarelease,filenuke,flashx,gorillavid,bayfiles,veehd,vidto,mailru,videomega,epicshare,bayfiles,2gbhosting,alldebrid,allmyvideos,vidspot,castamp,cheesestream,clicktoview,crunchyroll,cyberlocker,daclips,dailymotion,divxstage,donevideo,ecostream,entroupload,facebook,filebox,hostingbulk,hostingcup,jumbofiles,limevideo,movdivx,movpod,movshare,movzap,muchshare,nolimitvideo,nosvideo,novamov,nowvideo,ovfile,play44_net,played,playwire,premiumize_me,primeshare,promptfile,purevid,rapidvideo,realdebrid,rpnet,seeon,sharefiles,sharerepo,sharesix,skyload,stagevu,stream2k,streamcloud,thefile,tubeplus,tunepk,ufliq,upbulk,uploadc,uploadcrazynet,veoh,vidbull,vidcrazynet,video44,videobb,videofun,videotanker,videoweed,videozed,videozer,vidhog,vidpe,vidplay,vidstream,vidup,vidx,vidxden,vidzur,vimeo,vureel,watchfreeinhd,xvidstage,yourupload,youtube,youwatch,zalaa,zooupload,zshare,beststreams,thevideo'
 
 VERSION = str(selfAddon.getAddonInfo('version'))
@@ -35,11 +37,12 @@ except:
 
 sys.path.append( os.path.join( selfAddon.getAddonInfo('path'), 'resources', 'libs' ))
 ################################################################################ Common Calls ##########################################################################################################
-################################################################################ Common Calls ##########################################################################################################
 art = xbmc.translatePath('special://home/addons/plugin.video.megabox/resources/art/')
 fanartimage=Dir+'fanart.jpg'
 elogo = xbmc.translatePath('special://home/addons/plugin.video.megabox/resources/art/error.jpg')
 slogo = xbmc.translatePath('special://home/addons/plugin.video.megabox/resources/art/smallicon.png')
+
+
 
 
 def OPEN_URL(url):
@@ -208,7 +211,7 @@ def SwitchUp():
     xbmc.executebuiltin("XBMC.Container.Refresh")
 
 def ErrorReport(e):
-    elogo = xbmc.translatePath('special://home/addons/plugin.video.megabox/resources/art/bigx.png')
+    elogo = xbmc.translatePath('special://home/addons/plugin.video.megabox/resources/art/error.png')
     xbmc.executebuiltin("XBMC.Notification([COLOR=FF67cc33]Megabox Error[/COLOR],"+str(e)+",10000,"+elogo+")")
     xbmc.log('***********Megabox Error: '+str(e)+'**************', xbmc.LOGERROR)
         
@@ -317,7 +320,7 @@ def downloadFile(url,dest,silent = False,cookie = None):
         ErrorReport(e)
         if not silent:
             dialog = xbmcgui.Dialog()
-            dialog.ok("Mash Up", "Report the error below at " + supportsite, str(e), "We will try our best to help you")
+            dialog.ok("Megabox", "Report the error below at " + supportsite, str(e), "We will try our best to help you")
         return False
             
 def updateSearchFile(searchQuery,searchType,defaultValue = '###',searchMsg = ''):
@@ -327,7 +330,7 @@ def updateSearchFile(searchQuery,searchType,defaultValue = '###',searchMsg = '')
         searchHistoryFile = "SearchHistoryTv"
         if not searchMsg: searchMsg = 'Search For TV Shows' 
     else:
-        searchHistoryFile = "SearchHistory25"
+        searchHistoryFile = "SearchHistoryMB"
         if not searchMsg: searchMsg = 'Search For Movies' 
     SearchFile=os.path.join(searchpath,searchHistoryFile)
     searchQuery=urllib.unquote(searchQuery)
@@ -967,21 +970,7 @@ def addDirX(name,url,mode,iconimage,plot='',fanart='',dur=0,genre='',year='',imd
         else:
             Commands.append(('Copy to Clipboard', 'XBMC.RunPlugin(%s?mode=776&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
   
-    if searchMeta:
-        if metaType == 'TV' and selfAddon.getSetting("meta-view-tv") == "true":
-            xbmcplugin.setContent(int(sys.argv[1]), 'episodes')
-            cname = infoLabels['title']
-            cname = cname.decode('ascii', 'ignore')
-            cname = urllib.quote_plus(cname)
-            sea = infoLabels['season']
-            epi = infoLabels['episode']
-            imdb_id = infoLabels['imdb_id']
-            if imdb_id != '':
-                if infoLabels['overlay'] == 6: watched_mark = 'Mark as Watched'
-                else: watched_mark = 'Mark as Unwatched'
-                Commands.append((watched_mark, 'XBMC.RunPlugin(%s?mode=779&name=%s&url=%s&iconimage=%s&season=%s&episode=%s)' % (sys.argv[0], cname, 'episode', imdb_id,sea,epi)))
-            Commands.append(('Refresh Metadata', 'XBMC.RunPlugin(%s?mode=780&name=%s&url=%s&iconimage=%s&season=%s&episode=%s)' % (sys.argv[0], cname, 'episode',imdb_id,sea,epi)))
-        elif metaType == 'Movies' and selfAddon.getSetting("meta-view") == "true":
+    elif metaType == 'Movies' and selfAddon.getSetting("meta-view") == "true":
             xbmcplugin.setContent(int(sys.argv[1]), 'Movies')
             if id != None: xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_PLAYLIST_ORDER )
             else: xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_UNSORTED )
@@ -995,11 +984,10 @@ def addDirX(name,url,mode,iconimage,plot='',fanart='',dur=0,genre='',year='',imd
             if infoLabels['overlay'] == 6: watched_mark = 'Mark as Watched'
             else: watched_mark = 'Mark as Unwatched'
             Commands.append((watched_mark, 'XBMC.RunPlugin(%s?mode=777&name=%s&url=%s&iconimage=%s)' % (sys.argv[0], cname, 'movie',imdb_id)))
-            Commands.append(('Play Trailer','XBMC.RunPlugin(%s?mode=500&name=%s&url=%s&iconimage=%s)'% (sys.argv[0],cname,'_',imdb_id)))
+            Commands.append(('Play Trailer','XBMC.RunPlugin(%s?mode=782&name=%s&url=%s&iconimage=%s)'% (sys.argv[0],cname,'_',imdb_id)))
             Commands.append(('Refresh Metadata', 'XBMC.RunPlugin(%s?mode=778&name=%s&url=%s&iconimage=%s)' % (sys.argv[0], cname, 'movie',imdb_id)))
     else:
         infoLabels={ "Title": name, "Plot": plot, "Duration": dur, "Year": year ,"Genre": genre,"OriginalTitle" : removeColoredText(name) }
-    if id != None: infoLabels["count"] = id
     Commands.append(('[B][COLOR=FF67cc33]Megabox[/COLOR] Settings[/B]','XBMC.RunScript('+xbmc.translatePath(megaboxpath + '/resources/libs/settings.py')+')'))
     if menuItemPos != None:
         for mi in reversed(menuItems):
@@ -1252,10 +1240,17 @@ def ADULT_URL(url):
     req.add_header('Cookie', 'PHPSESSID=9188c0e302514530e8ed98e7ac777412; noadvtday=0; nopopatall=1399868698')
     response = urllib2.urlopen(req)
     link=response.read()
-    return link      
+    return link
+
+
+def ADULT_GENRE(url):
+    req = urllib2.Request(url)
+    #req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+    #response = urllib2.urlopen(req)
+    req.add_header('Cookie', 'PHPSESSID=08277c3b86d4fe77a2deee0be4c209aa; path=/; domain=megashare.li')
+    response = urllib2.urlopen(req)
+    link=response.read()
+    return link     
 ######################################################################################################################################
     
-
-
-
 
