@@ -93,7 +93,7 @@
 
 <addon id="plugin.video.megabox"
        name="Megabox"
-       version="2.2.0"
+       version="2.2.1"
        provider-name="Kasik04a">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>

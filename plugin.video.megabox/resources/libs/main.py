@@ -940,7 +940,6 @@ def TextBoxes(heading,anounce):
     
 
 ################################################################################ Types of Directories ##########################################################################################################
-
 def addDirX(name,url,mode,iconimage,plot='',fanart='',dur=0,genre='',year='',imdb='',tmdb='',isFolder=True,searchMeta=False,addToFavs=True,
             id=None,fav_t='',fav_addon_t='',fav_sub_t='',metaType='Movies',menuItemPos=None,menuItems=None,down=False,replaceItems=True,index=False):
     u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode="+str(mode)+"&name="+urllib.quote_plus(name)+"&iconimage="+urllib.quote_plus(iconimage)+"&plot="+urllib.quote_plus(plot)+"&fanart="+urllib.quote_plus(fanart)+"&genre="+urllib.quote_plus(genre)+"&index="+str(index)
@@ -970,7 +969,21 @@ def addDirX(name,url,mode,iconimage,plot='',fanart='',dur=0,genre='',year='',imd
         else:
             Commands.append(('Copy to Clipboard', 'XBMC.RunPlugin(%s?mode=776&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
   
-    elif metaType == 'Movies' and selfAddon.getSetting("meta-view") == "true":
+    if searchMeta:
+        if metaType == 'TV' and selfAddon.getSetting("meta-view-tv") == "true":
+            xbmcplugin.setContent(int(sys.argv[1]), 'episodes')
+            cname = infoLabels['title']
+            cname = cname.decode('ascii', 'ignore')
+            cname = urllib.quote_plus(cname)
+            sea = infoLabels['season']
+            epi = infoLabels['episode']
+            imdb_id = infoLabels['imdb_id']
+            if imdb_id != '':
+                if infoLabels['overlay'] == 6: watched_mark = 'Mark as Watched'
+                else: watched_mark = 'Mark as Unwatched'
+                Commands.append((watched_mark, 'XBMC.RunPlugin(%s?mode=779&name=%s&url=%s&iconimage=%s&season=%s&episode=%s)' % (sys.argv[0], cname, 'episode', imdb_id,sea,epi)))
+            Commands.append(('Refresh Metadata', 'XBMC.RunPlugin(%s?mode=780&name=%s&url=%s&iconimage=%s&season=%s&episode=%s)' % (sys.argv[0], cname, 'episode',imdb_id,sea,epi)))
+        elif metaType == 'Movies' and selfAddon.getSetting("meta-view") == "true":
             xbmcplugin.setContent(int(sys.argv[1]), 'Movies')
             if id != None: xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_PLAYLIST_ORDER )
             else: xbmcplugin.addSortMethod( handle=int( sys.argv[ 1 ] ), sortMethod=xbmcplugin.SORT_METHOD_UNSORTED )
@@ -988,6 +1001,7 @@ def addDirX(name,url,mode,iconimage,plot='',fanart='',dur=0,genre='',year='',imd
             Commands.append(('Refresh Metadata', 'XBMC.RunPlugin(%s?mode=778&name=%s&url=%s&iconimage=%s)' % (sys.argv[0], cname, 'movie',imdb_id)))
     else:
         infoLabels={ "Title": name, "Plot": plot, "Duration": dur, "Year": year ,"Genre": genre,"OriginalTitle" : removeColoredText(name) }
+    if id != None: infoLabels["count"] = id
     Commands.append(('[B][COLOR=FF67cc33]Megabox[/COLOR] Settings[/B]','XBMC.RunScript('+xbmc.translatePath(megaboxpath + '/resources/libs/settings.py')+')'))
     if menuItemPos != None:
         for mi in reversed(menuItems):
@@ -999,7 +1013,6 @@ def addDirX(name,url,mode,iconimage,plot='',fanart='',dur=0,genre='',year='',imd
         liz.setInfo( type="Video", infoLabels=infoLabels )
     liz.setProperty('fanart_image', fanart)
     return xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=isFolder)
-
 def addDirT(name,url,mode,iconimage,plot,fanart,dur,genre,year,index=False):
     return addDirX(name,url,mode,iconimage,plot,fanart,dur,genre,year,fav_t='TV',fav_addon_t='TV Show',fav_sub_t='Shows',index=index)
 
@@ -1126,7 +1139,7 @@ def addDown4(name,url,mode,iconimage,plot,fanart,dur,genre,year):
                        fav_t='Movies',fav_addon_t='Movie',down=not f)
 
 def addInfo(name,url,mode,iconimage,genre,year):
-    mi = [('Search Megabox','XBMC.Container.Update(%s?mode=4&url=%s)'% (sys.argv[0],'###'))]
+    mi = [('Search Megabox','XBMC.Container.Update(%s?mode=21&url=%s)'% (sys.argv[0],'###'))]
     return addDirX(name,url,mode,iconimage,'','','',genre,year,searchMeta=1,fav_t='Movies',fav_addon_t='Movie',menuItemPos=0,menuItems=mi)
 
 def addDirIWO(name,url,mode,iconimage,plot,fanart,dur,genre,year):
