@@ -6,3 +6,7 @@
 
 - Fixed Play Links.
 
+[B]Version 1.0.2[/B]
+
+- Fixed Play Links.(Again.)
+

@@ -21,16 +21,16 @@ def VIDBULLMAIN():
 
 def List(url):
         link=main.OPEN_URL(url)
-        match=re.compile('<div class="cover"><a href="([^"]*)" rel="bookmark" title=".+?"><img src="([^"]*)".+?alt="([^"]*)"/></a>').findall(link)
+        match=re.compile('class="cover"><a href="([^"]*?)" rel="bookmark" title=".+?"><img src="([^"]*?)".+?alt="([^"]*?)" /></a>.+?class="postmetadata">([^"]*?)</p>').findall(link)
         dialogWait = xbmcgui.DialogProgress()
         ret = dialogWait.create('Please wait until Show list is cached.')
         totalLinks = len(match)
         loadedLinks = 0
         remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
         dialogWait.update(0,'[B]Will load instantly from now on[/B]',remaining_display)
-        for url,thumb,name in match:
+        for url,thumb,name,date in match:
             #main.addPlayTE(name+' [COLOR red]'+date+'[/COLOR]',url,5,'','','','','','')
-            main.addDirTE(name,url,865,thumb,'','','','','')
+            main.addDirTE(name+'[COLOR red] '+date+'[/COLOR]',url,865,thumb,'','','','','')
             loadedLinks = loadedLinks + 1
             percent = (loadedLinks * 100)/totalLinks
             remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
@@ -408,7 +408,7 @@ def List2(url):
         
 def GRABFEED(name,url):      
         link = main.OPEN_URL(url)
-        r = re.compile(r'Videobull &raquo;.+?Comments Feed" href="([^"]*)"/>',re.M|re.DOTALL).findall(link)
+        r = re.compile(r'Videobull &raquo;.+?Comments Feed" href="([^"]*?)" />',re.M|re.DOTALL).findall(link)
         for url in r:
           LINKS(name,url)
                            
@@ -595,7 +595,24 @@ def LINKS(name,url):
           url = 'http://www.movshare.net/video/' + url
           host = 'movshare'                   
           main.addDown2(name.strip()+" [COLOR blue]"+host.upper()+"[/COLOR]",url,868,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')        
-                
+
+        oboom = re.compile('<a href="https://www.oboom.com/([^"]*)"></a>').findall(link)
+        for url in oboom:       
+          url = 'https://www.oboom.com/' + url
+          host = 'oboom'                   
+          main.addDown2(name.strip()+" [COLOR blue]"+host.upper()+"[/COLOR]",url,868,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')        
+
+        nosupload = re.compile('http://nosupload.com/[?]d=([^"]*)').findall(link)
+        for url in nosupload:       
+          url = 'http://nosupload.com/' + url
+          host = 'nosupload'                   
+          main.addDown2(name.strip()+" [COLOR blue]"+host.upper()+"[/COLOR]",url,868,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')        
+        filefactory = re.compile('http://www.filefactory.com/([^"]*)').findall(link)
+        for url in filefactory:       
+          url = 'http://www.filefactory.com/' + url
+          host = 'filefactory'                   
+          main.addDown2(name.strip()+" [COLOR blue]"+host.upper()+"[/COLOR]",url,868,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')        
+                                                                      
         
         
 #################################################

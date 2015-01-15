@@ -34,7 +34,7 @@ def AtoZ(url,name):
 def Index(url):
         link=main.OPENURL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xe2\x80\x99',"'").replace('\xe2\x80\x93','-').replace('\xe2\x80\x94','').replace('&-','-')
-        match = re.findall('<a href="([^"]*)" rel="bookmark" title="[^"]*"><img src="([^"]*)" width="120px" height="178px" alt="([^"]*)" /></a></div>.+?<p class="postmetadata">([^"]*)</p>',link)
+        match = re.findall('class="cover"><a href="([^"]*?)" rel="bookmark" title=".+?"><img src="([^"]*?)".+?alt="([^"]*?)" /></a>.+?class="postmetadata">([^"]*?)</p>',link)
         dialogWait = xbmcgui.DialogProgress()
         ret = dialogWait.create('Please wait until Show list is cached.')
         totalLinks = len(match)
