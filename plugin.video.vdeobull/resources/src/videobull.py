@@ -22,13 +22,33 @@ def VIDBULLMAIN():
 def List(url):
         link=main.OPEN_URL(url)
         match=re.compile('class="cover"><a href="([^"]*?)" rel="bookmark" title=".+?"><img src="([^"]*?)".+?alt="([^"]*?)" /></a>.+?class="postmetadata">([^"]*?)</p>').findall(link)
-        dialogWait = xbmcgui.DialogProgress()
-        ret = dialogWait.create('Please wait until Show list is cached.')
-        totalLinks = len(match)
-        loadedLinks = 0
-        remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
-        dialogWait.update(0,'[B]Will load instantly from now on[/B]',remaining_display)
-        for url,thumb,name,date in match:
+        if len(match) > 0:
+         dialogWait = xbmcgui.DialogProgress()
+         ret = dialogWait.create('Please wait until Show list is cached.')
+         totalLinks = len(match)
+         loadedLinks = 0
+         remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+         dialogWait.update(0,'[B]Will load instantly from now on[/B]',remaining_display)
+         for url,thumb,name,date in match:
+            #main.addPlayTE(name+' [COLOR red]'+date+'[/COLOR]',url,5,'','','','','','')
+            main.addDirTE(name+'[COLOR red] '+date+'[/COLOR]',url,865,thumb,'','','','','')
+            loadedLinks = loadedLinks + 1
+            percent = (loadedLinks * 100)/totalLinks
+            remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+            dialogWait.update(percent,'[B]Will load instantly from now on[/B]',remaining_display)
+            if (dialogWait.iscanceled()):
+                return False   
+         dialogWait.close()
+         del dialogWait
+        else:
+         matchnew=re.compile('class="cover"><a href="([^"]*?)".+?<img src="([^"]*?)".+?alt="([^"]*?)"/>.+?class="postmetadata">([^"]*?)</p>').findall(link)       
+         dialogWait = xbmcgui.DialogProgress()
+         ret = dialogWait.create('Please wait until Show list is cached.')
+         totalLinks = len(matchnew)
+         loadedLinks = 0
+         remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+         dialogWait.update(0,'[B]Will load instantly from now on[/B]',remaining_display)
+         for url,thumb,name,date in matchnew:
             #main.addPlayTE(name+' [COLOR red]'+date+'[/COLOR]',url,5,'','','','','','')
             main.addDirTE(name+'[COLOR red] '+date+'[/COLOR]',url,865,thumb,'','','','','')
             loadedLinks = loadedLinks + 1
@@ -38,8 +58,7 @@ def List(url):
             if (dialogWait.iscanceled()):
                 return False   
         dialogWait.close()
-        del dialogWait
-
+        del dialogWait       
         paginate=re.compile('="nextpostslink" rel="next" href="([^"]*)">&raquo;</a>').findall(link)
         if paginate:
           xurl=paginate[0]         
@@ -408,7 +427,7 @@ def List2(url):
         
 def GRABFEED(name,url):      
         link = main.OPEN_URL(url)
-        r = re.compile(r'Videobull &raquo;.+?Comments Feed" href="([^"]*?)" />',re.M|re.DOTALL).findall(link)
+        r = re.compile(r'Videobull &raquo;.+?Comments Feed" href="([^"]*?)"',re.M|re.DOTALL).findall(link)
         for url in r:
           LINKS(name,url)
                            

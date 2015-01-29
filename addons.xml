@@ -178,7 +178,7 @@
 
 <addon id="plugin.video.vdeobull"
        name="VideoBull"
-       version="1.0.2"
+       version="1.0.3"
        provider-name="Kasik">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>

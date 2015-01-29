@@ -10,3 +10,7 @@
 
 - Fixed Play Links.(Again.)
 
+[B]Version 1.0.3[/B]
+
+- updated to reflect site changed
+
