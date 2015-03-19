@@ -16,7 +16,7 @@ except Exception, e:
 addon_id = 'plugin.video.couchtuner'
 selfAddon = xbmcaddon.Addon(id=addon_id)
 art = main.art
-base_url = 'http://www.couchtuner.me/'
+base_url = 'http://www.couchtuner.eu'
 
 ################################################################################ Directories ##########################################################################################################
 UpdatePath=os.path.join(main.datapath,'Update')
@@ -34,20 +34,20 @@ except: pass
 
 def MAIN():
     
-    main.addDir('New Release','http://www.couchtuner.me/',1,art+'/New.png')
-    main.addDir('TV A-Z Index ','http://www.couchtuner.me/tv-streaming/',7,art+'/showlist.png')
-    main.addDir('Search','http://www.couchtuner.me/?s=',110,art+'/search.png')
+    main.addDir('New Release','http://www.couchtuner.eu/',1,art+'/New.png')
+    main.addDir('TV A-Z Index ','http://www.couchtuner.eu/tv-lists/',7,art+'/showlist.png')
+    main.addDir('Search','http://www.couchtuner.eu/?s=',110,art+'/search.png')
 
 ########################################################################################################################################################################
 def AtoZ():
-    main.addDir('0-9','http://www.couchtuner.ch/tv-list/#',8,art+'/09.png')
+    main.addDir('0-9','http://www.couchtuner.eu/tv-list/#',8,art+'/09.png')
     for i in string.ascii_uppercase:
-            main.addDir(i,'http://www.couchtuner.ch/tv-list/#'+i.upper()+'/',8,art+'/'+i.lower()+'.png')
+            main.addDir(i,'http://www.couchtuner.eu/tv-list/#'+i.upper()+'/',8,art+'/'+i.lower()+'.png')
 
 
 def AZLIST(url):
-    link=main.OPENURL(url)
-    link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
+    link=main.OPEN_URL(url)
+    link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&#8211;',' - ')
     #match=re.compile('<li><a href="([^"]*)" title="[^"]*">[%s]([^"]*)</a>'% name).findall(link)
     match=re.compile('<li><strong><a href="([^<]+)">[%s]([^<]+)</a></strong></li>'% name).findall(link)
     for url,title in match:
@@ -59,8 +59,8 @@ def AZLIST(url):
 
 
 def Episodes(url):
-    link=main.OPENURL(url)
-    link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
+    link=main.OPEN_URL(url)
+    link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&#8211;',' - ')
     match=re.compile('<li><strong><a href="([^<]+)">([^<]+)</a>([^<]+)</strong>').findall(link)
     for url,title,title1 in match:
         title=title+' ' + title1
@@ -71,12 +71,12 @@ def Episodes(url):
 def FirstLinks(name,url):
     link=main.OPENURL(url)
     link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-    match=re.compile('>Watch it here :.+?</span><a href="([^"]*)">').findall(link)
+    match=re.compile('Watch it here :</span>.+?<a href="([^"]*?)">').findall(link)
     if match:
      for url in match:
        Linkz(name,url)
     else:
-      match2=re.compile('>Watch it here.+?:</span><a href="([^<]*)">').findall(link)
+      match2=re.compile('Watch it here :.+?</span><a href="([^"]*?)">').findall(link)
       for url in match2:
        Linkz(name,url)   
         
@@ -84,12 +84,68 @@ def FirstLinks(name,url):
 def Linkz(name,url):
     link=main.OPENURL(url)
     link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-    match=re.compile('<b>([^"]*)</b></span><br /><IFRAME SRC="([^"]*)"').findall(link)
-    for host,url in match:
-       host=host.replace('AllMyV','AllMyVideos').replace('TheVid','TheVideo').replace('YouWa','YouWatch').replace('Vidbul','Vidbull').replace('Vodlo','Vodlocker').replace('Playe','Played').replace('ExaSh','Exashare').replace('IShar','Ishare')
-       main.addDown2(name.strip()+" [COLOR blue]"+host.upper()+"[/COLOR]",url,2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
+    vodlocker=re.compile('"http://vodlocker.com/embed-([^"]*?)-.+?.html"').findall(link)
+    for url in vodlocker:
+        url='http://vodlocker.com/'+url    
+        host='vodlocker'    
+        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')    
+    played=re.compile('http://played.to/embed-([^"]*?)-.+?.html').findall(link)
+    for url in played:
+        url='http://played.to/'+url    
+        host='played'    
+        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
+    thevideo=re.compile('"http://www.thevideo.me/embed-([^"]*?)-.+?.html').findall(link)
+    for url in thevideo:
+        url='http://www.thevideo.me/'+url    
+        host='thevideo'    
+        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
+    vidbull=re.compile('http://vidbull.com/embed-zvfcf9rs2kid-540x318.html').findall(link)
+    for url in vidbull:
+        url='http://vidbull.com/'+url    
+        host='vidbull'    
+        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
+    youwatch=re.compile('http://youwatch.org/embed-([^"]*?)-.+?.html').findall(link)
+    for url in youwatch:
+        url='http://youwatch.org/'+url    
+        host='youwatch'    
+        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
+    vidto=re.compile('"http://vidto.me/embed-([^"]*?)-.+?.html"').findall(link)
+    for url in vidto:
+        url='http://vidto.me/'+url    
+        host='vidto'    
+        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')     
+    vshare=re.compile('http://vshare.eu/embed-([^"]*?)-.+?.html').findall(link)
+    for url in vshare:
+        url='http://vshare.eu/'+url    
+        host='vshare'    
+        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')     
+    vidspot=re.compile('"http://vidspot.net/embed-([^"]*?).html').findall(link)
+    for url in vidspot:
+        url='http://vidspot.net/'+url    
+        host='vidspot'    
+        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
+    allmyvideos=re.compile('"http://allmyvideos.net/embed-([^"]*?)-.+?.html"').findall(link)
+    for url in allmyvideos:
+        url='http://allmyvideos.net/'+url    
+        host='allmyvideos'    
+        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
+    vkmobile=re.compile('http://videoapi.my.mail.ru/videos/embed/mail/geek.tv/_myvideo/([^"]*?).html').findall(link)
+    for url in vkmobile:
+        url='http://videoapi.my.mail.ru/videos/embed/mail/geek.tv/_myvideo/'+url    
+        host='VK-Mobile'    
+        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
+    fhoot=re.compile('http://filehoot.com/embed-([^"]*?)-.+?.html').findall(link)
+    for url in fhoot:
+        url='http://filehoot.com/'+url    
+        host='filehoot'    
+        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')     
+    exashare=re.compile('"http://www.exashare.com/embed-([^"]*?)-.+?.html"').findall(link)
+    for url in exashare:
+        url='http://www.exashare.com/'+url    
+        host='exashare'    
+        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')     
 
-
+    
 
 
 
@@ -404,7 +460,13 @@ elif mode==9:
     Episodes(url)
 
 elif mode==10:
-    FirstLinks(name,url)    
+    FirstLinks(name,url)
+
+
+elif mode==11:
+    from resources.libs import couchtuner
+    print " " + url
+    couchtuner.Seasons(url)
     
 
 

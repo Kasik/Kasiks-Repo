@@ -15,17 +15,17 @@ base_url = 'http://www.couchtuner.me/'
 wh = watchhistory.WatchHistory('plugin.video.couchtuner')
 
 def NewRelease(url):
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&player=2','').replace("",'').replace('\xe2\x80\x99',"'").replace('\xe2\x80\x93','-')
-        match=re.compile('<span class="tvbox"><a href="([^<]*)">.+?src="([^<]*)".+?class="tvpost">([^<]*)<br/>').findall(link)
+        link=main.OPEN_URL(url)
+        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&#8211;',' - ')
+        match=re.compile('class="tvbox"> <a href="([^"]*?)" title="Watch([^"]*?)" ><span style="background-image: url[(]([^"]*?)[)]" class').findall(link)
         dialogWait = xbmcgui.DialogProgress()
         ret = dialogWait.create('Please wait until Show list is cached.')
         totalLinks = len(match)
         loadedLinks = 0
         remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
         dialogWait.update(0,'[B]Will load instantly from now on[/B]',remaining_display)
-        for url,thumb,name in match:
-            #url = 'http://streamonline.me/' + url
+        for url,name,thumb in match:
+            thumb='http://www.couchtuner.eu'+thumb
             main.addDirTE(name,url,5,thumb,'','','','','')
             loadedLinks = loadedLinks + 1
             percent = (loadedLinks * 100)/totalLinks
@@ -45,36 +45,79 @@ def NewRelease(url):
 def LINK(name,url):
     link=main.OPEN_URL(url)
     link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-    match=re.compile('<strong>Watch It Here :</strong> <strong></strong></span><a href="([^"]*)"').findall(link)
-    if match:
-     for url in match:
-       LINKZ(name,url)
-    else:
-      match2=re.compile('>Watch it here.+?:</span><a href="([^<]*)">').findall(link)
-      if match2:
-       for url in match2:
-        LINKZ(name,url)
-      else:
-       match3=re.compile('<strong>Watch It Here : </strong></span><a href="([^"]*)"').findall(link)
-       for url in match3:
-        LINKZ(name,url)
+    match=re.compile('>Watch it here :</span>.+?<a href="([^"]*?)">').findall(link)
+    for url in match:
+       LINKZ(name,str(url))
+    
        
         
 
 def LINKZ(name,url):
+    #main.addLink("[COLOR yellow]For Download Options, Bring up Context Menu Over Selected Link.[/COLOR]",'','')
     link=main.OPENURL(url)
     link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-    match=re.compile('<b>([^"]*)</b></span><br /><IFRAME SRC="([^"]*)"').findall(link)
-    for host,url in match:
-       host=host.replace('AllMyV','AllMyVideos').replace('TheVid','TheVideo').replace('YouWa','YouWatch').replace('Vidbul','Vidbull').replace('Vodlo','Vodlocker').replace('Playe','Played').replace('ExaSh','Exashare').replace('IShar','Ishare').replace('Playedd','Played').replace('VodLR','Vodlocker')
-       main.addDown2(name.strip()+" [COLOR blue]"+host.upper()+"[/COLOR]",url,2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
-    match2=re.compile('<b>([^"]*)</b></span><br /><iframe width="540" height="330" src="([^"]*)"').findall(link)
-    for host,url in match2:
-       host=host.replace('AllMyV','AllMyVideos').replace('TheVid','TheVideo').replace('YouWa','YouWatch').replace('Vidbul','Vidbull').replace('Vodlo','Vodlocker').replace('Playe','Played').replace('ExaSh','Exashare').replace('IShar','Ishare').replace('Playedd','Played').replace('VodLR','Vodlocker')
-       main.addDown2(name.strip()+" [COLOR blue]"+host.upper()+"[/COLOR]",url,2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
+    vodlocker=re.compile('"http://vodlocker.com/embed-([^"]*?)-.+?.html"').findall(link)
+    for url in vodlocker:
+        url='http://vodlocker.com/'+url    
+        host='vodlocker'    
+        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')    
+    played=re.compile('http://played.to/embed-([^"]*?)-.+?.html').findall(link)
+    for url in played:
+        url='http://played.to/'+url    
+        host='played'    
+        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
+    thevideo=re.compile('"http://www.thevideo.me/embed-([^"]*?)-.+?.html').findall(link)
+    for url in thevideo:
+        url='http://www.thevideo.me/'+url    
+        host='thevideo'    
+        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
+    vidbull=re.compile('http://vidbull.com/embed-zvfcf9rs2kid-540x318.html').findall(link)
+    for url in vidbull:
+        url='http://vidbull.com/'+url    
+        host='vidbull'    
+        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
+    youwatch=re.compile('http://youwatch.org/embed-([^"]*?)-.+?.html').findall(link)
+    for url in youwatch:
+        url='http://youwatch.org/'+url    
+        host='youwatch'    
+        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
+    vidto=re.compile('"http://vidto.me/embed-([^"]*?)-.+?.html"').findall(link)
+    for url in vidto:
+        url='http://vidto.me/'+url    
+        host='vidto'    
+        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')     
+    vshare=re.compile('http://vshare.eu/embed-([^"]*?)-.+?.html').findall(link)
+    for url in vshare:
+        url='http://vshare.eu/'+url    
+        host='vshare'    
+        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')     
+    vidspot=re.compile('"http://vidspot.net/embed-([^"]*?).html').findall(link)
+    for url in vidspot:
+        url='http://vidspot.net/'+url    
+        host='vidspot'    
+        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
+    allmyvideos=re.compile('"http://allmyvideos.net/embed-([^"]*?)-.+?.html"').findall(link)
+    for url in allmyvideos:
+        url='http://allmyvideos.net/'+url    
+        host='allmyvideos'    
+        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
+    vkmobile=re.compile('http://videoapi.my.mail.ru/videos/embed/mail/geek.tv/_myvideo/([^"]*?).html').findall(link)
+    for url in vkmobile:
+        url='http://videoapi.my.mail.ru/videos/embed/mail/geek.tv/_myvideo/'+url    
+        host='VK-Mobile'    
+        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
+    fhoot=re.compile('http://filehoot.com/embed-([^"]*?)-.+?.html').findall(link)
+    for url in fhoot:
+        url='http://filehoot.com/'+url    
+        host='filehoot'    
+        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')     
+    exashare=re.compile('"http://www.exashare.com/embed-([^"]*?)-.+?.html"').findall(link)
+    for url in exashare:
+        url='http://www.exashare.com/'+url    
+        host='exashare'    
+        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')     
 
     
-
 
 
 
@@ -135,19 +178,18 @@ def Searchhistory():
 def SEARCH(url = ''):
         encode = main.updateSearchFile(url,'TV')
         if not encode: return False   
-        surl='http://www.couchtuner.me/?s=' + encode 
+        surl='http://www.couchtuner.eu/?s=' + encode 
         link=main.OPENURL(surl)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match=re.compile('<span class="tvbox"><a href="([^<]*)">.+?src="([^<]*)".+?class="tvpost">([^<]*)<br/>').findall(link)
+        match=re.compile('<h2><a href="([^"]*?)" rel="bookmark" title="Watch.+?Online">([^"]*?)</a></h2>').findall(link)
         dialogWait = xbmcgui.DialogProgress()
         ret = dialogWait.create('Please wait until Show list is cached.')
         totalLinks = len(match)
         loadedLinks = 0
         remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
         dialogWait.update(0,'[B]Will load instantly from now on[/B]',remaining_display)
-        for url,thumb,name in match:
-            #url = 'http://streamonline.me/' + url
-            main.addDirTE(name,url,5,thumb,'','','','','')
+        for url,name in match:
+            main.addDirTE(name,url,9,'','','','','','')
             loadedLinks = loadedLinks + 1
             percent = (loadedLinks * 100)/totalLinks
             remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
@@ -164,7 +206,14 @@ def SEARCH(url = ''):
 
 
 
-
+def Seasons(url):
+    link=main.OPEN_URL(url)
+    link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&#8211;',' - ')
+    match=re.compile('<strong>Season([^"]*?)</strong></span></p><ul><li>').findall(link)
+    for season in match:
+        print season
+        name=season
+        main.addDir('Season '+season,url,9,'','','')
 
 
 
