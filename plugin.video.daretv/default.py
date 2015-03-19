@@ -11,7 +11,7 @@ try:
 except Exception, e:
     elogo = xbmc.translatePath('special://home/addons/plugin.video.daretv/resources/art/sadface.png')
     dialog = xbmcgui.Dialog()
-    ok=dialog.ok('[B][COLOR=FF67cc33]The DareTv Import Error[/COLOR][/B]','Failed To Import Needed Modules',str(e),'Report missing Module at [COLOR=FF67cc33]Xbmchub.com[/COLOR] to Fix')
+    ok=dialog.ok('[B][COLOR=FF67cc33]The DareTv Import Error[/COLOR][/B]','Failed To Import Needed Modules',str(e),'Report missing Module at [COLOR=FF67cc33]Twitter @Kasik04a[/COLOR] to Fix')
     xbmc.log('The DareTv ERROR - Importing Modules: '+str(e))
 
     
@@ -22,7 +22,7 @@ from resources.src.scripts import settings
 #The DareTv - by Kasik 2014.
 
 
-base_url ='http://www.thedarewall.com/tv/'
+base_url ='http://www.thedarehub.com/tv/'
 addon_id = 'plugin.video.daretv'
 selfAddon = xbmcaddon.Addon(id=addon_id)
 grab = metahandlers.MetaData(preparezip = False)
@@ -52,21 +52,21 @@ def MAIN():
         #main.addDirHome('Live Sports',base_url,20,art+'/.png')
         
 def TV():
-        main.addDirHome('Search',base_url,215,art+'/search2.png')
-        main.addDirHome('Latest Episodes',base_url+'new-shows',1,art+'/latesteps.png')
-        main.addDirHome('TV Shows A-Z',base_url,2,art+'az.png')
-        main.addDirHome('TV Show Genres',base_url,4,art+'genres.png')
-        main.addDirHome('Premiers',base_url+'premiers',6,art+'premiers.png')
+        main.addDirHome('Search','http://www.thedarehub.com/tv/index.php?menu=search&query=',215,art+'/search2.png')
+        main.addDirHome('Latest Episodes','http://www.thedarehub.com/tv/new-shows',1,art+'/latesteps.png')
+        main.addDirHome('TV Shows A-Z','http://www.thedarehub.com/tv/',2,art+'az.png')
+        main.addDirHome('TV Show Genres','http://www.thedarehub.com/tv/tv-shows',4,art+'genres.png')
+        main.addDirHome('Premiers','http://www.thedarehub.com/tv/premiers',6,art+'premiers.png')
         
         
         main.VIEWSB()
         
 def MOVIES():        
-        main.addDirHome('Search',base_url,14,art+'/search2.png')
-        main.addDirHome('Latest Movies',base_url+'new-movies',11,art+'latestmovies.png')
-        main.addDirHome('Movie Genres',base_url+'movies',12,art+'genres.png')
-        main.addDirHome('Box Office',base_url+'movie-tags/boxoffice',13,art+'box.png')
-        main.addDirHome('DVD Release',base_url+'dvdrelease',13,art+'dvd.png')
+        main.addDirHome('Search','http://www.thedarehub.com/tv/index.php?menu=search&query=',14,art+'/search2.png')
+        main.addDirHome('Latest Movies','http://www.thedarehub.com/tv/movies/date',11,art+'latestmovies.png')
+        main.addDirHome('Movie Genres','http://www.thedarehub.com/tv/movies',12,art+'genres.png')
+        main.addDirHome('Box Office','http://www.thedarehub.com/tv/movie-tags/boxoffice',13,art+'box.png')
+        main.addDirHome('DVD Release','http://www.thedarehub.com/tv/dvdrelease',13,art+'dvd.png')
         #main.addDirHome('Theater',base_url+'',9,art+'.png')
         main.VIEWSB()
         
@@ -258,44 +258,44 @@ elif mode==70:
         TV()
         
 elif mode==1:
-        from resources.src import darewalltv
+        from resources.src import daretv
         print ""+url
-        darewalltv.TVIndex(url)
+        daretv.TVIndex(url)
                
 elif mode==2:
-        from resources.src import darewalltv
+        from resources.src import daretv
         print ""+url
-        darewalltv.TVTags(url,name)
+        daretv.TVTags(url,name)
 
 elif mode==3:
-        from resources.src import darewalltv
+        from resources.src import daretv
         print ""+url
-        darewalltv.TVIndex2(url,name)       
+        daretv.TVIndex2(url,name)       
 
 elif mode==4:
-        from resources.src import darewalltv
+        from resources.src import daretv
         print ""+url
-        darewalltv.TVGenres(url,name)
+        daretv.TVGenres(url,name)
 
 elif mode==5:
-        from resources.src import darewalltv
+        from resources.src import daretv
         print ""+url
-        darewalltv.TVIndex3(url,name)        
+        daretv.TVIndex3(url,name)        
 
 elif mode==6:
-        from resources.src import darewalltv
+        from resources.src import daretv
         print ""+url
-        darewalltv.Premiers(url,name)
+        daretv.Premiers(url,name)
 
 elif mode==7:
-        from resources.src import darewalltv
+        from resources.src import daretv
         print ""+url
-        darewalltv.TvSeasons(url,name)
+        daretv.TvSeasons(url,name)
 
 elif mode==8:
-        from resources.src import darewalltv
+        from resources.src import daretv
         print ""+url
-        darewalltv.Episodes(url,name)
+        daretv.Episodes(url,name)
 
    
 
@@ -304,39 +304,39 @@ elif mode==10:
         MOVIES()
         
 elif mode==11:
-        from resources.src import darewallmovies
+        from resources.src import daremovies
         print ""+url
-        darewallmovies.MoviesIndex(url,name)
+        daremovies.MoviesIndex(url,name)
 
 elif mode==12:
-        from resources.src import darewallmovies
+        from resources.src import daremovies
         print ""+url
-        darewallmovies.MoviesTags(url,name)
+        daremovies.MoviesTags(url,name)
 
 elif mode==13:
-        from resources.src import darewallmovies
+        from resources.src import daremovies
         print ""+url
-        darewallmovies.MovieIndex2(url,name)
+        daremovies.MovieIndex2(url,name)
 
 elif mode==14:
-        from resources.src import darewallmovies
+        from resources.src import daremovies
         print ""+url
-        darewallmovies.SEARCHS(url)
+        daremovies.SEARCHS(url)
 
 elif mode==15:
-        from resources.src import darewallmovies
+        from resources.src import daremovies
         print ""+url
-        darewallmovies.SearchResults(url)        
+        daremovies.SearchResults(url)        
         
 elif mode==16:
-        from resources.src import darewallmovies
+        from resources.src import daremovies
         print ""+url
-        darewallmovies.MovieIndex2(url,name)
+        daremovies.MovieIndex2(url,name)
 
 elif mode==17:
-        from resources.src import darewallmovies
+        from resources.src import daremovies
         print ""+url
-        darewallmovies.MovieIndex2(url,name)        
+        daremovies.MovieIndex2(url,name)        
 
         
 
@@ -346,41 +346,41 @@ elif mode==20:
         
 
 elif mode==75:
-       from resources.src import darewalltv
+       from resources.src import daretv
        print ""+url
-       darewalltv.VIDEOLINKS(name,url)
+       daretv.VIDEOLINKS(name,url)
 
 elif mode==80:
-       from resources.src import darewallmovies
+       from resources.src import daremovies
        print ""+url
-       darewallmovies.VIDEOLINKS(name,url)  
+       daremovies.VIDEOLINKS(name,url)  
 
 elif mode==100:
-       from resources.src import darewalltv
+       from resources.src import daretv
        print ""+url
-       darewalltv.Play(url,name)
+       daretv.Play(url,name)
 
 elif mode==150:
-       from resources.src import darewalltv
+       from resources.src import daretv
        print ""+url
-       darewalltv.PlayB(name,url)
+       daretv.PlayB(name,url)
        
     
 
 elif mode==200:
-        from resources.src import darewalltv
+        from resources.src import daretv
         print ""+url
-        darewalltv.Searchhistory()
+        daretv.Searchhistory()
 
 elif mode==215:
-        from resources.src import darewalltv
+        from resources.src import daretv
         print ""+url
-        darewalltv.SEARCHS(url)
+        daretv.SEARCHS(url)
 
 elif mode==220:
-        from resources.src import darewalltv
+        from resources.src import daretv
         print ""+url
-        darewalltv.SearchResults(url)        
+        daretv.SearchResults(url)        
 
         
 

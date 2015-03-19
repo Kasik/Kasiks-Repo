@@ -16,5 +16,13 @@
 
 - Added Youtube Links, Misc. Code Correction.
 
+[B]Version 0.0.4[/B]
+
+- Fixed Next Links Under Box Office Movies
+
+[B]Version 0.1.0[/B]
+
+- Updated Addon
+
 
 

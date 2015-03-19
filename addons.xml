@@ -24,7 +24,7 @@
 
 <addon id="plugin.video.daretv"
        name="The DareTv"
-       version="0.0.4"
+       version="0.1.0"
        provider-name="Kasik">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
