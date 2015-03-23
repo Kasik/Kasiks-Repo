@@ -17,7 +17,7 @@ wh = watchhistory.WatchHistory('plugin.video.couchtuner')
 def NewRelease(url):
         link=main.OPEN_URL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&#8211;',' - ')
-        match=re.compile('class="tvbox"> <a href="([^"]*?)" title="Watch([^"]*?)" ><span style="background-image: url[(]([^"]*?)[)]" class').findall(link)
+        match=re.compile('class="tvbox"><a href="([^"]*?)" title="Watch([^"]*?)Online"><span style="background-image: url[(]([^"]*?)[)]" class=".+?"></span>').findall(link)
         dialogWait = xbmcgui.DialogProgress()
         ret = dialogWait.create('Please wait until Show list is cached.')
         totalLinks = len(match)
