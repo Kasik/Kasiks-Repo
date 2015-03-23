@@ -17,14 +17,15 @@ wh = watchhistory.WatchHistory('plugin.video.couchtuner')
 def NewRelease(url):
         link=main.OPEN_URL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&#8211;',' - ')
-        match=re.compile('class="tvbox"><a href="([^"]*?)" title="Watch([^"]*?)Online"><span style="background-image: url[(]([^"]*?)[)]" class=".+?"></span>').findall(link)
-        dialogWait = xbmcgui.DialogProgress()
-        ret = dialogWait.create('Please wait until Show list is cached.')
-        totalLinks = len(match)
-        loadedLinks = 0
-        remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
-        dialogWait.update(0,'[B]Will load instantly from now on[/B]',remaining_display)
-        for url,name,thumb in match:
+        match=re.compile('class="tvbox">.+?<a href="([^"]*?)" title="Watch([^"]*?)Online" ><span style="background-image: url[(]([^"]*?)[)]" class.+?').findall(link)
+        if match:
+         dialogWait = xbmcgui.DialogProgress()
+         ret = dialogWait.create('Please wait until Show list is cached.')
+         totalLinks = len(match)
+         loadedLinks = 0
+         remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+         dialogWait.update(0,'[B]Will load instantly from now on[/B]',remaining_display)
+         for url,name,thumb in match:
             thumb='http://www.couchtuner.eu'+thumb
             main.addDirTE(name,url,5,thumb,'','','','','')
             loadedLinks = loadedLinks + 1
@@ -33,13 +34,32 @@ def NewRelease(url):
             dialogWait.update(percent,'[B]Will load instantly from now on[/B]',remaining_display)
             if (dialogWait.iscanceled()):
                 return False   
-        dialogWait.close()
-        del dialogWait
-
-        nextpage=re.compile('<div class="prev-page"><strong>Previous <a href="([^"]*)">[^"]*</a></strong>').findall(link)
-        if nextpage:
-         xurl=base_url+nextpage[0]
-         main.addDir('Next Page',xurl,1,'')
+         dialogWait.close()
+         del dialogWait         
+        else:
+         match=re.compile('class="tvbox">.+?<a href="([^"]*?)" title="Watch([^"]*?)Online" ><span style="background-image: url[(]([^"]*?)[)]" class.+?').findall(link)
+         dialogWait = xbmcgui.DialogProgress()
+         ret = dialogWait.create('Please wait until Show list is cached.')
+         totalLinks = len(match)
+         loadedLinks = 0
+         remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+         dialogWait.update(0,'[B]Will load instantly from now on[/B]',remaining_display)
+         for url,name,thumb in match:
+            thumb='http://www.couchtuner.eu'+thumb
+            main.addDirTE(name,url,5,thumb,'','','','','')
+            loadedLinks = loadedLinks + 1
+            percent = (loadedLinks * 100)/totalLinks
+            remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+            dialogWait.update(percent,'[B]Will load instantly from now on[/B]',remaining_display)
+            if (dialogWait.iscanceled()):
+                return False   
+         dialogWait.close()
+         del dialogWait
+                
+         nextpage=re.compile('<div class="prev-page"><strong>Previous <a href="([^"]*)">[^"]*</a></strong>').findall(link)
+         if nextpage:
+          xurl=base_url+nextpage[0]
+          main.addDir('Next Page',xurl,1,'')
 
         
 def LINK(name,url):

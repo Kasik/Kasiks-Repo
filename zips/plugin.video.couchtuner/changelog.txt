@@ -31,6 +31,9 @@ changed domain to couchtuner.eu
 [B]Version 0.1.6[/B]
 small code update.
 
+[B]Version 0.1.6a[/B]
+small code update, again.
+
 
 
 
