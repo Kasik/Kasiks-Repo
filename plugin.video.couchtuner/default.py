@@ -16,7 +16,7 @@ except Exception, e:
 addon_id = 'plugin.video.couchtuner'
 selfAddon = xbmcaddon.Addon(id=addon_id)
 art = main.art
-base_url = 'http://www.couchtuner.eu'
+base_url = 'http://www.couchtuner.la'
 
 ################################################################################ Directories ##########################################################################################################
 UpdatePath=os.path.join(main.datapath,'Update')
@@ -34,15 +34,15 @@ except: pass
 
 def MAIN():
     
-    main.addDir('New Release','http://www.couchtuner.eu/',1,art+'/New.png')
-    main.addDir('TV A-Z Index ','http://www.couchtuner.eu/tv-lists/',7,art+'/showlist.png')
-    main.addDir('Search','http://www.couchtuner.eu/?s=',110,art+'/search.png')
+    main.addDir('New Release','http://www.couchtuner.la/',1,art+'/New.png')
+    main.addDir('TV A-Z Index ','http://www.couchtuner.la/tv-lists/',7,art+'/showlist.png')
+    main.addDir('Search','http://www.couchtuner.la/?s=',110,art+'/search.png')
 
 ########################################################################################################################################################################
 def AtoZ():
-    main.addDir('0-9','http://www.couchtuner.eu/tv-list/#',8,art+'/09.png')
+    main.addDir('0-9','http://www.couchtuner.la/tv-list/#',8,art+'/09.png')
     for i in string.ascii_uppercase:
-            main.addDir(i,'http://www.couchtuner.eu/tv-list/#'+i.upper()+'/',8,art+'/'+i.lower()+'.png')
+            main.addDir(i,'http://www.couchtuner.la/tv-list/#'+i.upper()+'/',8,art+'/'+i.lower()+'.png')
 
 
 def AZLIST(url):

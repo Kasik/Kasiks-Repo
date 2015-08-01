@@ -1,0 +1,39 @@
+[B]Version 0.0.1[/B]
+
+- Intial release
+
+[B]Version 0.1.0[/B]
+
+- Code Reworked
+
+[B]Version 0.1.1[/B]
+
+- Code Updated/Reworked
+(Some items may result in error, this is normal and hopefully will
+be worked out in the next version)
+
+[B]Version 0.1.1A[/B]
+
+- Turned Metadata Off, Corrected New Releases image.
+
+[B]Version 0.1.2[/B]
+
+Misc updates
+
+[B]Version 0.1.2a[/B]
+
+small code change
+
+[B]Version 0.1.5[/B]
+
+changed domain to couchtuner.eu
+
+[B]Version 0.1.6[/B]
+small code update.
+
+[B]Version 0.1.6a[/B]
+small code update, again.
+
+
+
+

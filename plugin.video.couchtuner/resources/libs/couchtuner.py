@@ -11,7 +11,7 @@ addon_id = 'plugin.video.couchtuner'
 selfAddon = xbmcaddon.Addon(id=addon_id)
 addon = Addon('plugin.video.couchtuner', sys.argv)
 art = main.art
-base_url = 'http://www.couchtuner.me/'    
+base_url = 'http://www.couchtuner.la/'    
 wh = watchhistory.WatchHistory('plugin.video.couchtuner')
 
 def NewRelease(url):
@@ -26,7 +26,8 @@ def NewRelease(url):
          remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
          dialogWait.update(0,'[B]Will load instantly from now on[/B]',remaining_display)
          for url,name,thumb in match:
-            thumb='http://www.couchtuner.eu'+thumb
+            name=name.replace('&#8211;',' - ').replace('&#8230;','...')     
+            thumb='http://www.couchtuner.la'+thumb
             main.addDirTE(name,url,5,thumb,'','','','','')
             loadedLinks = loadedLinks + 1
             percent = (loadedLinks * 100)/totalLinks
@@ -35,7 +36,21 @@ def NewRelease(url):
             if (dialogWait.iscanceled()):
                 return False   
          dialogWait.close()
-         del dialogWait         
+         del dialogWait
+         pagetwo=re.compile('content="Page 2:').findall(link)
+         if len(pagetwo) > 0:
+          xurl='http://www.couchtuner.la/page/3/'
+          main.addDir('Page 3',xurl,1,'')
+         pagethree=re.compile('content="Page 3:').findall(link)
+         if len(pagethree) > 0:
+          xurl='http://www.couchtuner.la/page/4/'
+          main.addDir('Page 4',xurl,1,'')
+         pagefour=re.compile('content="Page 4:').findall(link)
+         if len(pagefour) > 0:
+          xurl='http://www.couchtuner.la/page/5/'
+          main.addDir('Page 5',xurl,1,'')  
+         else:
+          main.addDir('Page 2','http://www.couchtuner.la/page/2/',1,'')         
         else:
          match=re.compile('class="tvbox">.+?<a href="([^"]*?)" title="Watch([^"]*?)Online" ><span style="background-image: url[(]([^"]*?)[)]" class.+?').findall(link)
          dialogWait = xbmcgui.DialogProgress()
@@ -45,7 +60,8 @@ def NewRelease(url):
          remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
          dialogWait.update(0,'[B]Will load instantly from now on[/B]',remaining_display)
          for url,name,thumb in match:
-            thumb='http://www.couchtuner.eu'+thumb
+            name=name.replace('&#8211;',' - ').replace('&#8230;','...')     
+            thumb='http://www.couchtuner.la'+thumb
             main.addDirTE(name,url,5,thumb,'','','','','')
             loadedLinks = loadedLinks + 1
             percent = (loadedLinks * 100)/totalLinks
@@ -56,9 +72,9 @@ def NewRelease(url):
          dialogWait.close()
          del dialogWait
                 
-         nextpage=re.compile('<div class="prev-page"><strong>Previous <a href="([^"]*)">[^"]*</a></strong>').findall(link)
-         if nextpage:
-          xurl=base_url+nextpage[0]
+         nextpage=re.compile('<strong>Previous <a href="([^"]*?)">').findall(link)
+         for url in nextpage:
+          xurl=base_url+url
           main.addDir('Next Page',xurl,1,'')
 
         
@@ -69,10 +85,19 @@ def LINK(name,url):
     for url in match:
        LINKZ(name,str(url))
     
+def LINKZ(name,url):
+    main.addLink("[COLOR orange]For Download Options, Bring up Context Menu Over Selected Link.[/COLOR]",'','')
+    link=main.OPENURL(url)
+    link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('IFRAME SRC','iframe src')
+    match=re.compile('><b>([^"]*?)</b></span><br /><iframe.+?src="([^"]*?)"').findall(link)
+    for host,url in match:
+        host=host.replace('AllMyV','allmyvideos').replace('VSpot','vidspot').replace('TheVid','thevideo').replace('Vodlo','vodlocker').replace('Vidbul','vidbull')
+        main.addDown2(name.strip()+" [COLOR green]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
+
        
         
 
-def LINKZ(name,url):
+def LINKZB(name,url):
     #main.addLink("[COLOR yellow]For Download Options, Bring up Context Menu Over Selected Link.[/COLOR]",'','')
     link=main.OPENURL(url)
     link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
@@ -198,7 +223,7 @@ def Searchhistory():
 def SEARCH(url = ''):
         encode = main.updateSearchFile(url,'TV')
         if not encode: return False   
-        surl='http://www.couchtuner.eu/?s=' + encode 
+        surl='http://www.couchtuner.la/?s=' + encode 
         link=main.OPENURL(surl)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
         match=re.compile('<h2><a href="([^"]*?)" rel="bookmark" title="Watch.+?Online">([^"]*?)</a></h2>').findall(link)
