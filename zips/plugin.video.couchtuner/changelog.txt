@@ -37,6 +37,9 @@ small code update, again.
 [B]Version 0.1.7[/B]
 Domain change, added download ability.
 
+[B]Version 0.1.8[/B]
+Fixed Tv List, Added Season selection.
+
 
 
 

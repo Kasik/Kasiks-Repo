@@ -39,139 +39,6 @@ def MAIN():
     main.addDir('Search','http://www.couchtuner.la/?s=',110,art+'/search.png')
 
 ########################################################################################################################################################################
-def AtoZ():
-    main.addDir('0-9','http://www.couchtuner.la/tv-list/#',8,art+'/09.png')
-    for i in string.ascii_uppercase:
-            main.addDir(i,'http://www.couchtuner.la/tv-list/#'+i.upper()+'/',8,art+'/'+i.lower()+'.png')
-
-
-def AZLIST(url):
-    link=main.OPEN_URL(url)
-    link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&#8211;',' - ')
-    #match=re.compile('<li><a href="([^"]*)" title="[^"]*">[%s]([^"]*)</a>'% name).findall(link)
-    match=re.compile('<li><strong><a href="([^<]+)">[%s]([^<]+)</a></strong></li>'% name).findall(link)
-    for url,title in match:
-        title=name+title
-        #url = url.replace('watch-','watch/')+'/'
-        main.addInfo(title,url,9,'','','')
-
-
-
-
-def Episodes(url):
-    link=main.OPEN_URL(url)
-    link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&#8211;',' - ')
-    match=re.compile('<li><strong><a href="([^<]+)">([^<]+)</a>([^<]+)</strong>').findall(link)
-    for url,title,title1 in match:
-        title=title+' ' + title1
-        #url = url.replace('watch-','watch/')+'/'
-        main.addInfo(title,url,10,'','','')
-        
-
-def FirstLinks(name,url):
-    link=main.OPENURL(url)
-    link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-    match=re.compile('Watch it here :</span>.+?<a href="([^"]*?)">').findall(link)
-    if match:
-     for url in match:
-       Linkz(name,url)
-    else:
-      match2=re.compile('Watch it here :.+?</span><a href="([^"]*?)">').findall(link)
-      for url in match2:
-       Linkz(name,url)   
-        
-
-def Linkz(name,url):
-    link=main.OPENURL(url)
-    link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-    vodlocker=re.compile('"http://vodlocker.com/embed-([^"]*?)-.+?.html"').findall(link)
-    for url in vodlocker:
-        url='http://vodlocker.com/'+url    
-        host='vodlocker'    
-        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')    
-    played=re.compile('http://played.to/embed-([^"]*?)-.+?.html').findall(link)
-    for url in played:
-        url='http://played.to/'+url    
-        host='played'    
-        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
-    thevideo=re.compile('"http://www.thevideo.me/embed-([^"]*?)-.+?.html').findall(link)
-    for url in thevideo:
-        url='http://www.thevideo.me/'+url    
-        host='thevideo'    
-        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
-    vidbull=re.compile('http://vidbull.com/embed-zvfcf9rs2kid-540x318.html').findall(link)
-    for url in vidbull:
-        url='http://vidbull.com/'+url    
-        host='vidbull'    
-        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
-    youwatch=re.compile('http://youwatch.org/embed-([^"]*?)-.+?.html').findall(link)
-    for url in youwatch:
-        url='http://youwatch.org/'+url    
-        host='youwatch'    
-        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
-    vidto=re.compile('"http://vidto.me/embed-([^"]*?)-.+?.html"').findall(link)
-    for url in vidto:
-        url='http://vidto.me/'+url    
-        host='vidto'    
-        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')     
-    vshare=re.compile('http://vshare.eu/embed-([^"]*?)-.+?.html').findall(link)
-    for url in vshare:
-        url='http://vshare.eu/'+url    
-        host='vshare'    
-        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')     
-    vidspot=re.compile('"http://vidspot.net/embed-([^"]*?).html').findall(link)
-    for url in vidspot:
-        url='http://vidspot.net/'+url    
-        host='vidspot'    
-        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
-    allmyvideos=re.compile('"http://allmyvideos.net/embed-([^"]*?)-.+?.html"').findall(link)
-    for url in allmyvideos:
-        url='http://allmyvideos.net/'+url    
-        host='allmyvideos'    
-        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
-    vkmobile=re.compile('http://videoapi.my.mail.ru/videos/embed/mail/geek.tv/_myvideo/([^"]*?).html').findall(link)
-    for url in vkmobile:
-        url='http://videoapi.my.mail.ru/videos/embed/mail/geek.tv/_myvideo/'+url    
-        host='VK-Mobile'    
-        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
-    fhoot=re.compile('http://filehoot.com/embed-([^"]*?)-.+?.html').findall(link)
-    for url in fhoot:
-        url='http://filehoot.com/'+url    
-        host='filehoot'    
-        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')     
-    exashare=re.compile('"http://www.exashare.com/embed-([^"]*?)-.+?.html"').findall(link)
-    for url in exashare:
-        url='http://www.exashare.com/'+url    
-        host='exashare'    
-        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')     
-
-    
-
-
-
-
-
-
-def Episodes2(url):
-        req = urllib2.Request(url)
-        req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-        response = urllib2.urlopen(req)
-        link=response.read().replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&#8211;','-').replace('&#8217;',"'").replace('season-','s').replace('episode-','e').replace('#038;','')
-        response.close()
-		
-        match=re.compile('<a href="http://www.couchtuner.ch/([^"]*)/">([^"]*)</a>([^"]*)</strong>').findall(link)
-        for url,episode,title in match:
-                title='[COLOR blue]'+episode+'[/COLOR]'+ ' - ' +'[COLOR red]'+title+'[/COLOR]'
-                url = 'http://www.zzstream.li/'+url+'.html'
-                print ""+url
-                main.addDir(title,url,5,'')
-        match=re.compile('<a href="http://www.zzstream.li/([^"]*)" rel="nofollow">([^"]*)</a>([^"]*)</strong>').findall(link)
-        for url,episode,title in match:
-                title='[COLOR blue]'+episode+'[/COLOR]'+ ' - ' +'[COLOR red]'+title+'[/COLOR]'
-                url='http://www.zzstream.li/'+url
-                print ""+url
-                main.addDir(title,url,5,'')             
-
 
 ####################################################################################################################################################
 def getListFile(url, path, excepturl = None ):
@@ -449,18 +316,25 @@ elif mode==5:
     print " " + url
     couchtuner.LINK(name,url)
 
-
 elif mode==7:
-    AtoZ()
+    from resources.libs import couchtuner
+    print " " + url
+    couchtuner.AtoZ()
 
 elif mode==8:
-    AZLIST(url)
+    from resources.libs import couchtuner
+    print " " + url
+    couchtuner.AZLIST(name,url)
 
 elif mode==9:
-    Episodes(url)
+    from resources.libs import couchtuner
+    print " " + url
+    couchtuner.SEASONS(name,url,index=False)
 
 elif mode==10:
-    FirstLinks(name,url)
+    from resources.libs import couchtuner
+    print " " + url
+    couchtuner.EPISODES(name,url,index=False)    
 
 
 elif mode==11:
@@ -474,12 +348,6 @@ elif mode==45:
     from resources.libs import couchtuner
     print " " + url
     couchtuner.TVLINK(name,url)
-
-
-
-
-
-
 
     
 

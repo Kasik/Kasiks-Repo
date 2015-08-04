@@ -12,7 +12,59 @@ selfAddon = xbmcaddon.Addon(id=addon_id)
 addon = Addon('plugin.video.couchtuner', sys.argv)
 art = main.art
 base_url = 'http://www.couchtuner.la/'    
-wh = watchhistory.WatchHistory('plugin.video.couchtuner')
+
+
+def AtoZ():
+    main.addDir('0-9','http://www.couchtuner.la/tv-list/#',8,art+'/09.png')
+    for i in string.ascii_uppercase:
+            main.addDir(i,'http://www.couchtuner.la/tv-list/#'+i.upper(),8,art+'/'+i.lower()+'.png')
+
+def AZLIST(name,url):
+    link=main.OPEN_URL(url)
+    link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&#8211;',' - ').replace('<strong>','').replace('</strong>','')
+    #match=re.compile('<li><a href="([^"]*)" title="[^"]*">[%s]([^"]*)</a>'% name).findall(link)
+    match=re.compile('<li><a.+?href="(http://www.couchtuner.la/[^"]*?)">[%s]([^"]*?)</a></li>'% name).findall(link)
+    for url,title in match:
+        title=name+title
+        #url = url.replace('watch-','watch/')+'/'
+        main.addInfo(title,url,9,'','','')
+
+
+def SEASONS(name,url,index=False):
+    link = main.OPEN_URL(url)
+    link = link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&#8211;',' - ')#.replace('<strong>','').replace('</strong>','')
+    seasons = re.compile('(?sim)(Season [0-9]+)</strong>.+?<ul>(.*?)(?=<ul|/ul)').findall(link)
+    if not re.search('<strong>(\d+)</strong>', link): seasons = reversed(seasons)
+    for season,data in seasons:
+        episodes = re.compile('<li><strong><a href="([^"]*?)" rel="nofollow">([^"]*?)</a>([^"]*?)</strong></li>',re.DOTALL).findall(data)
+        main.addDir(name+' '+season.strip(),urllib.quote(str(episodes)),10,'','',index=index)
+        
+
+def EPISODES(name,url,index=False):
+    #name = name.partition('Season')[0].strip()
+    episodes = eval(urllib.unquote(url))
+    totalLinks = len(episodes)
+    dialogWait = xbmcgui.DialogProgress()
+    ret = dialogWait.create('Please wait until Episode list is cached.')
+    loadedLinks = 0
+    remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+    dialogWait.update(0,'[B]Will load instantly from now on[/B]',remaining_display)
+    xbmc.executebuiltin("XBMC.Dialog.Close(busydialog,true)")
+    for url,epname,eptitle in episodes:
+        if index == 'True':
+            main.addDirTE(epname+eptitle,url,5,'','','','','','')
+        else:
+            main.addDirTE(epname+eptitle,url,5,'','','','','','')
+        loadedLinks = loadedLinks + 1
+        percent = (loadedLinks * 100)/totalLinks
+        remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+        dialogWait.update(percent,'[B]Will load instantly from now on[/B]',remaining_display)
+        if (dialogWait.iscanceled()):
+            return False    
+    dialogWait.close()
+    del dialogWait
+
+
 
 def NewRelease(url):
         link=main.OPEN_URL(url)
@@ -80,19 +132,26 @@ def NewRelease(url):
         
 def LINK(name,url):
     link=main.OPEN_URL(url)
-    link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
+    link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('IFRAME SRC','iframe src')
     match=re.compile('>Watch it here :</span>.+?<a href="([^"]*?)">').findall(link)
     for url in match:
        LINKZ(name,str(url))
+       
+    matchtwo=re.compile('>Update :</span> If you dont see any Player. Refresh <br />').findall(link)
+    if len(matchtwo) > 0:
+       LINKZ(name,str(url)) 
+        
+
+               
     
 def LINKZ(name,url):
     main.addLink("[COLOR orange]For Download Options, Bring up Context Menu Over Selected Link.[/COLOR]",'','')
     link=main.OPENURL(url)
     link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('IFRAME SRC','iframe src')
-    match=re.compile('><b>([^"]*?)</b></span><br /><iframe.+?src="([^"]*?)"').findall(link)
+    match=re.compile('<b>([^"]*?)</b></span><br /><iframe.+?src="([^"]*?)"').findall(link)
     for host,url in match:
-        host=host.replace('AllMyV','allmyvideos').replace('VSpot','vidspot').replace('TheVid','thevideo').replace('Vodlo','vodlocker').replace('Vidbul','vidbull')
-        main.addDown2(name.strip()+" [COLOR green]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
+        host=host.replace('AllMyV','allmyvideos').replace('VSpot','vidspot').replace('TheVid','thevideo').replace('Vodlo','vodlocker').replace('Vidbul','vidbull').replace('IShar','ishared').replace('allmyvideosid','allmyvideos')
+        main.addDown2(name.strip()+" [COLOR blue]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
 
        
         
@@ -165,7 +224,12 @@ def LINKZB(name,url):
     
 
 
-
+def cleanHex(text):
+    def fixup(m):
+        text = m.group(0)
+        if text[:3] == "&#x": return unichr(int(text[3:-1], 16)).encode('utf-8')
+        else: return unichr(int(text[2:-1])).encode('utf-8')
+    return re.sub("(?i)&#\w+;", fixup, text.decode('ISO-8859-1').encode('utf-8'))
 
 
 def PLAY(name,url):
