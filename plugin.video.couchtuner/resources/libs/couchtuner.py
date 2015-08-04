@@ -32,12 +32,17 @@ def AZLIST(name,url):
 
 def SEASONS(name,url,index=False):
     link = main.OPEN_URL(url)
-    link = link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&#8211;',' - ')#.replace('<strong>','').replace('</strong>','')
+    link = link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&#8211;',' - ').replace('<br />','').replace('&#8217;',"'")
     seasons = re.compile('(?sim)(Season [0-9]+)</strong>.+?<ul>(.*?)(?=<ul|/ul)').findall(link)
     if not re.search('<strong>(\d+)</strong>', link): seasons = reversed(seasons)
     for season,data in seasons:
         episodes = re.compile('<li><strong><a href="([^"]*?)" rel="nofollow">([^"]*?)</a>([^"]*?)</strong></li>',re.DOTALL).findall(data)
-        main.addDir(name+' '+season.strip(),urllib.quote(str(episodes)),10,'','',index=index)
+        if len(episodes) > 0:
+         main.addDir(name+' '+season.strip(),urllib.quote(str(episodes)),10,'','',index=index)
+        else:
+         episodes = re.compile('<strong><a href="([^"]*?)">([^"]*?)</a>\s*([^"]*?)</strong></li>',re.DOTALL).findall(data)
+         main.addDir(name+' '+season.strip(),urllib.quote(str(episodes)),10,'','',index=index)
+        
         
 
 def EPISODES(name,url,index=False):

@@ -40,6 +40,8 @@ Domain change, added download ability.
 [B]Version 0.1.8[/B]
 Fixed Tv List, Added Season selection.
 
+[B]Version 0.1.8b[/B]
+Code correction for newer links.
 
 
 
