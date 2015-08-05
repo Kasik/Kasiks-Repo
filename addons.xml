@@ -2,7 +2,7 @@
 <addons>
 <addon id="plugin.video.couchtuner"
        name="CouchTuner"
-       version="0.1.8b"
+       version="0.1.9"
        provider-name="Kasik">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>

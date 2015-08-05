@@ -32,21 +32,21 @@ def AZLIST(name,url):
 
 def SEASONS(name,url,index=False):
     link = main.OPEN_URL(url)
-    link = link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&#8211;',' - ').replace('<br />','').replace('&#8217;',"'")
+    link = link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&#8211;',' - ').replace('<br />','').replace('&#8217;',"'").replace(' rel="nofollow"','')
     seasons = re.compile('(?sim)(Season [0-9]+)</strong>.+?<ul>(.*?)(?=<ul|/ul)').findall(link)
     if not re.search('<strong>(\d+)</strong>', link): seasons = reversed(seasons)
     for season,data in seasons:
-        episodes = re.compile('<li><strong><a href="([^"]*?)" rel="nofollow">([^"]*?)</a>([^"]*?)</strong></li>',re.DOTALL).findall(data)
-        if len(episodes) > 0:
-         main.addDir(name+' '+season.strip(),urllib.quote(str(episodes)),10,'','',index=index)
-        else:
-         episodes = re.compile('<strong><a href="([^"]*?)">([^"]*?)</a>\s*([^"]*?)</strong></li>',re.DOTALL).findall(data)
-         main.addDir(name+' '+season.strip(),urllib.quote(str(episodes)),10,'','',index=index)
+        #episodes = re.compile('<li><strong><a href="([^"]*?)" rel="nofollow">([^"]*?)</a>([^"]*?)</strong></li>',re.DOTALL).findall(data)
+        episodes =re.compile('<li><strong><a href="([^"]*?)">([^"]*?)</a>([^"]*?)</strong></li>').findall(data)
+        #if len(episodes) > 0:
+        main.addDir(name+' '+season.strip(),urllib.quote(str(episodes)),10,'','',index=index)
+        #else:
+         #episodes = re.compile('<strong><a href="([^"]*?)">([^"]*?)</a>\s*([^"]*?)</strong></li>',re.DOTALL).findall(data)
+         #main.addDir(name+' '+season.strip(),urllib.quote(str(episodes)),10,'','',index=index)
         
         
 
 def EPISODES(name,url,index=False):
-    #name = name.partition('Season')[0].strip()
     episodes = eval(urllib.unquote(url))
     totalLinks = len(episodes)
     dialogWait = xbmcgui.DialogProgress()
@@ -156,85 +156,8 @@ def LINKZ(name,url):
     match=re.compile('<b>([^"]*?)</b></span><br /><iframe.+?src="([^"]*?)"').findall(link)
     for host,url in match:
         host=host.replace('AllMyV','allmyvideos').replace('VSpot','vidspot').replace('TheVid','thevideo').replace('Vodlo','vodlocker').replace('Vidbul','vidbull').replace('IShar','ishared').replace('allmyvideosid','allmyvideos')
+        host=host.replace('FHoot','filehoot').replace('VidtO','vidto').replace('VK-Mob','vk')
         main.addDown2(name.strip()+" [COLOR blue]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
-
-       
-        
-
-def LINKZB(name,url):
-    #main.addLink("[COLOR yellow]For Download Options, Bring up Context Menu Over Selected Link.[/COLOR]",'','')
-    link=main.OPENURL(url)
-    link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-    vodlocker=re.compile('"http://vodlocker.com/embed-([^"]*?)-.+?.html"').findall(link)
-    for url in vodlocker:
-        url='http://vodlocker.com/'+url    
-        host='vodlocker'    
-        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')    
-    played=re.compile('http://played.to/embed-([^"]*?)-.+?.html').findall(link)
-    for url in played:
-        url='http://played.to/'+url    
-        host='played'    
-        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
-    thevideo=re.compile('"http://www.thevideo.me/embed-([^"]*?)-.+?.html').findall(link)
-    for url in thevideo:
-        url='http://www.thevideo.me/'+url    
-        host='thevideo'    
-        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
-    vidbull=re.compile('http://vidbull.com/embed-zvfcf9rs2kid-540x318.html').findall(link)
-    for url in vidbull:
-        url='http://vidbull.com/'+url    
-        host='vidbull'    
-        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
-    youwatch=re.compile('http://youwatch.org/embed-([^"]*?)-.+?.html').findall(link)
-    for url in youwatch:
-        url='http://youwatch.org/'+url    
-        host='youwatch'    
-        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
-    vidto=re.compile('"http://vidto.me/embed-([^"]*?)-.+?.html"').findall(link)
-    for url in vidto:
-        url='http://vidto.me/'+url    
-        host='vidto'    
-        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')     
-    vshare=re.compile('http://vshare.eu/embed-([^"]*?)-.+?.html').findall(link)
-    for url in vshare:
-        url='http://vshare.eu/'+url    
-        host='vshare'    
-        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')     
-    vidspot=re.compile('"http://vidspot.net/embed-([^"]*?).html').findall(link)
-    for url in vidspot:
-        url='http://vidspot.net/'+url    
-        host='vidspot'    
-        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
-    allmyvideos=re.compile('"http://allmyvideos.net/embed-([^"]*?)-.+?.html"').findall(link)
-    for url in allmyvideos:
-        url='http://allmyvideos.net/'+url    
-        host='allmyvideos'    
-        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
-    vkmobile=re.compile('http://videoapi.my.mail.ru/videos/embed/mail/geek.tv/_myvideo/([^"]*?).html').findall(link)
-    for url in vkmobile:
-        url='http://videoapi.my.mail.ru/videos/embed/mail/geek.tv/_myvideo/'+url    
-        host='VK-Mobile'    
-        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
-    fhoot=re.compile('http://filehoot.com/embed-([^"]*?)-.+?.html').findall(link)
-    for url in fhoot:
-        url='http://filehoot.com/'+url    
-        host='filehoot'    
-        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')     
-    exashare=re.compile('"http://www.exashare.com/embed-([^"]*?)-.+?.html"').findall(link)
-    for url in exashare:
-        url='http://www.exashare.com/'+url    
-        host='exashare'    
-        main.addDown2(name.strip()+" [COLOR red]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')     
-
-    
-
-
-def cleanHex(text):
-    def fixup(m):
-        text = m.group(0)
-        if text[:3] == "&#x": return unichr(int(text[3:-1], 16)).encode('utf-8')
-        else: return unichr(int(text[2:-1])).encode('utf-8')
-    return re.sub("(?i)&#\w+;", fixup, text.decode('ISO-8859-1').encode('utf-8'))
 
 
 def PLAY(name,url):
@@ -256,14 +179,8 @@ def PLAY(name,url):
         stream_url = urlresolver.resolve(url)
 
         infoL={'Title': infoLabels['metaName'], 'Plot': infoLabels['plot'], 'Genre': infoLabels['genre']}
-        # play with bookmark
         from resources.universal import playbackengine
         player = playbackengine.PlayWithoutQueueSupport(resolved_url=stream_url, addon_id=addon_id, video_type=video_type, title=str(infoLabels['title']),season=str(season), episode=str(episode), year=str(infoLabels['year']),img=img,infolabels=infoL, watchedCallbackwithParams=main.WatchedCallbackwithParams,imdb_id=imdb_id)
-        #WatchHistory
-        #if selfAddon.getSetting("whistory") == "true":
-        #    from resources.universal import watchhistory
-        #    wh = watchhistory.WatchHistory('plugin.video.movie25')
-        #    wh.add_item(hname+' '+'[COLOR green]Movie25[/COLOR]', sys.argv[0]+sys.argv[2], infolabels=infolabels, img=img, fanart=fanart, is_folder=False)
         player.KeepAlive()
         return ok
     except Exception, e:
@@ -317,17 +234,5 @@ def SEARCH(url = ''):
         if nextpage:
          xurl=base_url+nextpage[0]
          main.addDir('Next Page',xurl,120,'')            
-
-
-
-def Seasons(url):
-    link=main.OPEN_URL(url)
-    link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&#8211;',' - ')
-    match=re.compile('<strong>Season([^"]*?)</strong></span></p><ul><li>').findall(link)
-    for season in match:
-        print season
-        name=season
-        main.addDir('Season '+season,url,9,'','','')
-
 
 

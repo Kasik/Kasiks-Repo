@@ -43,5 +43,8 @@ Fixed Tv List, Added Season selection.
 [B]Version 0.1.8b[/B]
 Code correction for newer links.
 
+[B]Version 0.1.9[/B]
+Cleaned up somewhat, fixed seasons (hopefully)
+
 
 
