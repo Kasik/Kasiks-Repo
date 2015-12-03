@@ -11,70 +11,64 @@ addon_id = 'plugin.video.couchtuner'
 selfAddon = xbmcaddon.Addon(id=addon_id)
 addon = Addon('plugin.video.couchtuner', sys.argv)
 art = main.art
-base_url = 'http://www.couchtuner.la/'    
+base_url = 'http://couchtuner.at/'    
 
 
 def AtoZ():
-    main.addDir('0-9','http://www.couchtuner.la/tv-list/#',8,art+'/09.png')
+    main.addDir('0-9','http://couchtuner.at/tv/startwith/',8,art+'/09.png')
     for i in string.ascii_uppercase:
-            main.addDir(i,'http://www.couchtuner.la/tv-list/#'+i.upper(),8,art+'/'+i.lower()+'.png')
+            main.addDir(i,'http://couchtuner.at/tv/startwith/'+i.upper(),8,art+'/'+i.lower()+'.png')
 
 def AZLIST(name,url):
     link=main.OPEN_URL(url)
     link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&#8211;',' - ').replace('<strong>','').replace('</strong>','')
     #match=re.compile('<li><a href="([^"]*)" title="[^"]*">[%s]([^"]*)</a>'% name).findall(link)
-    match=re.compile('<li><a.+?href="(http://www.couchtuner.la/[^"]*?)">[%s]([^"]*?)</a></li>'% name).findall(link)
-    for url,title in match:
+    match=re.compile('placement=.+?href="([^"]*?)" >\s*<img src="([^"]*?)" alt.+?>\s*<div class="well-sx text-center">[%s]([^"]*?)</div>'% name).findall(link)
+    for url,thumb,title in match:
         title=name+title
         #url = url.replace('watch-','watch/')+'/'
-        main.addInfo(title,url,9,'','','')
+        main.addInfo(title,url,9,thumb,'','')
 
 
 def SEASONS(name,url,index=False):
     link = main.OPEN_URL(url)
     link = link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&#8211;',' - ').replace('<br />','').replace('&#8217;',"'").replace(' rel="nofollow"','')
-    seasons = re.compile('(?sim)(Season [0-9]+)</strong>.+?<ul>(.*?)(?=<ul|/ul)').findall(link)
+    seasons = re.compile('(?sim)</span>\s*(Season [0-9]+)\s*</a>\s*<a href="([^"]*?)">').findall(link)
     if not re.search('<strong>(\d+)</strong>', link): seasons = reversed(seasons)
-    for season,data in seasons:
-        #episodes = re.compile('<li><strong><a href="([^"]*?)" rel="nofollow">([^"]*?)</a>([^"]*?)</strong></li>',re.DOTALL).findall(data)
-        episodes =re.compile('<li><strong><a href="([^"]*?)">([^"]*?)</a>([^"]*?)</strong></li>').findall(data)
-        #if len(episodes) > 0:
-        main.addDir(name+' '+season.strip(),urllib.quote(str(episodes)),10,'','',index=index)
-        #else:
-         #episodes = re.compile('<strong><a href="([^"]*?)">([^"]*?)</a>\s*([^"]*?)</strong></li>',re.DOTALL).findall(data)
-         #main.addDir(name+' '+season.strip(),urllib.quote(str(episodes)),10,'','',index=index)
-        
-        
+    for season,url in seasons:
+        main.addDir(name+' - '+season.strip(),url,10,'','',index=index)
+                
 
 def EPISODES(name,url,index=False):
-    episodes = eval(urllib.unquote(url))
-    totalLinks = len(episodes)
+    link=main.OPEN_URL(url)
+    link=main.unescapes(link)
+    match=re.compile('<td><a href="([^"]*?)"><span class=.+?></span>\s*([^"]*?)</a></td>\s*<td class>([^"]*?)</td>\s*<td class="text-center">([^"]*?)</td>').findall(link)
     dialogWait = xbmcgui.DialogProgress()
-    ret = dialogWait.create('Please wait until Episode list is cached.')
+    ret = dialogWait.create('Please wait until Show list is cached.')
+    totalLinks = len(match)
     loadedLinks = 0
     remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
     dialogWait.update(0,'[B]Will load instantly from now on[/B]',remaining_display)
-    xbmc.executebuiltin("XBMC.Dialog.Close(busydialog,true)")
-    for url,epname,eptitle in episodes:
-        if index == 'True':
-            main.addDirTE(epname+eptitle,url,5,'','','','','','')
-        else:
-            main.addDirTE(epname+eptitle,url,5,'','','','','','')
-        loadedLinks = loadedLinks + 1
-        percent = (loadedLinks * 100)/totalLinks
-        remaining_display = 'Movies loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
-        dialogWait.update(percent,'[B]Will load instantly from now on[/B]',remaining_display)
-        if (dialogWait.iscanceled()):
-            return False    
-    dialogWait.close()
-    del dialogWait
+    for url,epinfo,epname,date in match:
+     main.addDirTE(name+' -'+epinfo+' '+epname+' '+date,url,5,'','','','','','')
+     loadedLinks = loadedLinks + 1
+     percent = (loadedLinks * 100)/totalLinks
+     remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+     dialogWait.update(percent,'[B]Will load instantly from now on[/B]',remaining_display)
+     if (dialogWait.iscanceled()):
+      return False   
+      dialogWait.close()
+      del dialogWait
 
+      paginate=re.compile('<a href="(http://couchtuner.at/page/[^"]*?)">></a></li>').findall(link)
+      for xurl in paginate:  
+       main.addDir('[COLOR blue]Next Page >'+'[/COLOR]',xurl,1,art+'/next2.png','')
 
-
+    
 def NewRelease(url):
         link=main.OPEN_URL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('&#8211;',' - ')
-        match=re.compile('class="tvbox">.+?<a href="([^"]*?)" title="Watch([^"]*?)Online" ><span style="background-image: url[(]([^"]*?)[)]" class.+?').findall(link)
+        link=main.unescapes(link)
+        match=re.compile('data-placement=.+?title=".+?href="([^"]*?)"><img src="([^"]*?)" alt="([^"]*?)"><div class="well-sx text-center">([^"]*?)<br>([^"]*?)</div></a></div>').findall(link)
         if match:
          dialogWait = xbmcgui.DialogProgress()
          ret = dialogWait.create('Please wait until Show list is cached.')
@@ -82,10 +76,8 @@ def NewRelease(url):
          loadedLinks = 0
          remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
          dialogWait.update(0,'[B]Will load instantly from now on[/B]',remaining_display)
-         for url,name,thumb in match:
-            name=name.replace('&#8211;',' - ').replace('&#8230;','...')     
-            thumb='http://www.couchtuner.la'+thumb
-            main.addDirTE(name,url,5,thumb,'','','','','')
+         for url,thumb,epname,name,epinfo in match:
+            main.addDirTE(name+' -'+epinfo+' '+epname,url,5,thumb,'','','','','')
             loadedLinks = loadedLinks + 1
             percent = (loadedLinks * 100)/totalLinks
             remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
@@ -94,70 +86,27 @@ def NewRelease(url):
                 return False   
          dialogWait.close()
          del dialogWait
-         pagetwo=re.compile('content="Page 2:').findall(link)
-         if len(pagetwo) > 0:
-          xurl='http://www.couchtuner.la/page/3/'
-          main.addDir('Page 3',xurl,1,'')
-         pagethree=re.compile('content="Page 3:').findall(link)
-         if len(pagethree) > 0:
-          xurl='http://www.couchtuner.la/page/4/'
-          main.addDir('Page 4',xurl,1,'')
-         pagefour=re.compile('content="Page 4:').findall(link)
-         if len(pagefour) > 0:
-          xurl='http://www.couchtuner.la/page/5/'
-          main.addDir('Page 5',xurl,1,'')  
-         else:
-          main.addDir('Page 2','http://www.couchtuner.la/page/2/',1,'')         
-        else:
-         match=re.compile('class="tvbox">.+?<a href="([^"]*?)" title="Watch([^"]*?)Online" ><span style="background-image: url[(]([^"]*?)[)]" class.+?').findall(link)
-         dialogWait = xbmcgui.DialogProgress()
-         ret = dialogWait.create('Please wait until Show list is cached.')
-         totalLinks = len(match)
-         loadedLinks = 0
-         remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
-         dialogWait.update(0,'[B]Will load instantly from now on[/B]',remaining_display)
-         for url,name,thumb in match:
-            name=name.replace('&#8211;',' - ').replace('&#8230;','...')     
-            thumb='http://www.couchtuner.la'+thumb
-            main.addDirTE(name,url,5,thumb,'','','','','')
-            loadedLinks = loadedLinks + 1
-            percent = (loadedLinks * 100)/totalLinks
-            remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
-            dialogWait.update(percent,'[B]Will load instantly from now on[/B]',remaining_display)
-            if (dialogWait.iscanceled()):
-                return False   
-         dialogWait.close()
-         del dialogWait
-                
-         nextpage=re.compile('<strong>Previous <a href="([^"]*?)">').findall(link)
-         for url in nextpage:
-          xurl=base_url+url
-          main.addDir('Next Page',xurl,1,'')
+
+        paginate=re.compile('<a href="(http://couchtuner.at/page/[^"]*?)">></a></li>').findall(link)
+        for xurl in paginate:  
+         main.addDir('[COLOR blue]Next Page >'+'[/COLOR]',xurl,1,art+'/next2.png','')
 
         
 def LINK(name,url):
     link=main.OPEN_URL(url)
     link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('IFRAME SRC','iframe src')
-    match=re.compile('>Watch it here :</span>.+?<a href="([^"]*?)">').findall(link)
-    for url in match:
-       LINKZ(name,str(url))
-       
-    matchtwo=re.compile('>Update :</span> If you dont see any Player. Refresh <br />').findall(link)
-    if len(matchtwo) > 0:
-       LINKZ(name,str(url)) 
-        
+    match=re.compile('class="domain" ><a href="([^"]*?)" ><span class="glyphicon glyphicon-play"></span> ([^"]*?)</a></td>\s*<td class="text-center"><span class="">([^"]*?)</span>').findall(link)
+    for url,host,q in match:
+      #resolveURL(name,url,host)
+      main.addDir(name.strip()+" [COLOR blue]"+host.upper()+"[/COLOR]",str(url),20,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
 
-               
-    
-def LINKZ(name,url):
-    main.addLink("[COLOR orange]For Download Options, Bring up Context Menu Over Selected Link.[/COLOR]",'','')
-    link=main.OPENURL(url)
-    link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('IFRAME SRC','iframe src')
-    match=re.compile('<b>([^"]*?)</b></span><br /><iframe.+?src="([^"]*?)"').findall(link)
-    for host,url in match:
-        host=host.replace('AllMyV','allmyvideos').replace('VSpot','vidspot').replace('TheVid','thevideo').replace('Vodlo','vodlocker').replace('Vidbul','vidbull').replace('IShar','ishared').replace('allmyvideosid','allmyvideos')
-        host=host.replace('FHoot','filehoot').replace('VidtO','vidto').replace('VK-Mob','vk')
-        main.addDown2(name.strip()+" [COLOR blue]"+host.upper()+"[/COLOR]",str(url),2,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
+def resolveURL(name,url):
+    main.addLink("[COLOR red]For Download Options, Bring up Context Menu Over Selected Link.[/COLOR]",'','')
+    html = main.OPENURL(url)
+    html = main.unescapes(html).replace('IFRAME SRC','iframe src')
+    match = re.findall('<iframe.+?src="([^"]*?)"',html)
+    for url in match:
+     main.addDown2(name.strip(),str(url),2,'.png','.png')
 
 
 def PLAY(name,url):
@@ -165,6 +114,8 @@ def PLAY(name,url):
     hname=name
     name  = name.split('[COLOR blue]')[0]
     name  = name.split('[COLOR red]')[0]
+    #url = resolveURL(url)
+    url = url
     infoLabels = main.GETMETAT(name,'','','')
     video_type='movie'
     season=''
@@ -173,7 +124,7 @@ def PLAY(name,url):
     fanart =infoLabels['backdrop_url']
     imdb_id=infoLabels['imdb_id']
     infolabels = { 'supports_meta' : 'true', 'video_type':video_type, 'name':str(infoLabels['title']), 'imdb_id':str(infoLabels['imdb_id']), 'season':str(season), 'episode':str(episode), 'year':str(infoLabels['year']) }
-
+    
     try:
         xbmc.executebuiltin("XBMC.Notification(Please Wait!,Resolving Link,3000)")
         stream_url = urlresolver.resolve(url)
@@ -209,18 +160,18 @@ def Searchhistory():
 def SEARCH(url = ''):
         encode = main.updateSearchFile(url,'TV')
         if not encode: return False   
-        surl='http://www.couchtuner.la/?s=' + encode 
+        surl='http://couchtuner.at/search?q=' + encode 
         link=main.OPENURL(surl)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
-        match=re.compile('<h2><a href="([^"]*?)" rel="bookmark" title="Watch.+?Online">([^"]*?)</a></h2>').findall(link)
+        match=re.compile('td class="col-md-1"><img src="([^"]*?)" title=".+?</td>\s*<td class="col-md-11">.+?<h4 class="media-heading" ><a href="([^"]*?)">([^"]*?)</a></h4>').findall(link)
         dialogWait = xbmcgui.DialogProgress()
         ret = dialogWait.create('Please wait until Show list is cached.')
         totalLinks = len(match)
         loadedLinks = 0
         remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
         dialogWait.update(0,'[B]Will load instantly from now on[/B]',remaining_display)
-        for url,name in match:
-            main.addDirTE(name,url,9,'','','','','','')
+        for thumb,url,name in match:
+            main.addDirTE(name,url,9,thumb,'','','','','')
             loadedLinks = loadedLinks + 1
             percent = (loadedLinks * 100)/totalLinks
             remaining_display = 'Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
@@ -230,9 +181,9 @@ def SEARCH(url = ''):
         dialogWait.close()
         del dialogWait
 
-        nextpage=re.compile('<div class="prev-page"><strong>Previous <a href="([^"]*)">[^"]*</a></strong>').findall(link)
+        nextpage=re.compile('<a href="(http://couchtuner.at/page/[^"]*?)">></a></li>').findall(link)
         if nextpage:
-         xurl=base_url+nextpage[0]
-         main.addDir('Next Page',xurl,120,'')            
+         for xurl in nextpage:
+          main.addDir('Next Page',xurl,120,'')            
 
 

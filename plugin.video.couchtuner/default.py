@@ -16,7 +16,7 @@ except Exception, e:
 addon_id = 'plugin.video.couchtuner'
 selfAddon = xbmcaddon.Addon(id=addon_id)
 art = main.art
-base_url = 'http://www.couchtuner.la'
+base_url = 'http://couchtuner.at'
 
 ################################################################################ Directories ##########################################################################################################
 UpdatePath=os.path.join(main.datapath,'Update')
@@ -34,9 +34,9 @@ except: pass
 
 def MAIN():
     
-    main.addDir('New Release','http://www.couchtuner.la/',1,art+'/New.png')
-    main.addDir('TV A-Z Index ','http://www.couchtuner.la/tv-lists/',7,art+'/showlist.png')
-    main.addDir('Search','http://www.couchtuner.la/?s=',110,art+'/search.png')
+    main.addDir('New Release','http://couchtuner.at/latest-episodes',1,art+'/New.png')
+    main.addDir('TV A-Z Index ','http://couchtuner.at/tv',7,art+'/showlist.png')
+    main.addDir('Search','http://couchtuner.at/search?q=',110,art+'/search.png')
 
 ########################################################################################################################################################################
 
@@ -69,12 +69,12 @@ maintenance=os.path.join(hubpath, 'plugin.video.hubmaintenance')
 def downloadFileWithDialog(url,dest):
     try:
         dp = xbmcgui.DialogProgress()
-        dp.create("channel_cut","Downloading & Copying File",'')
+        dp.create("Couch Tuner","Downloading & Copying File",'')
         urllib.urlretrieve(url,dest,lambda nb, bs, fs, url=url: main._pbhook(nb,bs,fs,dp,time.time()))
     except Exception, e:
         dialog = xbmcgui.Dialog()
         main.ErrorReport(e)
-        dialog.ok("channel_cut", "Report the error below at " + main.supportsite, str(e), "We will try our best to help you")
+        dialog.ok("Couch Tuner", "Report the error below at " + main.supportsite, str(e), "We will try our best to help you")
 
 def UploadLog():
     from resources.fixes import addon
@@ -343,6 +343,11 @@ elif mode==11:
     couchtuner.Seasons(url)
     
 
+
+elif mode==20:
+    from resources.libs import couchtuner
+    print " " + url
+    couchtuner.resolveURL(name,url)
 
 elif mode==45:
     from resources.libs import couchtuner

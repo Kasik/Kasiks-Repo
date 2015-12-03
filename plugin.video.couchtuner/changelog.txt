@@ -46,5 +46,8 @@ Code correction for newer links.
 [B]Version 0.1.9[/B]
 Cleaned up somewhat, fixed seasons (hopefully)
 
+[B]Version 0.2.0[/B]
+Made changes to reflect new domain.
+
 
 
