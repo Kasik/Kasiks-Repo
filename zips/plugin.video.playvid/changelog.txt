@@ -6,3 +6,7 @@ Partial Fix, Some Features Are Not Working!!
 
 [B]Version 0.3[/B]
 Code reflected to mobile version of site
+
+[B]Version 1.0.0[/B]
+Reworked complete code
+

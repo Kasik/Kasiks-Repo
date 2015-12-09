@@ -1,9 +1,12 @@
 <strings>
-    <string id="30000">Use DVD Player instead of regular player</string>
-    <string id="30061">WARNING :This plugin contains explicit adult material.</string>
-    <string id="30062">You may enter only if you are at least 18 years of age</string>
-    <string id="30063">or at least the legal age in the jurisdiction where</string>
-    <string id="30064">you reside or from which you access this content.</string>
-    <string id="30065">Exit</string>
-    <string id="30066">Enter</string>
+    <string id="30002">Don't ask for videohost</string>
+    <string id="30011">Select Sort method for Scenes</string>
+    <string id="30012">Latest</string>
+    <string id="30013">Top rated</string>
+    <string id="30014">Most viewed</string>
+    <string id="30021">Select Sort method for Movies</string>
+    <string id="30022">Date</string>
+    <string id="30023">Title</string>
+    <string id="30024">Views</string>
+    <string id="30025">Likes</string>
 </strings>
