@@ -7,7 +7,7 @@ from BeautifulSoup import BeautifulSoup
 
 ### The DareTv by Kasik. (2014) ###
 
-base_url='http://www.thedarehub.com/tv/'
+base_url='http://www.thedaretube.com/tv/'
 addon_id = 'plugin.video.daretv'
 selfAddon = xbmcaddon.Addon(id=addon_id)
 addon = Addon('plugin.video.daretv', sys.argv)
@@ -46,9 +46,9 @@ def TVIndex(url): #################  TV Index #################
         
 
 def TVTags(url,name): ################# TV A-Z List #################
-        main.addDir('0-9','http://www.thedarehub.com/tv/tvtag/09',5,art+'/09.png')
+        main.addDir('0-9','http://www.thedaretube.com/tv/tvtag/09',5,art+'/09.png')
         for i in string.ascii_uppercase:
-            main.addDir(i,'http://www.thedarehub.com/tv/tvtag/'+i.lower(),5,art+'/'+i.lower()+'.png')
+            main.addDir(i,'http://www.thedaretube.com/tv/tvtag/'+i.lower(),5,art+'/'+i.lower()+'.png')
     
 
 
@@ -88,7 +88,7 @@ def TVIndex2(url,name): ################# TV TAG Index #################
 def TVGenres(url,name): ################# TV Genre List #################
         link=main.OPENURL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','')
-        match = re.findall('<li><a href="(http://www.thedarehub.com/tv/tv-categories/.+?)">([^"]*?)</a></li>',link)
+        match = re.findall('<li><a href="(http://www.thedaretube.com/tv/tv-categories/.+?)">([^"]*?)</a></li>',link)
         for url,name in match:
                 main.addDir(name,url,5,'')
 
@@ -185,7 +185,7 @@ def Premiers(url,name): ################# Premiers #################
 def SearchResults(url):
         link=main.OPEN_URL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xe2\x80\xa6','...').replace('&#8211;','-').replace('#038;','').replace('&#039;',"'")
-        match = re.findall('class="view_img">.+?<a href="([^"]*?)" class="spec-border-ie" title="">.+?<img class="img-preview spec-border show-thumbnail"  src="http://www.thedarehub.com/tv/templates/svarog/timthumb.php[?]src=([^"]*?)&amp;w=130&amp;h=190&amp;zc=1" alt=" " />.+?<h5>.+?<a class="link" href=".+?" title=".+?">([^"]*?)</a>',link)
+        match = re.findall('class="view_img">.+?<a href="([^"]*?)" class="spec-border-ie" title="">.+?<img class="img-preview spec-border show-thumbnail"  src="http://www.thedaretube.com/tv/templates/svarog/timthumb.php[?]src=([^"]*?)&amp;w=130&amp;h=190&amp;zc=1" alt=" " />.+?<h5>.+?<a class="link" href=".+?" title=".+?">([^"]*?)</a>',link)
         dialogWait = xbmcgui.DialogProgress()
         ret = dialogWait.create('Please wait while Search is cached.')
         totalLinks = len(match)
@@ -214,7 +214,7 @@ def SearchResults(url):
 def SEARCHS(url):
         search_entered =search()
         name=str(search_entered).replace('+','')
-        searchUrl = 'http://www.thedarehub.com/tv/index.php?menu=search&query=' + search_entered 
+        searchUrl = 'http://www.thedaretube.com/tv/index.php?menu=search&query=' + search_entered 
 	# we need to set the title to our query
         title = urllib.quote_plus('')
         searchUrl += title 

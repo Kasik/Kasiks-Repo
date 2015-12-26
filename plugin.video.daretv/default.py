@@ -22,7 +22,7 @@ from resources.src.scripts import settings
 #The DareTv - by Kasik 2014.
 
 
-base_url ='http://www.thedarehub.com/tv/'
+base_url ='http://www.thedaretube.com/tv/'
 addon_id = 'plugin.video.daretv'
 selfAddon = xbmcaddon.Addon(id=addon_id)
 grab = metahandlers.MetaData(preparezip = False)
@@ -52,21 +52,21 @@ def MAIN():
         #main.addDirHome('Live Sports',base_url,20,art+'/.png')
         
 def TV():
-        main.addDirHome('Search','http://www.thedarehub.com/tv/index.php?menu=search&query=',215,art+'/search2.png')
-        main.addDirHome('Latest Episodes','http://www.thedarehub.com/tv/new-shows',1,art+'/latesteps.png')
-        main.addDirHome('TV Shows A-Z','http://www.thedarehub.com/tv/',2,art+'az.png')
-        main.addDirHome('TV Show Genres','http://www.thedarehub.com/tv/tv-shows',4,art+'genres.png')
-        main.addDirHome('Premiers','http://www.thedarehub.com/tv/premiers',6,art+'premiers.png')
+        main.addDirHome('Search','http://www.thedaretube.com/tv/index.php?menu=search&query=',215,art+'/search2.png')
+        main.addDirHome('Latest Episodes','http://www.thedaretube.com/tv/new-shows',1,art+'/latesteps.png')
+        main.addDirHome('TV Shows A-Z','http://www.thedaretube.com/tv/',2,art+'az.png')
+        main.addDirHome('TV Show Genres','http://www.thedaretube.com/tv/tv-shows',4,art+'genres.png')
+        main.addDirHome('Premiers','http://www.thedaretube.com/tv/premiers',6,art+'premiers.png')
         
         
         main.VIEWSB()
         
 def MOVIES():        
-        main.addDirHome('Search','http://www.thedarehub.com/tv/index.php?menu=search&query=',14,art+'/search2.png')
-        main.addDirHome('Latest Movies','http://www.thedarehub.com/tv/movies/date',11,art+'latestmovies.png')
-        main.addDirHome('Movie Genres','http://www.thedarehub.com/tv/movies',12,art+'genres.png')
-        main.addDirHome('Box Office','http://www.thedarehub.com/tv/movie-tags/boxoffice',13,art+'box.png')
-        main.addDirHome('DVD Release','http://www.thedarehub.com/tv/dvdrelease',13,art+'dvd.png')
+        main.addDirHome('Search','http://www.thedaretube.com/tv/index.php?menu=search&query=',14,art+'/search2.png')
+        main.addDirHome('Latest Movies','http://www.thedaretube.com/tv/movies/date',11,art+'latestmovies.png')
+        main.addDirHome('Movie Genres','http://www.thedaretube.com/tv/movies',12,art+'genres.png')
+        main.addDirHome('Box Office','http://www.thedaretube.com/tv/movie-tags/boxoffice',13,art+'box.png')
+        main.addDirHome('DVD Release','http://www.thedaretube.com/tv/dvdrelease',13,art+'dvd.png')
         #main.addDirHome('Theater',base_url+'',9,art+'.png')
         main.VIEWSB()
         

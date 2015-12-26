@@ -7,7 +7,7 @@ from BeautifulSoup import BeautifulSoup
 
 ### The DareTv by Kasik. (2014) ###
 
-base_url='http://www.thedarehub.com/tv/'
+base_url='http://www.thedaretube.com/tv/'
 addon_id = 'plugin.video.daretv'
 selfAddon = xbmcaddon.Addon(id=addon_id)
 addon = Addon('plugin.video.daretv', sys.argv)
@@ -81,7 +81,7 @@ def TVIndex2(url,name): ################# TV TAG Index #################
 def TVGenres(url,name): ################# TV Genre List #################
         link=main.OPENURL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','')
-        match = re.findall('<li><a href="(http://www.thedarehub.com/tv/tv-categories/.+?)">([^"]*?)</a></li>',link)
+        match = re.findall('<li><a href="(http://www.thedaretube.com/tv/tv-categories/.+?)">([^"]*?)</a></li>',link)
         for url,name in match:
                 main.addDir(name,url,5,'')
 

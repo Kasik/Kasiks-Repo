@@ -7,7 +7,7 @@ from BeautifulSoup import BeautifulSoup
 
 ### The DareTv by Kasik. (2014) ###
 
-base_url='http://www.thedarewall.com/tv'
+base_url='http://www.thedaretube.com/tv'
 addon_id = 'plugin.video.daretv'
 selfAddon = xbmcaddon.Addon(id=addon_id)
 addon = Addon('plugin.video.daretv', sys.argv)
@@ -19,7 +19,7 @@ AZ_DIRECTORIES = (ltr for ltr in string.ascii_uppercase)
 def TVIndex(url): #################  TV Index #################
         link=main.OPEN_URL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','')
-        match = re.findall('src="http://www.thedarewall.com/tv/templates/svarog/timthumb.php[?]src=([^"]*)&amp;w=[^"]*&amp;h=[^"]*&amp;zc=1" alt=" " style="[^"]*"/>            </a>                        </div>                <h5>                                <a class="link" href="([^"]*)" title="([^"]*)">[^"]*</a>                </h5><p class="left">([^"]*)</p>',link)
+        match = re.findall('src="http://www.thedaretube.com/tv/templates/svarog/timthumb.php[?]src=([^"]*)&amp;w=[^"]*&amp;h=[^"]*&amp;zc=1" alt=" " style="[^"]*"/>            </a>                        </div>                <h5>                                <a class="link" href="([^"]*)" title="([^"]*)">[^"]*</a>                </h5><p class="left">([^"]*)</p>',link)
         dialogWait = xbmcgui.DialogProgress()
         ret = dialogWait.create('Please wait until Show list is cached.')
         totalLinks = len(match)
@@ -49,13 +49,13 @@ def TVTags(url,name): ################# TV A-Z List #################
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','')
         match = re.findall('<li><a href="/tv/tvtag/([^"]*)">([^"]*)</a></li>',link)
         for url,name in match:
-                url = 'http://www.thedarewall.com/tv/tvtag/' + url
+                url = 'http://www.thedaretube.com/tv/tvtag/' + url
                 main.addDir(name,url,3,'')
 
 def TVIndex2(url,name): ################# TV TAG Index #################
         link=main.OPEN_URL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','')
-        match = re.findall('src="http://www.thedarewall.com/tv/templates/svarog/timthumb.php[?]src=([^"]*)&amp;w=[^"]*&amp;h=[^"]*&amp;zc=1" alt=" "/>            </a>                        </div>                <h5>                                <a class="link" href="([^"]*)" title="([^"]*)">[^"]*</a>',link)
+        match = re.findall('src="http://www.thedaretube.com/tv/templates/svarog/timthumb.php[?]src=([^"]*)&amp;w=[^"]*&amp;h=[^"]*&amp;zc=1" alt=" "/>            </a>                        </div>                <h5>                                <a class="link" href="([^"]*)" title="([^"]*)">[^"]*</a>',link)
         dialogWait = xbmcgui.DialogProgress()
         ret = dialogWait.create('Please wait until Show list is cached.')
         totalLinks = len(match)
@@ -82,15 +82,15 @@ def TVIndex2(url,name): ################# TV TAG Index #################
 def TVGenres(url,name): ################# TV Genre List #################
         link=main.OPEN_URL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','')
-        match = re.findall('<a href="http://www.thedarewall.com/tv/tv-categories/([^"]*)">([^"]*)</a>',link)
+        match = re.findall('<a href="http://www.thedaretube.com/tv/tv-categories/([^"]*)">([^"]*)</a>',link)
         for url,name in match:
-                url = 'http://www.thedarewall.com/tv/tv-categories/' + url + '/abc'
+                url = 'http://www.thedaretube.com/tv/tv-categories/' + url + '/abc'
                 main.addDir(name,url,5,'')
 
 def TVIndex3(url,name): ################# TV Genre Index #################
         link=main.OPEN_URL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','')
-        match = re.findall('src="http://www.thedarewall.com/tv/templates/svarog/timthumb.php[?]src=([^"]*)&amp;w=[^"]*&amp;h=[^"]*&amp;zc=1" alt=" "/>            </a>                        </div>                <h5>                                <a class="link" href="([^"]*)" title="([^"]*)">[^"]*</a>',link)
+        match = re.findall('src="http://www.thedaretube.com/tv/templates/svarog/timthumb.php[?]src=([^"]*)&amp;w=[^"]*&amp;h=[^"]*&amp;zc=1" alt=" "/>            </a>                        </div>                <h5>                                <a class="link" href="([^"]*)" title="([^"]*)">[^"]*</a>',link)
         dialogWait = xbmcgui.DialogProgress()
         ret = dialogWait.create('Please wait until Show list is cached.')
         totalLinks = len(match)
@@ -126,7 +126,7 @@ def TvSeasons(url,name): ################# TV Seasons #################
 def Episodes(url,name): ################# TV Episodes #################
         link=main.OPEN_URL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','')
-        match = re.findall('src="http://www.thedarewall.com/tv/templates/svarog/timthumb.php[?]src=([^"]*)&amp;w=[^"]*&amp;h=[^"]*&amp;zc=1" alt=" " style=.+?<h5 class="left">                <a class="link" href="([^>]*)" title="(.+?)</a>',link)
+        match = re.findall('src="http://www.thedaretube.com/tv/templates/svarog/timthumb.php[?]src=([^"]*)&amp;w=[^"]*&amp;h=[^"]*&amp;zc=1" alt=" " style=.+?<h5 class="left">                <a class="link" href="([^>]*)" title="(.+?)</a>',link)
         dialogWait = xbmcgui.DialogProgress()
         ret = dialogWait.create('Please wait until Show list is cached.')
         totalLinks = len(match)
@@ -160,7 +160,7 @@ def Premiers(url,name): ################# Premiers #################
         for url,thumb,name in match:
                 name=name.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('">'," ")
                 thumb = base_url + thumb
-                url = 'http://www.thedarewall.com/' + url
+                url = 'http://www.thedaretube.com/' + url
                 main.addInfo(name,url,7,thumb,'','')
                 loadedLinks = loadedLinks + 1
                 percent = (loadedLinks * 100)/totalLinks
@@ -177,7 +177,7 @@ def Premiers(url,name): ################# Premiers #################
 def SearchResults(url):
         link=main.OPEN_URL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xe2\x80\xa6','...').replace('&#8211;','-').replace('#038;','').replace('&#039;',"'")
-        match = re.findall('src="http://www.thedarewall.com/tv/templates/svarog/timthumb.php[?]src=([^"]*)&amp;w=[^"]*&amp;h=[^"]*&amp;zc=1" alt=" " />.+?<a class="link" href="([^"]*)" title="([^"]*)">[^"]*</a>',link)
+        match = re.findall('src="http://www.thedaretube.com/tv/templates/svarog/timthumb.php[?]src=([^"]*)&amp;w=[^"]*&amp;h=[^"]*&amp;zc=1" alt=" " />.+?<a class="link" href="([^"]*)" title="([^"]*)">[^"]*</a>',link)
         dialogWait = xbmcgui.DialogProgress()
         ret = dialogWait.create('Please wait while Search is cached.')
         totalLinks = len(match)
@@ -206,7 +206,7 @@ def SearchResults(url):
 def SEARCHS(url):
         search_entered =search()
         name=str(search_entered).replace('+','')
-        searchUrl = 'http://www.thedarewall.com/tv/index.php?menu=search&query=' + search_entered 
+        searchUrl = 'http://www.thedaretube.com/tv/index.php?menu=search&query=' + search_entered 
 	# we need to set the title to our query
         title = urllib.quote_plus('')
         searchUrl += title 

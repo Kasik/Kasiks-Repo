@@ -24,5 +24,9 @@
 
 - Updated Addon
 
+[B]Version 0.1.`[/B]
+
+- Updated to reflect website change.
+
 
 
