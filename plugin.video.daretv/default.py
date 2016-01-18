@@ -44,6 +44,7 @@ try:
     os.makedirs(ListsPath)
 except: pass
 
+
 ############################# Main ###########################################################################################
       
 def MAIN():
@@ -58,8 +59,7 @@ def TV():
         main.addDirHome('TV Show Genres','http://www.thedaretube.com/tv/tv-shows',4,art+'genres.png')
         main.addDirHome('Premiers','http://www.thedaretube.com/tv/premiers',6,art+'premiers.png')
         
-        
-        main.VIEWSB()
+
         
 def MOVIES():        
         main.addDirHome('Search','http://www.thedaretube.com/tv/index.php?menu=search&query=',14,art+'/search2.png')
