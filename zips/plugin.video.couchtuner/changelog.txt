@@ -49,5 +49,8 @@ Cleaned up somewhat, fixed seasons (hopefully)
 [B]Version 0.2.0[/B]
 Made changes to reflect new domain.
 
+[B]Version 0.2.1[/B]
+Fixed Links, Fixed ability to turn off Download Instructions.
+
 
 
