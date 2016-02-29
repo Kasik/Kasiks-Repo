@@ -2,7 +2,7 @@
 <addons>
 <addon id="plugin.video.couchtuner"
        name="CouchTuner"
-       version="0.2.0"
+       version="0.2.1"
        provider-name="Kasik">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
@@ -62,53 +62,6 @@
     <extension point="xbmc.addon.metadata">
     <summary lang="en">The Dare Tv - Socialize While Watching Your Favorite Tv Shows And Movies</summary>
     <description lang="en">Watch the latest episodes , free tv , the latest shows , latest movies , live tv free on the dare wall , streaming , watch online</description>
-    <platform>all</platform>
-  </extension>
-</addon>
-
-<addon id="plugin.video.filmesonline2"
-       name="Filmesonline2"
-       version="0.1.1"
-       provider-name="Kasik04a">
-    <requires>
-        <import addon="xbmc.python" version="2.1.0"/>
-		<import addon="script.module.urlresolver"  version="0.0.1"/>
-		<import addon="script.module.t0mm0.common" version="1.1.0"/>
-		<import addon="script.module.metahandler"  version="1.0.2"/>
-		<import addon="script.module.beautifulsoup"/>
-    </requires>
-    <extension point="xbmc.python.pluginsource"
-               library="default.py">
-        <provides>video</provides>
-    </extension>
-    <extension point="xbmc.addon.metadata">
-    <summary lang="en">Filmes Online 2 - Assistir Filmes Online Em Full HD 1080p - HD 720p</summary>
-    <description lang="en">Filmes Online 2 - Assistir Filmes Online Em Full HD 1080p - HD 720p[/COLOR]</description>
-    <platform>all</platform>
-  </extension>
-</addon>
-
-<addon id="plugin.video.filmesonlinegratis"
-       name="Filmesonlinegratis"
-       version="0.0.2"
-       provider-name="Kasik">
-    <requires>
-        <import addon="xbmc.python" version="2.1.0"/>
-	<import addon="script.module.urlresolver"  version="0.0.1"/>
-
-	<import addon="script.module.t0mm0.common" version="1.1.0"/>
-
-	<import addon="script.module.metahandler"  version="1.0.2"/>
-
-	<import addon="script.module.beautifulsoup"/>
-    </requires>
-    <extension point="xbmc.python.pluginsource"
-               library="default.py">
-        <provides>video</provides>
-    </extension>
-    <extension point="xbmc.addon.metadata">
-    <summary lang="en">Free Movies Online - Watch Movies Online - Watch Movies Online - Online Movies 2014 - Movies Online Dubbed</summary>
-    <description lang="en">Free Movies Online is an online portal for watching online movies. View Movies Online, Watch Movies Online, Watch, 2014 Movies Online, Online Series, No Limit Films Online!</description>
     <platform>all</platform>
   </extension>
 </addon>

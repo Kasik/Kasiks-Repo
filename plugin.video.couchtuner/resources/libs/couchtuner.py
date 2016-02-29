@@ -95,13 +95,14 @@ def NewRelease(url):
 def LINK(name,url):
     link=main.OPEN_URL(url)
     link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('IFRAME SRC','iframe src')
-    match=re.compile('class="domain" ><a href="([^"]*?)" ><span class="glyphicon glyphicon-play"></span> ([^"]*?)</a></td>\s*<td class="text-center"><span class="">([^"]*?)</span>').findall(link)
+    match=re.findall('class="domain"><a href="([^"]*?)"><span class="glyphicon glyphicon-play"></span>\s*([^"]*?)</a></td><td class="text-center"><span class="">([^"]*?)</span>',link)
     for url,host,q in match:
       #resolveURL(name,url,host)
       main.addDir(name.strip()+" [COLOR blue]"+host.upper()+"[/COLOR]",str(url),20,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
 
 def resolveURL(name,url):
-    main.addLink("[COLOR red]For Download Options, Bring up Context Menu Over Selected Link.[/COLOR]",'','')
+    if selfAddon.getSetting("hide-download-instructions") != "true":
+     main.addLink("[COLOR red]For Download Options, Bring up Context Menu Over Selected Link.[/COLOR]",'','')
     html = main.OPENURL(url)
     html = main.unescapes(html).replace('IFRAME SRC','iframe src')
     match = re.findall('<iframe.+?src="([^"]*?)"',html)
