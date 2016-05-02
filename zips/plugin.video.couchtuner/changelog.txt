@@ -52,5 +52,9 @@ Made changes to reflect new domain.
 [B]Version 0.2.1[/B]
 Fixed Links, Fixed ability to turn off Download Instructions.
 
+[B]Version 0.2.2[/B]
+Changed code to reflect new site domain. 
+Other miscellaneous changes.
+
 
 

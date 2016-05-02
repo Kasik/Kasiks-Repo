@@ -16,7 +16,7 @@ except Exception, e:
 addon_id = 'plugin.video.couchtuner'
 selfAddon = xbmcaddon.Addon(id=addon_id)
 art = main.art
-base_url = 'http://couchtuner.at'
+base_url = 'DELETE'
 
 ################################################################################ Directories ##########################################################################################################
 UpdatePath=os.path.join(main.datapath,'Update')
@@ -34,9 +34,9 @@ except: pass
 
 def MAIN():
     
-    main.addDir('New Release','http://couchtuner.at/latest-episodes',1,art+'/New.png')
-    main.addDir('TV A-Z Index ','http://couchtuner.at/tv',7,art+'/showlist.png')
-    main.addDir('Search','http://couchtuner.at/search?q=',110,art+'/search.png')
+    main.addDir('New Release','http://couchtuner2.to/latest-episodes',1,art+'/New.png')
+    main.addDir('TV A-Z Index ','http://couchtuner2.to/tv',7,art+'/showlist.png')
+    main.addDir('Search','http://couchtuner2.to/search?q=',110,art+'/search.png')
 
 ########################################################################################################################################################################
 
@@ -60,71 +60,6 @@ def setListFile(url, path, excepturl = None):
         try: open(path,'w+').write(content)
         except: pass
     return
-
-
-################################################################################ XBMCHUB Repo & Hub Maintenance Installer ##########################################################################################################
-hubpath = xbmc.translatePath(os.path.join('special://home/addons', ''))
-maintenance=os.path.join(hubpath, 'plugin.video.hubmaintenance')
-
-def downloadFileWithDialog(url,dest):
-    try:
-        dp = xbmcgui.DialogProgress()
-        dp.create("Couch Tuner","Downloading & Copying File",'')
-        urllib.urlretrieve(url,dest,lambda nb, bs, fs, url=url: main._pbhook(nb,bs,fs,dp,time.time()))
-    except Exception, e:
-        dialog = xbmcgui.Dialog()
-        main.ErrorReport(e)
-        dialog.ok("Couch Tuner", "Report the error below at " + main.supportsite, str(e), "We will try our best to help you")
-
-def UploadLog():
-    from resources.fixes import addon
-    addon.LogUploader()
-
-################################################################################ XBMCHUB POPUP ##########################################################################################################
-class HUB( xbmcgui.WindowXMLDialog ):
-    def __init__( self, *args, **kwargs ):
-        self.shut = kwargs['close_time'] 
-        xbmc.executebuiltin( "Skin.Reset(AnimeWindowXMLDialogClose)" )
-        xbmc.executebuiltin( "Skin.SetBool(AnimeWindowXMLDialogClose)" )
-                                       
-    def onInit( self ):
-        xbmc.Player().play('%s/resources/skins/DefaultSkin/media/theme.ogg'%selfAddon.getAddonInfo('path'))# Music.
-        while self.shut > 0:
-            xbmc.sleep(1000)
-            self.shut -= 1
-        xbmc.Player().stop()
-        self._close_dialog()
-                
-    def onFocus( self, controlID ): pass
-    
-    def onClick( self, controlID ): 
-        if controlID == 12:
-            xbmc.Player().stop()
-            self._close_dialog()
-        if controlID == 7:
-            xbmc.Player().stop()
-            self._close_dialog()
-
-    def onAction( self, action ):
-        if action in [ 5, 6, 7, 9, 10, 92, 117 ] or action.getButtonCode() in [ 275, 257, 261 ]:
-            xbmc.Player().stop()
-            self._close_dialog()
-
-    def _close_dialog( self ):
-        xbmc.executebuiltin( "Skin.Reset(AnimeWindowXMLDialogClose)" )
-        time.sleep( .4 )
-        self.close()
-        
-def pop():
-    if xbmc.getCondVisibility('system.platform.ios'):
-        if not xbmc.getCondVisibility('system.platform.atv'):
-            popup = HUB('hub1.xml',selfAddon.getAddonInfo('path'),'DefaultSkin',close_time=34,logo_path='%s/resources/skins/DefaultSkin/media/Logo/'%selfAddon.getAddonInfo('path'))
-    if xbmc.getCondVisibility('system.platform.android'):
-        popup = HUB('hub1.xml',selfAddon.getAddonInfo('path'),'DefaultSkin',close_time=34,logo_path='%s/resources/skins/DefaultSkin/media/Logo/'%selfAddon.getAddonInfo('path'))
-    else:
-        popup = HUB('hub.xml',selfAddon.getAddonInfo('path'),'DefaultSkin',close_time=34,logo_path='%s/resources/skins/DefaultSkin/media/Logo/'%selfAddon.getAddonInfo('path'))
-    popup.doModal()
-    del popup
 
 ################################################################################ Message ##########################################################################################################
 

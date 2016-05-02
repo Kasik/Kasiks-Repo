@@ -81,7 +81,8 @@ def resolve_url(url, filename = False):
                 source = urlresolver.HostedMediaFile(url)
                 if source:
                     stream_url = source.resolve()
-                    if isinstance(stream_url,urlresolver.UrlResolver.unresolvable):
+                   # if isinstance(stream_url,urlresolver.UrlResolver.unresolvable):
+                    if isinstance(stream_url,urlresolver.resolver.ResolverError):
                         showUrlResoverError(stream_url)
                         stream_url = False
                 else:
@@ -99,7 +100,8 @@ def resolve_url(url, filename = False):
                 source = urlresolver.HostedMediaFile(url)
                 if source:
                     stream_url = source.resolve()
-                    if isinstance(stream_url,urlresolver.UrlResolver.unresolvable):
+                   # if isinstance(stream_url,urlresolver.UrlResolver.unresolvable):
+                    if isinstance(stream_url,urlresolver.resolver.ResolverError):
                         showUrlResoverError(stream_url)
                         stream_url = False
             except Exception as e:

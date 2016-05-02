@@ -11,13 +11,13 @@ addon_id = 'plugin.video.couchtuner'
 selfAddon = xbmcaddon.Addon(id=addon_id)
 addon = Addon('plugin.video.couchtuner', sys.argv)
 art = main.art
-base_url = 'http://couchtuner.at/'    
+base_url = 'http://couchtuner2.to'    
 
 
 def AtoZ():
-    main.addDir('0-9','http://couchtuner.at/tv/startwith/',8,art+'/09.png')
+    main.addDir('0-9','http://couchtuner2.to/tv/startwith/',8,art+'/09.png')
     for i in string.ascii_uppercase:
-            main.addDir(i,'http://couchtuner.at/tv/startwith/'+i.upper(),8,art+'/'+i.lower()+'.png')
+            main.addDir(i,'http://couchtuner2.to/tv/startwith/'+i.upper(),8,art+'/'+i.lower()+'.png')
 
 def AZLIST(name,url):
     link=main.OPEN_URL(url)
@@ -60,9 +60,9 @@ def EPISODES(name,url,index=False):
       dialogWait.close()
       del dialogWait
 
-      paginate=re.compile('<a href="(http://couchtuner.at/page/[^"]*?)">></a></li>').findall(link)
+      paginate=re.compile('<a href="(http://couchtuner2.to/page/[^"]*?)">></a></li>').findall(link)
       for xurl in paginate:  
-       main.addDir('[COLOR blue]Next Page >'+'[/COLOR]',xurl,1,art+'/next2.png','')
+       main.addDir('[COLOR blue]Next Page >'+'[/COLOR]',xurl,1,art+'/next.png','')
 
     
 def NewRelease(url):
@@ -87,17 +87,18 @@ def NewRelease(url):
          dialogWait.close()
          del dialogWait
 
-        paginate=re.compile('<a href="(http://couchtuner.at/page/[^"]*?)">></a></li>').findall(link)
+        paginate=re.compile('<a href="(http://couchtuner2.to/page/[^"]*?)">></a></li>').findall(link)
         for xurl in paginate:  
-         main.addDir('[COLOR blue]Next Page >'+'[/COLOR]',xurl,1,art+'/next2.png','')
+         main.addDir('[COLOR blue]Next Page >'+'[/COLOR]',xurl,1,art+'/next.png','')
 
         
 def LINK(name,url):
     link=main.OPEN_URL(url)
     link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('IFRAME SRC','iframe src')
-    match=re.findall('class="domain"><a href="([^"]*?)"><span class="glyphicon glyphicon-play"></span>\s*([^"]*?)</a></td><td class="text-center"><span class="">([^"]*?)</span>',link)
+    match=re.findall('<td class="domain" ><a href="([^"]*?)" ><span class="glyphicon glyphicon-play"></span>\s*([^"]*?)</a></td>\s*<td class="text-center"><span class="">([^"]*?)</span></td>',link)
     for url,host,q in match:
       #resolveURL(name,url,host)
+      host=host.replace('.me','').replace('.to','').replace('.net','').replace('.sx','').replace('.eu','').replace('.com','')        
       main.addDir(name.strip()+" [COLOR blue]"+host.upper()+"[/COLOR]",str(url),20,art+'/hosts/'+host+'.png',art+'/hosts/'+host+'.png')
 
 def resolveURL(name,url):
@@ -111,6 +112,25 @@ def resolveURL(name,url):
 
 
 def PLAY(name,url):
+    ok=True
+    url = url    
+    try:
+        xbmc.executebuiltin("XBMC.Notification(Please Wait!,Resolving Link,3000)")
+        stream_url = urlresolver.resolve(url)
+
+        listitem = xbmcgui.ListItem(name)
+        listitem.setInfo('video', {'Title': name, 'Genre': 'Movie'})
+        xbmc.Player().play(str(stream_url), listitem)
+        return ok
+    except Exception, e:
+        if stream_url != False:
+                main.ErrorReport(e)
+        return ok
+
+
+#################### OLD PLAYER ########################################
+
+def PLAYOLD(name,url):
     ok=True
     hname=name
     name  = name.split('[COLOR blue]')[0]
@@ -139,6 +159,10 @@ def PLAY(name,url):
         if stream_url != False:
                 main.ErrorReport(e)
         return ok
+########################################################################
+
+
+
 
 
 def Searchhistory():
@@ -161,7 +185,7 @@ def Searchhistory():
 def SEARCH(url = ''):
         encode = main.updateSearchFile(url,'TV')
         if not encode: return False   
-        surl='http://couchtuner.at/search?q=' + encode 
+        surl='http://couchtuner2.to/search?q=' + encode 
         link=main.OPENURL(surl)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
         match=re.compile('td class="col-md-1"><img src="([^"]*?)" title=".+?</td>\s*<td class="col-md-11">.+?<h4 class="media-heading" ><a href="([^"]*?)">([^"]*?)</a></h4>').findall(link)
@@ -182,9 +206,9 @@ def SEARCH(url = ''):
         dialogWait.close()
         del dialogWait
 
-        nextpage=re.compile('<a href="(http://couchtuner.at/page/[^"]*?)">></a></li>').findall(link)
+        nextpage=re.compile('<a href="(http://couchtuner2.to/page/[^"]*?)">></a></li>').findall(link)
         if nextpage:
          for xurl in nextpage:
-          main.addDir('Next Page',xurl,120,'')            
+          main.addDir('Next Page',xurl,120,art+'/next.png')            
 
 
