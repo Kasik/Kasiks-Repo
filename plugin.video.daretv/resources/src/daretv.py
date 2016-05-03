@@ -16,10 +16,40 @@ AZ_DIRECTORIES = (ltr for ltr in string.ascii_uppercase)
 
 
 ############################################################### TV SECTION  #############################################################################################################################################################
-def TVIndex(url): #################  TV Index #################
+def TVIndex(url,index=False): #################  TV Index #################
+    link=main.OPEN_URL(url)
+    link=main.unescapes(link)
+    match = re.findall('''<div class="view_img">\s*<a href="([^"]*?)" class="spec-border-ie" title="">\s*<img class="img-preview spec-border"  src="([^']*?)" alt=" " style="background-color: #717171;"/>\s*</a>\s*</div>\s*<h5>\s*<a class="link" href=".+?title=".+?">([^"]*?)</a>\s*</h5><p class="left">([^"]*?)</p>''',link)   
+    dialogWait = xbmcgui.DialogProgress()
+    ret = dialogWait.create('Please wait until Show list is cached.')
+    totalLinks = len(match)
+    loadedLinks = 0
+    remaining_display = 'Shows loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+    dialogWait.update(0, '[B]Will load instantly from now on[/B]',remaining_display)
+    xbmc.executebuiltin("XBMC.Dialog.Close(busydialog,true)")
+    for url,thumb,name,season in match:
+        main.addDirTE(name+ ' ' + season,url,75,thumb,'','','','','')
+        loadedLinks = loadedLinks + 1
+        percent = (loadedLinks * 100)/totalLinks
+        remaining_display = 'Shows loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
+        dialogWait.update(percent,'[B]Will load instantly from now on[/B]',remaining_display)
+        if dialogWait.iscanceled(): return False   
+    dialogWait.close()
+    del dialogWait
+     
+    nextpage=re.compile('><a href="([^"]*?)">&raquo;</a></li>             </ul>        </div>        <div class="show_all_btn"><ul class="pagination"><li>').findall(link)
+    for url in nextpage:
+     main.addDir('[COLOR blue]Next Page -> [/COLOR]',url,1,art+'/next.png')    
+
+    xbmcplugin.setContent(int(sys.argv[1]), 'Movies')
+    main.VIEWS()            
+
+
+
+def TVIndexOLD(url): #################  TV Index #################
         link=main.OPEN_URL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','')
-        match = re.findall('<img class="img-preview spec-border"  src="([^"]*?)" alt=" " style="background.+?<a class="link" href="([^"]*?)" title=".+?">([^"]*?)</a>.+?</h5><p class="left">([^"]*?)</p>',link)
+        link=main.unescapes(link)
+        match = re.findall('''<div class="view_img">\s*<a href="([^"]*?)" class="spec-border-ie" title="">\s*<img class="img-preview spec-border"  src="([^']*?)" alt=" " style="background-color: #717171;"/>\s*</a>\s*</div>\s*<h5>\s*<a class="link" href=".+?title=".+?">([^"]*?)</a>\s*</h5><p class="left">([^"]*?)</p>''',link)
         dialogWait = xbmcgui.DialogProgress()
         ret = dialogWait.create('Please wait until Show list is cached.')
         totalLinks = len(match)
@@ -27,7 +57,8 @@ def TVIndex(url): #################  TV Index #################
         remaining_display = 'Latest Episodes Loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
         dialogWait.update(0, '[B]Will load instantly from now on[/B]',remaining_display)
         for thumb,url,name,season in match:
-                name=name.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xe2\x80\x99',"'").replace('\xe2\x80\x93','-').replace('\xe2\x80\x94','').replace('&-','-')
+                #name=name.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('\xe2\x80\x99',"'").replace('\xe2\x80\x93','-').replace('\xe2\x80\x94','').replace('&-','-')
+                name=main.unescapes(name)
                 #main.addInfo(name+ ' ' + season,url,75,thumb,'','')
                 main.addDirTE(name+ ' ' + season,url,75,thumb,'','','','','')
                 loadedLinks = loadedLinks + 1
@@ -51,11 +82,6 @@ def TVTags(url,name): ################# TV A-Z List #################
             main.addDir(i,'http://www.thedaretube.com/tv/tvtag/'+i.lower(),5,art+'/'+i.lower()+'.png')
     
 
-
-
-
-
-        
 
 def TVIndex2(url,name): ################# TV TAG Index #################
         link=main.OPEN_URL(url)
@@ -93,8 +119,8 @@ def TVGenres(url,name): ################# TV Genre List #################
                 main.addDir(name,url,5,'')
 
 def TVIndex3(url,name): ################# TV Genre Index #################
-        link=main.OPENURL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','')
+        link=main.OPEN_URL(url)
+        link=main.unescapes(link)
         match = re.findall('<div class="view_img">.+?<a href="([^"]*?)" class="spec-border-ie" title="">.+?<img class="img-preview spec-border show-thumbnail"  src="([^"]*?)" alt=.+?class="link" href=".+?" title=".+?">([^"]*?)</a>',link)
         dialogWait = xbmcgui.DialogProgress()
         ret = dialogWait.create('Please wait until Show list is cached.')
@@ -119,42 +145,25 @@ def TVIndex3(url,name): ################# TV Genre Index #################
         for url in nextpage:
                 main.addDir('[COLOR blue]Next Page -> [/COLOR]',url,5,art+'/next.png')
                 xbmcplugin.setContent(int(sys.argv[1]), 'Tv-Shows')
-
                 
 
 def TvSeasons(url,name): ################# TV Seasons #################
         link=main.OPEN_URL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','')
-        match = re.findall('><a href=\'([^>]*)\'>Season ([0-9]*)</a>',link)
-        for url,name in match:
-                name = 'Season ' +name
-                main.addDir(name,url,8,'')
-                xbmcplugin.setContent(int(sys.argv[1]), 'Tv-Shows')
+        link=main.unescapes(link)
+        match=re.findall('<a href=\'([^"]*?)\'>(Season[^"]*?)</a>',link)
+        for url,season in match:
+                #name = 'Season ' +name
+                main.addDir(name+' '+season,url,8,'')
+        
 
 def Episodes(url,name): ################# TV Episodes #################
         link=main.OPEN_URL(url)
-        link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','')
-        match = re.findall('<img class="img-preview spec-border"  src="([^"]*?)" alt=" " style="background-color: #717171;"/>.+?<h5 class="left">.+?<a class="link" href="([^"]*?)" title="([^"]*?)">([^"]*?)</a></h5>',link)
-        dialogWait = xbmcgui.DialogProgress()
-        ret = dialogWait.create('Please wait until Show list is cached.')
-        totalLinks = len(match)
-        loadedLinks = 0
-        remaining_display = 'Tv Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
-        dialogWait.update(0, '[B]Will load instantly from now on[/B]',remaining_display)
-        for thumb,url,title,name in match:
-                name=name.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','').replace('">'," ")
-                main.addDirTE(title+' - '+name,url,75,thumb,'','','','','')
-                loadedLinks = loadedLinks + 1
-                percent = (loadedLinks * 100)/totalLinks
-                remaining_display = 'Tv Episodes loaded :: [B]'+str(loadedLinks)+' / '+str(totalLinks)+'[/B].'
-                dialogWait.update(percent,'[B]Will load instantly from now on[/B]',remaining_display)
-                if (dialogWait.iscanceled()):
-                        return False   
-        dialogWait.close()
-        del dialogWait
-        
-        xbmcplugin.setContent(int(sys.argv[1]), 'Tv-Shows')
-
+        link=main.unescapes(link)
+        match = re.findall('<a class="link" href="([^"]*?)" title=".+?">.+?(Episode[^"]*?)</a></h5>',link)
+        for url,showtitle in match:
+                name=main.unescapes(name)
+                main.addDirTE("[COLOR yellow]"+name+" "+showtitle+"[/COLOR]",url,75,'','','','','','')
+                
 def Premiers(url,name): ################# Premiers #################
         link=main.OPEN_URL(url)
         link=link.replace('\r','').replace('\n','').replace('\t','').replace('&nbsp;','').replace('\\','')
@@ -448,21 +457,29 @@ def VIDEOLINKS(name,url):
                
                 #addDownLink(name,url,mode,iconimage,fan):
 
+
 def Play(url,name):
+    ok=True
+    url = url
+    if not url: return False
+    #murl = murl
+    #if not murl: return True
+    print "Is The File Playing ? " + url
+
+    try:
         xbmc.executebuiltin("XBMC.Notification(Please Wait!,Resolving Link,3000)")
-        codelink = url
-        url = url
-        name = name
-        hostUrl = url
-        infoLabels = main.GETMETAT(name,'','','')
-        videoLink = urlresolver.resolve(hostUrl)      
-        player = xbmc.Player(xbmc.PLAYER_CORE_AUTO)
+        stream_url = urlresolver.resolve(url)
+
         listitem = xbmcgui.ListItem(name)
-        listitem.setInfo('video', infoLabels=infoLabels)
-        listitem.setThumbnailImage(infoLabels['cover_url'])
-        player.play(str(videoLink),listitem)
-        main.addLink('Restart Video '+ name,str(videoLink),'')
-        xbmcplugin.endOfDirectory(int(sys.argv[1]))
+        listitem.setInfo('video', {'Title': name, 'Genre': 'Movie'})
+        xbmc.Player().play(str(stream_url), listitem)
+        return ok
+    except Exception, e:
+        if stream_url != False:
+                main.ErrorReport(e)
+        return ok
+
+
 
 
 
